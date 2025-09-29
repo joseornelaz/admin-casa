@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
 
   return {
-    base: !isProduction ? '/agc-react/' : '',
+    base: !isProduction ? '/admin-casa/' : '',
     plugins: [react(), svgr()],
     resolve: {
       alias: {
