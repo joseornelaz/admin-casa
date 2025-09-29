@@ -25,7 +25,7 @@ const drawerWidth = 280;
 const Sidenav: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(0);
+    const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(-1);
     const [openSubmenu, setOpenSubmenu] = React.useState<string | null>(null);
     
     const menuRoutes = React.useMemo(
@@ -36,17 +36,31 @@ const Sidenav: React.FC = () => {
     // Calcula los índices una sola vez y los mantiene estables
     const menuWithIndices = React.useMemo(() => {
         let globalIndex = 0;
-        return menuRoutes.filter((item) => item.visible === 1).map((item) => ({
-            ...item,
-            index: globalIndex++,
-            children: item.children.map((child) => ({
-                ...child,
-                index: globalIndex++
-            }))
-        }));
+        return menuRoutes.filter((item) => item.visible === 1).map((item) => {
+            const hasChildren = item.children.length > 0;
+            
+            if (hasChildren) {
+                // Si tiene children, solo asigna índice a los children
+                return {
+                    ...item,
+                    index: undefined,
+                    children: item.children.map((child) => ({
+                        ...child,
+                        index: globalIndex++
+                    }))
+                };
+            } else {
+                // Si no tiene children, asigna índice al item padre
+                return {
+                    ...item,
+                    index: globalIndex++,
+                    children: []
+                };
+            }
+        });
     }, [menuRoutes]);
 
-    const handleNavigation = (path: string, index: number) => {
+    const handleNavigation = (path: string, index: number | undefined) => {
       navigate(path);
       setSelectedIndex(index);
     };
