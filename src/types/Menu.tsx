@@ -21,7 +21,7 @@ export interface Child {
 }
 
 export const MenuRoutes: Menu[] = [
-    { id: 1, text: TitleScreen.HOME, icon: Icons.Home, path: AppRoutingPaths.HOME, order: 0, visible: 1, children:[], menu: 'main' },
+    { id: 1, text: TitleScreen.HOME, icon: Icons.Home, path: AppRoutingPaths.HOME, order: 0, visible: 0, children:[], menu: 'main' },
     { id: 2, text: TitleScreen.REGISTROS, icon: Icons.Registros, path: '', order: 1, visible: 1, 
         children:[
             { text: TitleScreen.CONSULTA, path: AppRoutingPaths.CONSULTA, visible: 1},

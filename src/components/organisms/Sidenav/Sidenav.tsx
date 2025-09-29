@@ -27,9 +27,24 @@ const Sidenav: React.FC = () => {
     const theme = useTheme();
     const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(0);
     const [openSubmenu, setOpenSubmenu] = React.useState<string | null>(null);
+    
+    const menuRoutes = React.useMemo(
+        () => [...MenuItems].filter((item) => item.menu === "main").sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+        []
+    );
 
-    const menuRoutes = [...MenuItems].filter((item) => item.menu === "main").sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    let globalIndex = 0;
+    // Calcula los índices una sola vez y los mantiene estables
+    const menuWithIndices = React.useMemo(() => {
+        let globalIndex = 0;
+        return menuRoutes.filter((item) => item.visible === 1).map((item) => ({
+            ...item,
+            index: globalIndex++,
+            children: item.children.map((child) => ({
+                ...child,
+                index: globalIndex++
+            }))
+        }));
+    }, [menuRoutes]);
 
     const handleNavigation = (path: string, index: number) => {
       navigate(path);
@@ -69,10 +84,9 @@ const Sidenav: React.FC = () => {
         
         <List>
           {
-            menuRoutes.filter((item) => item.visible === 1).map((item) => {
+            menuWithIndices.map((item) => {
                 const hasChildren = item.children.length > 0;
                 const isOpen = openSubmenu === item.text;
-                const currentParentIndex = globalIndex++;
 
                 return (
                     <React.Fragment key={item.text}>
@@ -82,12 +96,12 @@ const Sidenav: React.FC = () => {
                                     width: '100%', 
                                     borderRadius: '4px', 
                                     ml: '5px', 
-                                    backgroundColor: selectedIndex === currentParentIndex  ? '#F6F7F9' : 'transparent',
-                                    borderLeft: selectedIndex === currentParentIndex  ? '3px solid #30394A' : '3px solid transparent', 
+                                    backgroundColor: selectedIndex === item.index ? '#F6F7F9' : 'transparent',
+                                    borderLeft: selectedIndex === item.index ? '3px solid #30394A' : '3px solid transparent', 
                                 }}
                             >
                                 <ListItemButton
-                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item.path, currentParentIndex)}
+                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item.path, item.index)}
                                     sx={{ borderRadius: '8px', gap: '8px' }}
                                 >
                                     <ListItemIcon sx={{ minWidth: '0px'}}>
@@ -101,40 +115,34 @@ const Sidenav: React.FC = () => {
                         {hasChildren && (
                             <Collapse in={isOpen} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    {item.children.map((child) => {
-                                        const currentChildIndex = globalIndex++;
-
-                                        return (
-                                            <Box 
-                                                sx={{  
-                                                    width: '100%', 
-                                                    borderRadius: '4px', 
-                                                    ml: '5px', 
-                                                    backgroundColor: selectedIndex === currentChildIndex ? '#F6F7F9' : 'transparent',
-                                                    borderLeft: selectedIndex === currentChildIndex ? '3px solid #30394A' : '3px solid transparent', 
+                                    {item.children.map((child) => (
+                                        <Box 
+                                            sx={{  
+                                                width: '100%', 
+                                                borderRadius: '4px', 
+                                                ml: '5px', 
+                                                backgroundColor: selectedIndex === child.index ? '#F6F7F9' : 'transparent',
+                                                borderLeft: selectedIndex === child.index ? '3px solid #30394A' : '3px solid transparent', 
+                                            }}
+                                            key={child.text}
+                                        >
+                                            <ListItemButton
+                                                onClick={() => handleNavigation(child.path, child.index)}
+                                                sx={{
+                                                    pl: 5,
+                                                    justifyContent: 'initial',
                                                 }}
-                                                key={child.text}
                                             >
-                                                <ListItemButton
-                                                    onClick={() => handleNavigation(child.path, currentChildIndex)}
-                                                    sx={{
-                                                        pl: 5,
-                                                        justifyContent: 'initial',
-                                                    }}
-                                                >
-                                                    <Typography variant='body2' sx={{ color: theme.palette.primary[600]}}>{child.text}</Typography>
-                                                </ListItemButton>
-                                            </Box>
-                                        )
-                                    })}
+                                                <Typography variant='body2' sx={{ color: theme.palette.primary[600]}}>{child.text}</Typography>
+                                            </ListItemButton>
+                                        </Box>
+                                    ))}
                                 </List>
                             </Collapse>
                         )}
                     </React.Fragment>
-                    
                 )
-                }
-            )
+            })
         }
         </List>
       </Drawer>
