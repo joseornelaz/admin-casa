@@ -1,0 +1,56 @@
+name: Deploy to Main
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+    build-and-deploy:
+        name: Deploy ${{ github.ref_name }} to main
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pages: write
+            id-token: write
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        # Instala dependencias (ajusta según tu proyecto)
+        - name: Install dependencies
+          run: npm install
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20' # Usa la versión que necesites
+            cache: 'npm'
+
+        - name: Install dependencies
+          run: npm install
+
+        # - name: Run Linter
+        #   run: npm run lint
+
+        # Construye el proyecto (ajusta según tu proyecto)
+        - name: Build project
+          run: npm run git-page
+
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: './dist'
+
+        - name: Deploy to GitHub Pages
+          uses: actions/deploy-pages@v4
+          
+        # Publica o despliega (ajusta este paso según tu flujo)
+        - name: Deploy to Main Environment
+          run: echo "Deploying to main environment..."
+
+        - name: Deploy on
+          run: echo "https://joseornelaz.github.io/admin-casa/#/login"          
+
+                # Aquí puedes agregar comandos de despliegue reales, por ejemplo:
+                # run: npm run deploy:dev

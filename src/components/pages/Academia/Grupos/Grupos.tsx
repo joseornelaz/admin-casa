@@ -1,13 +1,10 @@
-import { Typography, useTheme } from "@mui/material";
-import Box from "@mui/material/Box";
 import React from "react";
-import DsSvgIcon from "../../../atoms/Icon/Icon";
-
+// import { useTheme } from "@mui/material";
 import { InfoAlert } from "../../../molecules/InfoAlert/InfoAlert";
 
 const Grupos: React.FC = () => {
 
-    const theme = useTheme();
+    // const theme = useTheme();
 
     return (
         <React.Fragment>
