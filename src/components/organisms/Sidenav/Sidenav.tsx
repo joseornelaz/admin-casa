@@ -33,7 +33,7 @@ const Sidenav: React.FC = () => {
         () => [...MenuItems].filter((item) => item.menu === "main").sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
         []
     );
-    
+
     const menuWithIndices = React.useMemo(() => {
         let globalIndex = 0;
         return menuRoutes.filter((item) => item.visible === 1).map((item) => {
@@ -111,12 +111,12 @@ const Sidenav: React.FC = () => {
                                     width: '100%', 
                                     borderRadius: '4px', 
                                     ml: '5px', 
-                                    backgroundColor: selectedIndex === item.id ? '#F6F7F9' : 'transparent',
-                                    borderLeft: selectedIndex === item.id ? '3px solid #30394A' : '3px solid transparent', 
+                                    backgroundColor: selectedIndex === item.index ? '#F6F7F9' : 'transparent',
+                                    borderLeft: selectedIndex === item.index ? '3px solid #30394A' : '3px solid transparent', 
                                 }}
                             >
                                 <ListItemButton
-                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item, item.id)}
+                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item, item.index)}
                                     sx={{ borderRadius: '8px', gap: '8px' }}
                                 >
                                     <ListItemIcon sx={{ minWidth: '0px'}}>
@@ -136,13 +136,13 @@ const Sidenav: React.FC = () => {
                                                 width: '100%', 
                                                 borderRadius: '4px', 
                                                 ml: '5px', 
-                                                backgroundColor: selectedIndex === child.id ? '#F6F7F9' : 'transparent',
-                                                borderLeft: selectedIndex === child.id ? '3px solid #30394A' : '3px solid transparent', 
+                                                backgroundColor: selectedIndex === child.index ? '#F6F7F9' : 'transparent',
+                                                borderLeft: selectedIndex === child.index ? '3px solid #30394A' : '3px solid transparent', 
                                             }}
                                             key={child.text}
                                         >
                                             <ListItemButton
-                                                onClick={() => handleNavigation(child, child.id)}
+                                                onClick={() => handleNavigation(child, child.index)}
                                                 sx={{
                                                     pl: 5,
                                                     justifyContent: 'initial',
