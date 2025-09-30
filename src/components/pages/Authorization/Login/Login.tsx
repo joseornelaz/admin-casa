@@ -144,6 +144,7 @@ const Login: React.FC = () => {
                   background: 'linear-gradient(135deg, #5568d3 0%, #653a8b 100%)',
                 }
               }}
+              disabled={isLoading}
               onClick={handleSubmit(onSubmit)}
             >
               Ingresar

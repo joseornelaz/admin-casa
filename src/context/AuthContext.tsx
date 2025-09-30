@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { checkAuthStatus, cleanStorage, setAuthModel, getAuthModel, setToken } from '../hooks/useLocalStorage';
-import { encryptData } from '../utils/crypto';
+import { checkAuthStatus, cleanStorage, setToken } from '../hooks/useLocalStorage'; //setAuthModel, getAuthModel,
+// import { encryptData } from '../utils/crypto';
 import type { User } from '@constants';
-import { useAuthLogin, useAuthNewPassword, useGetPerfilUsuario, useLogout } from '../services/AuthService';
+import { useAuthLogin, useAuthNewPassword, useLogout } from '../services/AuthService';
+// useGetPerfilUsuario,
 
 interface AuthContextType {
   user: User | null;
@@ -32,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [error, setError] = useState<string | null>(null);
     const [isLogout, setIsLogout] = useState(false);
 
-    const { refetch } = useGetPerfilUsuario("Login", { enabled: false });
+    // const { refetch } = useGetPerfilUsuario("Login", { enabled: false });
     
     const queryClient = useQueryClient();
 
