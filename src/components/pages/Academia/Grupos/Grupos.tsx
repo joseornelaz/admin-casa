@@ -1,15 +1,65 @@
 import React from "react";
-// import { useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
 import { InfoAlert } from "../../../molecules/InfoAlert/InfoAlert";
+import { EmptyState } from "../../../molecules/EmptyState/EmptyState";
+import { PageHeader } from "../../../molecules/PageHeader/PageHeader";
 
 const Grupos: React.FC = () => {
+    const [isEmptyState, setIsEmptyState] = React.useState<boolean>(true);
+    // const [showDetails, setShowDetails] = React.useState<boolean>(true);
+    const [counter, _setCounter] = React.useState<number>(0);
+    
+    const theme = useTheme();
 
-    // const theme = useTheme();
+    const handleAction = () => {
+        setIsEmptyState(false);
+    }
+
+    const pageHeader = () => {
+
+        return(
+            <PageHeader 
+                title="Grupos" 
+                buttonText="Crear grupo" 
+                onButtonClick={handleAction} 
+                counter={counter} 
+            />
+        );
+    }
 
     return (
-        <React.Fragment>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <InfoAlert text="Aquí podrás crear y organizar los grupos necesarios para la gestión de estudiantes." />
-        </React.Fragment>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    minHeight: '532px',
+                    padding: '24px',
+                    gap: '16px',
+                    borderRadius: '6px',
+                    border: `1px solid ${theme.palette.primary[200]}`,
+                }}
+            >
+                { pageHeader() }
+                {
+                    isEmptyState 
+                    ?
+                        <EmptyState 
+                            title="No existen grupos para esta materia/ruta de estudios." 
+                            subTitle="Crea un grupo para comenzar a gestionar estudiantes."
+                            buttonText="Crear grupo"
+                            onButtonClick={handleAction} 
+                        />
+                    :
+                    <></>
+                }
+                    
+            </Box>
+        </Box>
     );
 }
 

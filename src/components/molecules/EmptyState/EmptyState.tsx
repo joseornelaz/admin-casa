@@ -1,0 +1,45 @@
+import { Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import DsSvgIcon from "../../atoms/Icon/Icon";
+import { ActionWhite } from "@iconsCustomizeds";
+import Button from "../../atoms/Button/Button";
+import imgEmptyState from "../../../assets/Img/EmptyState.png";
+import { flexColumn } from "@styles";
+
+type EmptyStateProps = {
+    title: string;
+    subTitle: string;
+    buttonText?: string;
+    onButtonClick?: () => void;
+}
+
+export const EmptyState: React.FC<EmptyStateProps> = ({title, subTitle, buttonText, onButtonClick}) => {
+    const handleSubmit = () => {
+        if(onButtonClick) onButtonClick();
+    }
+
+    return(
+        <Box sx={{...flexColumn, gap: '30px'}}>
+            <img src={imgEmptyState} />
+            <Box sx={{...flexColumn, gap: '8px'}}>
+                <Typography component="h4" color="primary" variant="h4">
+                    {title}
+                </Typography>
+                <Typography component="span" color="primary" variant="body2">
+                    {subTitle}
+                </Typography>
+                <Box sx={{ width: '130px' }}>
+                    {
+                        buttonText && <Button
+                            onClick={handleSubmit}
+                            fullWidth
+                            icon={<DsSvgIcon component={ActionWhite} />}
+                            iconPosition="start"
+                            sxProps={{ display: 'flex', justifyContent: 'space-between'}}
+                        >{ buttonText }</Button>
+                    }
+                </Box>
+            </Box>
+        </Box>
+    );
+}
