@@ -9,7 +9,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -25,6 +25,7 @@ const drawerWidth = 280;
 const Sidenav: React.FC = () => {
     const navigate = useNavigate();
     const theme = useTheme();
+    const location = useLocation();
     const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(-1);
     const [openSubmenu, setOpenSubmenu] = React.useState<string | null>(null);
     const [pathSelected, setPathSelected] = React.useState<any>(null);
@@ -40,7 +41,6 @@ const Sidenav: React.FC = () => {
             const hasChildren = item.children.length > 0;
             
             if (hasChildren) {
-                // Si tiene children, solo asigna índice a los children
                 return {
                     ...item,
                     index: undefined,
@@ -50,7 +50,6 @@ const Sidenav: React.FC = () => {
                     }))
                 };
             } else {
-                // Si no tiene children, asigna índice al item padre
                 return {
                     ...item,
                     index: globalIndex++,
@@ -59,6 +58,28 @@ const Sidenav: React.FC = () => {
             }
         });
     }, [menuRoutes]);
+
+    React.useEffect(() => {
+        let foundIndex: number | undefined = undefined;
+        
+        menuWithIndices.forEach((item) => {
+            if (item.children.length > 0) {
+                const child = item.children.find(c => c.path === location.pathname);
+                if (child && child.index !== undefined) {
+                    foundIndex = child.index;
+                    setOpenSubmenu(item.text);
+                    setPathSelected(child);
+                }
+            } else if (item.path === location.pathname && item.index !== undefined) {
+                foundIndex = item.index;
+                setPathSelected(item);
+            }
+        });
+        
+        if (foundIndex !== undefined) {
+            setSelectedIndex(foundIndex);
+        }
+    }, [location.pathname, menuWithIndices]);
 
     const handleNavigation = (item: any, index: number | undefined) => {
       navigate(item.path);
@@ -73,6 +94,7 @@ const Sidenav: React.FC = () => {
     const handleHome = () => {
         setPathSelected(null);
         setSelectedIndex(-1);
+        setOpenSubmenu(null);
     }
 
   return (

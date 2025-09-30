@@ -13,5 +13,6 @@ export const AppRoutingPaths = {
     NOTFOUND: '*',
     SESSION_EXPIRED: "/expired",
     VIGENCIAS: "/academia/vigencias",
+    MI_PERFIL: '/perfil'
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

@@ -45,10 +45,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const { isAuth, tokenExpired } = await checkAuthStatus();
                 setIsAuthenticated(isAuth);
                 setIsTokenExpired(tokenExpired);
-                if (isAuth && !tokenExpired) {
-                    const userData = await getAuthModel();
-                    setUser(userData);
-                }
+                // if (isAuth && !tokenExpired) {
+                //     const userData = await getAuthModel();
+                //     setUser(userData);
+                // }
             } catch (error) {
                 console.error("Error checking auth:", error);
             }
@@ -150,27 +150,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const procesarPerfil = async() => {
-        const perfil = await refetch();
+        // const perfil = await refetch();
 
-        if (perfil.data) {
-            const datos = perfil.data.data;
+        // if (perfil.data) {
+        //     const datos = perfil.data.data;
 
-            const auth = {
-                name: `${datos.nombre} ${datos.apellido_paterno} ${datos.apellido_materno}`,
-                email: datos.correo,
-                photo: datos.foto_perfil_url,
-                city: datos.nombre_ciudad,
-                phone: datos.telefonos?.find((item) => item.tipo === "Celular")?.numero ?? "0000000000",
-                perfil: datos,
-            };
+        //     const auth = {
+        //         name: `${datos.nombre} ${datos.apellido_paterno} ${datos.apellido_materno}`,
+        //         email: datos.correo,
+        //         photo: datos.foto_perfil_url,
+        //         city: datos.nombre_ciudad,
+        //         phone: datos.telefonos?.find((item) => item.tipo === "Celular")?.numero ?? "0000000000",
+        //         perfil: datos,
+        //     };
 
-            setUser(auth);
+        //     setUser(auth);
 
-            const encry = await encryptData(auth);
-            setAuthModel(encry);
-        } else {
-            setUser(null);
-        }
+        //     const encry = await encryptData(auth);
+        //     setAuthModel(encry);
+        // } else {
+        //     setUser(null);
+        // }
     };
 
     const logoutMutation = useMutation({

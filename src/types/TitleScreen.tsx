@@ -9,4 +9,5 @@ export const TitleScreen = {
     HOME: "Inicio",
     REGISTROS: "Registros",
     VIGENCIAS: "Vigencias",
+    MI_PERFIL: "Mi Perfil",
 }

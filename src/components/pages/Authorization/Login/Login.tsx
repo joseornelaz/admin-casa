@@ -14,15 +14,15 @@ import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormData } from '../../../../schemas/authSchema';
-// import { useAuth } from '../../../../hooks';
+import { useAuth } from '../../../../hooks';
 import { useNavigate } from 'react-router-dom';
-// import { useNotification } from '../../../../providers/NotificationProvider';
+import { useNotification } from '../../../../providers/NotificationProvider';
 import { AppRoutingPaths } from '@constants';
 
 const Login: React.FC = () => {
-    // const { login, isLoading } = useAuth();
+    const { login, isLoading } = useAuth();
     const navigate = useNavigate();
-    // const { showNotification } = useNotification();
+    const { showNotification } = useNotification();
     const [showPassword, setShowPassword] = useState(false);
 
     const { register, handleSubmit, formState: { errors }, } = useForm<LoginFormData>({
@@ -32,20 +32,18 @@ const Login: React.FC = () => {
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
     // data: LoginFormData
-    const onSubmit = async () => {
-        // const result = await login(data.username, data.password);
-        // enviar formulario
-        navigate(AppRoutingPaths.HOME);
-        return;
-        // if (result.success) {
-        //     navigate(AppRoutingPaths.HOME);
-        // } else {
-        // //     if (result.cambiarPassword) {
-        // //         setShowChangePassword(true);
-        // //     } else {
-        //         showNotification(result.message ?? "Ocurrió un error inesperado", "warning");
-        // //     }
-        // }
+    const onSubmit = async (data: LoginFormData) => {
+        const result = await login(data.username, data.password);
+        if (result.success) {
+            navigate(AppRoutingPaths.HOME);
+        } else {
+            if (result.cambiarPassword) {
+                // setShowChangePassword(true);
+                showNotification("Mostrar Cambiar Password", 'info');
+            } else {
+                showNotification(result.message ?? "Ocurrió un error inesperado", "warning");
+            }
+        }
     };
 
 

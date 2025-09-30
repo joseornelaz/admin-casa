@@ -1,18 +1,18 @@
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
 import Box from '@mui/material/Box';
-import { Typography } from '@mui/material';
+import { IconButton, Typography } from '@mui/material';
 import { AppRoutingPaths } from '@constants';
 
 import { Link as MuiLink } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
+import { Avatar } from '../../atoms/Avatar/Avatar';
+import { PerfilMenu } from '../../molecules/Menu/PerfilMenu/PerfilMenu';
 
 type TopBarProps = {
     path: { path: string, text: string } | null;
@@ -20,9 +20,22 @@ type TopBarProps = {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    
+    const name = 'J Ornelas';
+    const avatar = '';
+
     const handleRouting = () => {
         if(isHome) isHome();
     }
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
     return(
         <AppBar 
@@ -55,9 +68,10 @@ export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
                         </Stack>
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
-                        <IconButton sx={{ p: 0 }}>
-                            <Avatar alt="Remy Sharp" src="" />
+                        <IconButton>
+                            <Avatar alt={ name } src={avatar} width={48} height={48} onClick={(event) => handleMenuClick(event)} />
                         </IconButton>
+                        <PerfilMenu anchorEl={anchorEl} onClose={handleMenuClose} />
                     </Box>
                 </Toolbar>
             </Container>
