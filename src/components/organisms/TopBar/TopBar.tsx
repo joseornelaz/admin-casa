@@ -9,8 +9,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
+import { AppRoutingPaths } from '@constants';
 
-export const TopBar: React.FC = () => {
+type TopBarProps = {
+    path: { path: string, text: string } | null
+}
+
+export const TopBar: React.FC<TopBarProps> = ({ path }) => {
     return(
         <AppBar 
             position="static" 
@@ -20,21 +25,21 @@ export const TopBar: React.FC = () => {
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1 }}>
                         <Stack spacing={2}>
-                            <Breadcrumbs separator="›" aria-label="breadcrumb">
+                            <Breadcrumbs 
+                                separator="›" 
+                                aria-label="breadcrumb"
+                                sx={{ fontSize: '32px'}}
+                            >
                                 <Link
                                     underline="hover"
                                     color="inherit"
-                                    href="/"
+                                    href={AppRoutingPaths.HOME}
                                 >
                                     <HomeIcon sx={{ mr: 0.5, fontSize: '24px' }} fontSize="inherit" />
                                 </Link>
-                                <Link
-                                    underline="hover"
-                                    color="inherit"
-                                    href="/"
-                                >
-                                    <Typography variant='h3' color='primary'>Grupos</Typography>
-                                </Link>
+                                {
+                                    path && <Typography variant='h3' color='primary'>{path.text}</Typography>
+                                }
                             </Breadcrumbs>
                         </Stack>
                     </Box>

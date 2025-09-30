@@ -1,3 +1,4 @@
+// , createBrowserRouter
 import { createHashRouter } from "react-router-dom";
 import App from "./App";
 import MainTemplate from "./components/templates/MainTemplate/MainTemplate";
@@ -12,7 +13,7 @@ export const AppRouting = createHashRouter([
         children: [
             {
                 index: true,
-                Component: MainTemplate //aqui debe ir el login
+                Component: Component.Login
             },
             {
                 // Component: ProtectedRoute,
@@ -20,6 +21,10 @@ export const AppRouting = createHashRouter([
                     {
                         Component: MainTemplate,
                         children: [
+                            {
+                                path: AppRoutingPaths.HOME,
+                                Component: Component.Home
+                            },
                             {
                                 path: AppRoutingPaths.GRUPOS,
                                 Component: Component.Grupos

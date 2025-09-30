@@ -9,6 +9,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { RouterProvider } from 'react-router-dom';
 
 import theme from './themes/theme';
+import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './providers/NotificationProvider';
 
 
 createRoot(document.getElementById('root')!).render(
@@ -16,22 +18,14 @@ createRoot(document.getElementById('root')!).render(
     <QueryProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <StyledEngineProvider injectFirst>
-          <RouterProvider router={router} />
-        </StyledEngineProvider>
+        <AuthProvider>
+          <NotificationProvider>
+            <StyledEngineProvider injectFirst>
+              <RouterProvider router={router} />
+            </StyledEngineProvider>
+          </NotificationProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryProvider>
-    {/* <Box sx={{ height: '100%' }}>
-        <QueryProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <AuthProvider>
-              <NotificationProvider>
-                <RouterProvider router={router} />
-              </NotificationProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </QueryProvider>
-      </Box> */}
   </StrictMode>,
 )

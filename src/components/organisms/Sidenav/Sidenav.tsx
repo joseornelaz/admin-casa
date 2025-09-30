@@ -27,13 +27,13 @@ const Sidenav: React.FC = () => {
     const theme = useTheme();
     const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(-1);
     const [openSubmenu, setOpenSubmenu] = React.useState<string | null>(null);
+    const [pathSelected, setPathSelected] = React.useState<any>(null);
     
     const menuRoutes = React.useMemo(
         () => [...MenuItems].filter((item) => item.menu === "main").sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
         []
     );
-
-    // Calcula los índices una sola vez y los mantiene estables
+    
     const menuWithIndices = React.useMemo(() => {
         let globalIndex = 0;
         return menuRoutes.filter((item) => item.visible === 1).map((item) => {
@@ -60,9 +60,10 @@ const Sidenav: React.FC = () => {
         });
     }, [menuRoutes]);
 
-    const handleNavigation = (path: string, index: number | undefined) => {
-      navigate(path);
+    const handleNavigation = (item: any, index: number | undefined) => {
+      navigate(item.path);
       setSelectedIndex(index);
+      setPathSelected(item);
     };
 
     const handleToggleSubmenu = (label: string) => {
@@ -110,12 +111,12 @@ const Sidenav: React.FC = () => {
                                     width: '100%', 
                                     borderRadius: '4px', 
                                     ml: '5px', 
-                                    backgroundColor: selectedIndex === item.index ? '#F6F7F9' : 'transparent',
-                                    borderLeft: selectedIndex === item.index ? '3px solid #30394A' : '3px solid transparent', 
+                                    backgroundColor: selectedIndex === item.id ? '#F6F7F9' : 'transparent',
+                                    borderLeft: selectedIndex === item.id ? '3px solid #30394A' : '3px solid transparent', 
                                 }}
                             >
                                 <ListItemButton
-                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item.path, item.index)}
+                                    onClick={() => hasChildren ? handleToggleSubmenu(item.text) : handleNavigation(item, item.id)}
                                     sx={{ borderRadius: '8px', gap: '8px' }}
                                 >
                                     <ListItemIcon sx={{ minWidth: '0px'}}>
@@ -135,13 +136,13 @@ const Sidenav: React.FC = () => {
                                                 width: '100%', 
                                                 borderRadius: '4px', 
                                                 ml: '5px', 
-                                                backgroundColor: selectedIndex === child.index ? '#F6F7F9' : 'transparent',
-                                                borderLeft: selectedIndex === child.index ? '3px solid #30394A' : '3px solid transparent', 
+                                                backgroundColor: selectedIndex === child.id ? '#F6F7F9' : 'transparent',
+                                                borderLeft: selectedIndex === child.id ? '3px solid #30394A' : '3px solid transparent', 
                                             }}
                                             key={child.text}
                                         >
                                             <ListItemButton
-                                                onClick={() => handleNavigation(child.path, child.index)}
+                                                onClick={() => handleNavigation(child, child.id)}
                                                 sx={{
                                                     pl: 5,
                                                     justifyContent: 'initial',
@@ -173,7 +174,7 @@ const Sidenav: React.FC = () => {
                 backgroundColor: '#fff',
             }}
         >
-            <TopBar />
+            <TopBar path={pathSelected} />
             <Box
                 sx={{p: 4}}
             >

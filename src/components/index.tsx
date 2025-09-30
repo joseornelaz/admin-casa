@@ -1,8 +1,9 @@
-export { default as Grupos } from './pages/Academia/Grupos/Grupos';
 export { default as Actividades } from './pages/Academia/Actividades/Actividades';
-export { default as Foros } from './pages/Academia/Foros/Foros';
-export { default as Vigencias } from './pages/Academia/Vigencias/Vigencias';
 export { default as AltaUnica } from './pages/Registros/AltaUnica/AltaUnica';
 export { default as Consultas } from './pages/Registros/Consultas/Consultas';
+export { default as Foros } from './pages/Academia/Foros/Foros';
+export { default as Grupos } from './pages/Academia/Grupos/Grupos';
 export { default as HistorialCambios } from './pages/Registros/HistorialCambios/HistorialCambios';
-
+export { default as Home } from './pages/Home/Home';
+export { default as Login } from './pages/Authorization/Login/Login';
+export { default as Vigencias } from './pages/Academia/Vigencias/Vigencias';
