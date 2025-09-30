@@ -6,16 +6,24 @@ import Stack from '@mui/material/Stack';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Toolbar from '@mui/material/Toolbar';
 import HomeIcon from '@mui/icons-material/Home';
-import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import { AppRoutingPaths } from '@constants';
 
+import { Link as MuiLink } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import React from 'react';
+
 type TopBarProps = {
-    path: { path: string, text: string } | null
+    path: { path: string, text: string } | null;
+    isHome?: () => void
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ path }) => {
+export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
+    const handleRouting = () => {
+        if(isHome) isHome();
+    }
+
     return(
         <AppBar 
             position="static" 
@@ -30,13 +38,16 @@ export const TopBar: React.FC<TopBarProps> = ({ path }) => {
                                 aria-label="breadcrumb"
                                 sx={{ fontSize: '32px'}}
                             >
-                                <Link
+                                <MuiLink
+                                    onClick={handleRouting}
+                                    component={RouterLink}
+                                    to={AppRoutingPaths.HOME}
                                     underline="hover"
                                     color="inherit"
-                                    href={AppRoutingPaths.HOME}
+                                    sx={{ display: 'flex', alignItems: 'center' }}
                                 >
                                     <HomeIcon sx={{ mr: 0.5, fontSize: '24px' }} fontSize="inherit" />
-                                </Link>
+                                </MuiLink>
                                 {
                                     path && <Typography variant='h3' color='primary'>{path.text}</Typography>
                                 }

@@ -70,6 +70,11 @@ const Sidenav: React.FC = () => {
       setOpenSubmenu((prev) => (prev === label ? null : label));
     };
 
+    const handleHome = () => {
+        setPathSelected(null);
+        setSelectedIndex(-1);
+    }
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#EFF0F6' }}>
       <CssBaseline />
@@ -174,7 +179,7 @@ const Sidenav: React.FC = () => {
                 backgroundColor: '#fff',
             }}
         >
-            <TopBar path={pathSelected} />
+            <TopBar path={pathSelected} isHome={handleHome}/>
             <Box
                 sx={{p: 4}}
             >
