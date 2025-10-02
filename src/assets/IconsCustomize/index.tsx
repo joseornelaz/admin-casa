@@ -6,3 +6,10 @@ export { default as ActionWhite } from './ActionWhite.svg?react';
 export { default as EditPerfil } from './Edit.svg?react';
 export { default as CancelEditPerfil } from './CancelEdit.svg?react';
 export { default as Estrellas } from './Estrellas.svg?react';
+export { default as Search } from './Search.svg?react';
+
+export { default as Book } from './Book.svg?react';
+export { default as Documento } from './Documento.svg?react';
+export { default as User } from './User.svg?react';
+export { default as ArrowRightCircle } from './ArrowRightCircle.svg?react';
+
