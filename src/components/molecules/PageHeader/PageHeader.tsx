@@ -12,7 +12,7 @@ type PageHeaderProps = {
   onButtonClick?: () => void;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonText, buttonWidth = 135, onButtonClick }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonText, onButtonClick }) => {
     
     const handleSubmit = () => {
         if(onButtonClick) onButtonClick();
@@ -29,7 +29,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonTe
                     {(counter! > 0) && <Typography component="h3" color="primary" variant="h3">({counter})</Typography>}
                 </Box>
             </Box>
-            <Box sx={{ width: `${buttonWidth}px` }}>
+            <Box>
                 { onButtonClick && 
                     <Button
                         onClick={handleSubmit}
