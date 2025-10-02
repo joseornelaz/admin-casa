@@ -10,10 +10,11 @@ type EmptyStateProps = {
     title: string;
     subTitle: string;
     buttonText?: string;
+    buttonWidth?: number;
     onButtonClick?: () => void;
 }
 
-export const EmptyState: React.FC<EmptyStateProps> = ({title, subTitle, buttonText, onButtonClick}) => {
+export const EmptyState: React.FC<EmptyStateProps> = ({title, subTitle, buttonText, buttonWidth = 135, onButtonClick}) => {
     const handleSubmit = () => {
         if(onButtonClick) onButtonClick();
     }
@@ -28,7 +29,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({title, subTitle, buttonTe
                 <Typography component="span" color="primary" variant="body2">
                     {subTitle}
                 </Typography>
-                <Box sx={{ width: '130px' }}>
+                <Box sx={{ width: `${buttonWidth}px` }}>
                     {
                         buttonText && <Button
                             onClick={handleSubmit}

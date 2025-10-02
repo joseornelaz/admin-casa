@@ -7,11 +7,12 @@ import Button from "../../atoms/Button/Button";
 type PageHeaderProps = {
   title: string;
   counter?: number;
-  buttonText?: string;  
+  buttonText?: string;
+  buttonWidth?: number;
   onButtonClick?: () => void;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonText, onButtonClick }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonText, buttonWidth = 135, onButtonClick }) => {
     
     const handleSubmit = () => {
         if(onButtonClick) onButtonClick();
@@ -28,7 +29,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonTe
                     {(counter! > 0) && <Typography component="h3" color="primary" variant="h3">({counter})</Typography>}
                 </Box>
             </Box>
-            <Box sx={{ width: '130px' }}>
+            <Box sx={{ width: `${buttonWidth}px` }}>
                 { onButtonClick && 
                     <Button
                         onClick={handleSubmit}

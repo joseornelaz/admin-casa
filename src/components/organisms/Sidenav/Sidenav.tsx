@@ -108,10 +108,11 @@ const Sidenav: React.FC = () => {
                 width: drawerWidth,
                 boxSizing: 'border-box',
                 position: 'relative',
-                height: '100%',
+                minHeight: '100%',
                 border: 'none',
                 backgroundColor: '#EFF0F6',
-                boxShadow: 'none'
+                boxShadow: 'none',
+                overflow: 'hidden'
             },
         }}
         variant="permanent"
@@ -196,14 +197,16 @@ const Sidenav: React.FC = () => {
         <Box
             sx={{ 
                 border: '1px solid #D3D9E4', 
-                height: 'calc(100vh - 16px)',
+                minHeight: 'calc(100vh - 16px)',
                 borderRadius: '16px',
                 backgroundColor: '#fff',
             }}
         >
             <TopBar path={pathSelected} isHome={handleHome}/>
             <Box
-                sx={{p: 4}}
+                sx={{
+                    p: 4,
+                }}
             >
                 <Outlet />
             </Box>

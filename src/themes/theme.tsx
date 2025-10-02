@@ -51,31 +51,26 @@ const theme = createTheme({
   typography: {
     fontFamily: 'Roboto, Arial, sans-serif',
     h1: {
-      fontFamily: 'Gotham',
       fontWeight: 700,
       fontSize: '64px',
       lineHeight: '76px',
     },
     h2: {
-      fontFamily: 'Gotham',
       fontWeight: 600,
       fontSize: '36px',
       lineHeight: '44px',
     },
     h3: {
-      // fontFamily: 'Gotham',
       fontWeight: 600,
       fontSize: '28px',
       lineHeight: '36px',
     },
     h4: {
-      // fontFamily: 'Gotham',
       fontWeight: 600,
       fontSize: '20px',
       lineHeight: '28px',
     },
     h5: {
-      fontFamily: 'Gotham',
       fontWeight: 700,
       fontSize: '20px',
       lineHeight: '28px'
@@ -102,8 +97,23 @@ const theme = createTheme({
     },
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: (theme) => ({
+        body: {
+          backgroundColor: theme.palette.primary[100],
+        },
+      }),
+    },
     MuiButton: {
       styleOverrides: {
+        outlined: {
+          backgroundColor: '#EFF0F6',
+          borderColor: '#D3D9E4',
+          '&:hover': {
+            backgroundColor: '#E5E7F0', // Un tono más oscuro para el hover
+            borderColor: '#C5CCDA',
+          },
+        },
         root: {
           textTransform: 'none',
           height: '40px'
@@ -113,6 +123,15 @@ const theme = createTheme({
         }
       },
     },
+
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          height: '40px'
+        },
+      }
+    },
+
     MuiDrawer: {
       styleOverrides: {
         paper: {

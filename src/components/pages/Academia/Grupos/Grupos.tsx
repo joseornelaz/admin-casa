@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { InfoAlert } from "../../../molecules/InfoAlert/InfoAlert";
 import { EmptyState } from "../../../molecules/EmptyState/EmptyState";
 import { PageHeader } from "../../../molecules/PageHeader/PageHeader";
+import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
 
 const Grupos: React.FC = () => {
     const [isEmptyState, setIsEmptyState] = React.useState<boolean>(true);
@@ -31,17 +32,13 @@ const Grupos: React.FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <InfoAlert text="Aquí podrás crear y organizar los grupos necesarios para la gestión de estudiantes." />
-            <Box
-                sx={{
+            <BoxContainer
+                sxProps={{
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    width: '100%',
                     minHeight: '532px',
-                    padding: '24px',
                     gap: '16px',
-                    borderRadius: '6px',
-                    border: `1px solid ${theme.palette.primary[200]}`,
                 }}
             >
                 { pageHeader() }
@@ -57,8 +54,7 @@ const Grupos: React.FC = () => {
                     :
                     <></>
                 }
-                    
-            </Box>
+            </BoxContainer>
         </Box>
     );
 }
