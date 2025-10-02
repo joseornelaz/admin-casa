@@ -4,11 +4,12 @@ import { PageHeader } from "../../../molecules/PageHeader/PageHeader";
 import { EmptyState } from "../../../molecules/EmptyState/EmptyState";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FilterVigenciaSchema, type FilterMateriaData } from "../../../../schemas/filterVigenciaSchema";
+import { FilterVigenciaSchema, type FilterVigenciaData } from "../../../../schemas/filterVigenciaSchema";
 import Button from "../../../atoms/Button/Button";
 import DsSvgIcon from "../../../atoms/Icon/Icon";
 import { Action, ArrowRightCircle, Book, Documento, Search, User } from "@iconsCustomizeds";
 import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
+import { RegistroVigenciasDialog } from "../../../molecules/Dialogs/RegistroVigenciasDialog/RegistroVigenciasDialog";
 
 const InfoCardArray = [
     {
@@ -65,9 +66,10 @@ const InfoCardArray = [
 
 const Vigencias: React.FC = () => {
     const theme = useTheme();
+    const [isOpenRegistrar, setIsOpenRegistrar] = React.useState(false);
 
     const materias = [{ id: 0, nombre: 'Todas'}, { id: 1, nombre: 'Pendientes de calificar'}, { id: 2, nombre: 'Calificados'}];
-    const { control, formState: { errors } } = useForm<FilterMateriaData>({
+    const { control, formState: { errors } } = useForm<FilterVigenciaData>({
             resolver: zodResolver(
                 FilterVigenciaSchema(
                     (materias?.map((m) => m.id)) ?? [],
@@ -85,6 +87,7 @@ const Vigencias: React.FC = () => {
 
     const handleAction = () => {
         setIsEmptyState(false);
+        setIsOpenRegistrar(true);
     }
 
     const handleSearch = () => {
@@ -195,11 +198,11 @@ const Vigencias: React.FC = () => {
                         control={control}
                         render={({ field }) => (
                             <FormControl fullWidth error={!!errors.materias}>
-                                <InputLabel id="grupo-label">Grupos de alumnos asignados</InputLabel>
+                                <InputLabel id="grupo-label">Materia</InputLabel>
                                 <Select
                                     // disabled={isLoading}
                                     labelId="grupo-label"
-                                    label="Grupos de alumnos asignados"
+                                    label="Materia"
                                     {...field}
                                     onChange={(event) => {
                                         const value = event.target.value;
@@ -259,6 +262,7 @@ const Vigencias: React.FC = () => {
                 }
                     
             </BoxContainer>
+            <RegistroVigenciasDialog isOpen={isOpenRegistrar} close={() => setIsOpenRegistrar(false)} />
         </Box>
     );
 }

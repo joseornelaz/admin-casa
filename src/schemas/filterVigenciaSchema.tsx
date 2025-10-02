@@ -12,4 +12,4 @@ export const FilterVigenciaSchema = (materias: number[]) =>
 });
 
 
-export type FilterMateriaData = z.infer<ReturnType<typeof FilterVigenciaSchema>>;
+export type FilterVigenciaData = z.infer<ReturnType<typeof FilterVigenciaSchema>>;

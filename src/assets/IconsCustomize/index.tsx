@@ -12,4 +12,5 @@ export { default as Book } from './Book.svg?react';
 export { default as Documento } from './Documento.svg?react';
 export { default as User } from './User.svg?react';
 export { default as ArrowRightCircle } from './ArrowRightCircle.svg?react';
+export { default as AddDocument } from './AddDocument.svg?react';
 
