@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "@mui/material";
+// import { useTheme } from "@mui/material";
 import Box from "@mui/material/Box";
 import { InfoAlert } from "../../../molecules/InfoAlert/InfoAlert";
 import { EmptyState } from "../../../molecules/EmptyState/EmptyState";
@@ -11,7 +11,7 @@ const Grupos: React.FC = () => {
     // const [showDetails, setShowDetails] = React.useState<boolean>(true);
     const [counter, _setCounter] = React.useState<number>(0);
     
-    const theme = useTheme();
+    // const theme = useTheme();
 
     const handleAction = () => {
         setIsEmptyState(false);
