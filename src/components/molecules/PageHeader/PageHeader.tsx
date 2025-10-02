@@ -36,7 +36,6 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, counter, buttonTe
                         fullWidth
                         icon={<DsSvgIcon component={ActionWhite} />}
                         iconPosition="start"
-                        sxProps={{ display: 'flex', justifyContent: 'space-between'}}
                     >{ buttonText }</Button>
                 }
             </Box>
