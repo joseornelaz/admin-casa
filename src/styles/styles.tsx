@@ -29,3 +29,31 @@ export const innerHTMLStyle = {
     },
     pl: 3, pr: 3
 };
+
+export const StateColors = { 
+    idleForeground: '#067ad8',
+    idleBackground: '#e5f3fe',
+    backlogForeground: '#e68f38',
+    backlogBackground: '#ffefe6',
+    enabledForeground: '#009327',
+    enabledBackground: '#e1fae8',
+    disabledForeground: '#bf284d',
+    disabledBackground: '#fdeef1',
+}
+
+export const BorderRadius = {
+    sm: '4px', 
+    md: '8px', 
+    lg: '16px', 
+    full: '9999px'
+}
+
+export const Paddings = {
+    xs: '4px', 
+    s: '8px', 
+    m: '16px', 
+    l: '24px',
+    xl: '32px',
+    xxl: '64px',
+    xxxl: '96px',
+}

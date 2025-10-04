@@ -42,6 +42,10 @@ export const AppRouting = createHashRouter([
                                 Component: Component.Vigencias
                             },
                             {
+                                path: AppRoutingPaths.VIGENCIAS_DETALLE,
+                                Component: Component.VigenciasDetalles
+                            },
+                            {
                                 path: AppRoutingPaths.ALTA_UNICA,
                                 Component: Component.AltaUnica
                             },

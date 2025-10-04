@@ -52,49 +52,69 @@ const theme = createTheme({
     fontFamily: 'Roboto, Arial, sans-serif',
     h1: {
       fontWeight: 700,
-      fontSize: '64px',
-      lineHeight: '76px',
+      fontSize: '40px',
+      lineHeight: '32px',
     },
     h2: {
-      fontWeight: 600,
-      fontSize: '36px',
-      lineHeight: '44px',
+      fontWeight: 700,
+      fontSize: '32px',
+      lineHeight: '28px',
     },
     h3: {
       fontWeight: 600,
       fontSize: '28px',
-      lineHeight: '36px',
+      lineHeight: '24px',
     },
     h4: {
       fontWeight: 600,
-      fontSize: '20px',
-      lineHeight: '28px',
+      fontSize: '24px',
+      lineHeight: '20px',
     },
     h5: {
-      fontWeight: 700,
+      fontWeight: 600,
       fontSize: '20px',
-      lineHeight: '28px'
+      lineHeight: '16px'
+    },
+    h6: {
+      fontWeight: 600,
+      fontSize: '16px',
+      lineHeight: '14px'
     },
     body1: {
       fontWeight: 400,
-      fontSize: '14px',
-      lineHeight: '18px',
+      fontSize: '16px',
+      lineHeight: '14px',
     },
     body2: {
       fontWeight: 400,
-      fontSize: '16px',
-      lineHeight: '24px',
+      fontSize: '14px',
+      lineHeight: '12px',
     },
     body3: {
       fontWeight: 400,
       fontSize: '18px',
       lineHeight: '24px'
     },
-    subtitle1: {
+    button:{
       fontWeight: 500,
-      fontSize: '16px',
-      lineHeight: '24px',
+      fontSize: '14px',
+      lineHeight: '14px'
     },
+    caption: {
+      fontWeight: 400,
+      fontSize: '12px',
+      lineHeight: '12px'
+    },
+    overline: {
+      fontWeight: 400,
+      fontSize: '11px',
+      lineHeight: '11px'
+    },
+    code: {
+      fontWeight: 400,
+      fontSize: '16px',
+      lineHeight: '16px'
+    }
   },
   components: {
     MuiCssBaseline: {

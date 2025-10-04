@@ -1,6 +1,6 @@
 import '@mui/material/styles';
 
-declare module '@mui/material/styles' {
+declare module '@mui/material/styles' { 
   interface PaletteColor {
     50?: string;
     100?: string;
@@ -41,10 +41,12 @@ declare module '@mui/material/styles' {
 
   interface TypographyVariants {
     body3: React.CSSProperties;
+    code: React.CSSProperties;
   }
 
   interface TypographyVariantsOptions {
     body3?: React.CSSProperties;
+    code?: React.CSSProperties;
   }
 }
 

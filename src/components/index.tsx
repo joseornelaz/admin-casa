@@ -7,3 +7,4 @@ export { default as HistorialCambios } from './pages/Registros/HistorialCambios/
 export { default as Home } from './pages/Home/Home';
 export { default as Login } from './pages/Authorization/Login/Login';
 export { default as Vigencias } from './pages/Academia/Vigencias/Vigencias';
+export { default as VigenciasDetalles } from './pages/Academia/Vigencias/VigenciasDetalles';

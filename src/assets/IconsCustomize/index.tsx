@@ -13,4 +13,6 @@ export { default as Documento } from './Documento.svg?react';
 export { default as User } from './User.svg?react';
 export { default as ArrowRightCircle } from './ArrowRightCircle.svg?react';
 export { default as AddDocument } from './AddDocument.svg?react';
+export { default as Calendar } from './Calendar.svg?react';
+export { default as PlusWhite } from './PlusWhite.svg?react';
 

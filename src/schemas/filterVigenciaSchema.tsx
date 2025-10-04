@@ -8,6 +8,18 @@ export const FilterVigenciaSchema = (materias: number[]) =>
             .refine((id) => materias.includes(id), {
                 message: "Seleccionar Materia",
             }),
+        planEstudios: z
+            .number()
+            .min(1, { message: "Seleccionar Materia" })
+            .refine((id) => materias.includes(id), {
+                message: "Seleccionar Materia",
+            }),
+        rutaEstudios: z
+            .number()
+            .min(1, { message: "Seleccionar Materia" })
+            .refine((id) => materias.includes(id), {
+                message: "Seleccionar Materia",
+            }),
         
 });
 

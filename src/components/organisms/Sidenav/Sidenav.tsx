@@ -199,7 +199,7 @@ const Sidenav: React.FC = () => {
                 border: '1px solid #D3D9E4', 
                 minHeight: 'calc(100vh - 16px)',
                 borderRadius: '16px',
-                backgroundColor: '#fff',
+                backgroundColor: theme.palette.primary[50],
             }}
         >
             <TopBar path={pathSelected} isHome={handleHome}/>

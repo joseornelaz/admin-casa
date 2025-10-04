@@ -3,7 +3,6 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Toolbar from '@mui/material/Toolbar';
-import HomeIcon from '@mui/icons-material/Home';
 import Box from '@mui/material/Box';
 import { IconButton, Typography } from '@mui/material';
 import { AppRoutingPaths } from '@constants';
@@ -13,6 +12,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Avatar } from '../../atoms/Avatar/Avatar';
 import { PerfilMenu } from '../../molecules/Menu/PerfilMenu/PerfilMenu';
+import DsSvgIcon from '../../atoms/Icon/Icon';
+import { Home } from '@iconsCustomizeds';
 
 type TopBarProps = {
     path: { path: string, text: string } | null;
@@ -49,7 +50,7 @@ export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
                             <Breadcrumbs 
                                 separator="›" 
                                 aria-label="breadcrumb"
-                                sx={{ fontSize: '32px'}}
+                                sx={{ fontSize: '16px'}}
                             >
                                 <MuiLink
                                     onClick={handleRouting}
@@ -59,10 +60,10 @@ export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
                                     color="inherit"
                                     sx={{ display: 'flex', alignItems: 'center' }}
                                 >
-                                    <HomeIcon sx={{ mr: 0.5, fontSize: '24px' }} fontSize="inherit" />
+                                    <DsSvgIcon component={Home} sxProps={{mr: 0.5}} />
                                 </MuiLink>
                                 {
-                                    path && <Typography variant='h3' color='primary'>{path.text}</Typography>
+                                    path && <Typography variant='caption' color='primary'>{path.text}</Typography>
                                 }
                             </Breadcrumbs>
                         </Stack>
