@@ -4,18 +4,22 @@ import { Typography } from "../../atoms/Typography/Typography";
 type TitleHeaderProps = {
     text: string;
     subTitle?: string;
-    fontSize?: "h1" | "h2" | "h3" | "h4"
+    fontSize?: "h1" | "h2" | "h3" | "h4";
+    icon?: React.ElementType;
 };
 
-export const TitleHeader: React.FC<TitleHeaderProps> = ({text, subTitle, fontSize = "h2"}) => {
+export const TitleHeader: React.FC<TitleHeaderProps> = ({text, subTitle, fontSize = "h2", icon: Icon}) => {
     const theme = useTheme();
 
     return (
         <>
             <Box sx={{ display: "flex", flexDirection: 'column', mb: 2, gap: 1 }} >
-                <Typography color="primary" component={fontSize} variant={fontSize}>
-                    { text }
-                </Typography>
+                <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }} >
+                    {Icon && <Icon />}
+                    <Typography color="primary" component={fontSize} variant={fontSize}>
+                        { text }
+                    </Typography>
+                </Box>
                 { 
                     subTitle && <Typography component="span" variant="caption" sxProps={{ color: theme.palette.primary[600]}}>
                         { subTitle }

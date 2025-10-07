@@ -20,6 +20,7 @@ import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
 import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextBreadcrumb";
 import { useNavigate } from "react-router-dom";
@@ -86,6 +87,7 @@ const Vigencias: React.FC = () => {
                 buttonWidth={145}
                 counter={counter} 
                 onButtonClick={handleAction}
+                buttonIcon={<AddOutlinedIcon />}
             />
         );
     }

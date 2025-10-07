@@ -20,6 +20,7 @@ import { MetricCard, type MetricCardProps } from "../../../molecules/MetricCard/
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
+import { Grupos } from "@components";
 
 const MetricCardArray: MetricCardProps[] = [
     { title: 'Grupos activos', icon: ShowChartOutlinedIcon, value: 3, subtitle: 'En los últimos 2 meses' },
@@ -133,7 +134,7 @@ const VigenciasDetalles: React.FC = () => {
                     MetricCardArray.map((item, i) => <MetricCard {...item} key={i} />)
                 }
             </Box>
-            
+            <Grupos />
         </Box>
     );
 }

@@ -1,7 +1,6 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import DsSvgIcon from "../../atoms/Icon/Icon";
-import { ActionWhite } from "@iconsCustomizeds";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import Button from "../../atoms/Button/Button";
 import imgEmptyState from "../../../assets/Img/EmptyState.png";
 import { flexColumn } from "@styles";
@@ -34,9 +33,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({title, subTitle, buttonTe
                         buttonText && <Button
                             onClick={handleSubmit}
                             fullWidth
-                            icon={<DsSvgIcon component={ActionWhite} />}
+                            icon={<AddOutlinedIcon />}
                             iconPosition="start"
-                            sxProps={{ display: 'flex', justifyContent: 'space-between'}}
                         >{ buttonText }</Button>
                     }
                 </Box>

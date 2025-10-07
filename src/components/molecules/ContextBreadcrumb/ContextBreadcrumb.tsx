@@ -3,12 +3,6 @@ import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import { IconText } from "../IconText/IconText";
 
-// type ContextBreadcrumbProps = {
-//     list: [{ Text: string, Icon: React.ElementType | any, Type: 'logo' | 'iconText' }];
-//     fontSize?: string;
-//     separator?: any;
-// }
-
 type ContextBreadcrumbProps = {
     list: Array<{ 
         text: string;
@@ -21,8 +15,6 @@ type ContextBreadcrumbProps = {
 
 export const ContextBreadcrumb: React.FC<ContextBreadcrumbProps> = ({ list, fontSize='16px', separator='|' }) => {
     const theme = useTheme();
-    
-    console.log(list);
 
     return(
         <Stack spacing={2}>

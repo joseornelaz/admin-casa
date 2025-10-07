@@ -4,7 +4,7 @@ import { BorderRadius, StateColors } from "@styles";
 
 type TagsContainerProps = {
     text: string;
-    status: 'prueba' | 'normal' | 'activa' | 'default';
+    status: 'prueba' | 'normal' | 'activa' | 'inactivo' | 'default';
 }
 
 export const TagsContainer: React.FC<TagsContainerProps> = ({text, status}) => {    
@@ -15,6 +15,7 @@ export const TagsContainer: React.FC<TagsContainerProps> = ({text, status}) => {
             case "activa": return StateColors.enabledBackground;
             case "normal": return StateColors.idleBackground;
             case "prueba": return StateColors.backlogBackground;
+            case "inactivo": return StateColors.disabledBackground;
             default: return theme.palette.primary[300];
         }
     }
@@ -24,6 +25,7 @@ export const TagsContainer: React.FC<TagsContainerProps> = ({text, status}) => {
             case "activa": return StateColors.enabledForeground;
             case "normal": return StateColors.idleForeground;
             case "prueba": return StateColors.backlogForeground;
+            case "inactivo": return StateColors.disabledForeground;
             default: return theme.palette.primary[600];
         }
     }
@@ -40,11 +42,8 @@ export const TagsContainer: React.FC<TagsContainerProps> = ({text, status}) => {
                     justifyContent: 'center'
                 }}
             >
-                <Typography 
+                <Typography variant="overline"
                     sx={{ 
-                        fontSize: '10px', 
-                        fontWeight: '500', 
-                        lineHeight: '130%', 
                         textTransform: 'uppercase', 
                         color: setFontColor()
                     }}

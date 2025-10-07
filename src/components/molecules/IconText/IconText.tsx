@@ -7,7 +7,7 @@ type IconTextProps = {
     iconSize?: string;
 };
 
-export const IconText: React.FC<IconTextProps> = ({text, variantText = "overline", Icon, iconSize = "12px"}) => {
+export const IconText: React.FC<IconTextProps> = ({text, variantText = "overline", Icon, iconSize = "20px"}) => {
     const theme = useTheme();
 
     return (

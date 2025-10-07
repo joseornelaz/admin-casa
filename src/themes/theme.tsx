@@ -102,13 +102,13 @@ const theme = createTheme({
     },
     caption: {
       fontWeight: 400,
-      fontSize: '12px',
-      lineHeight: '12px'
+      fontSize: '14px',
+      lineHeight: '16px'
     },
     overline: {
       fontWeight: 400,
-      fontSize: '11px',
-      lineHeight: '11px'
+      fontSize: '14px',
+      lineHeight: '16px'
     },
     code: {
       fontWeight: 400,
@@ -143,7 +143,6 @@ const theme = createTheme({
         }
       },
     },
-
     MuiSelect: {
       styleOverrides: {
         root: {
@@ -192,7 +191,6 @@ const theme = createTheme({
     },
     MuiTextField: {
       defaultProps: {
-        // Estas serán las props por defecto para todos los TextField
         variant: 'outlined',
         fullWidth: true,
         size: 'medium',
@@ -200,15 +198,18 @@ const theme = createTheme({
       },
       styleOverrides: {
         root: ({theme}) => ({
-          // Estilos globales para TextField
           marginBottom: '1rem',
           '& .MuiOutlinedInput-root': {
-            // Estilos específicos para el outlined variant
             borderRadius: '4px',
+            height: '40px',
+          },
+          '& .MuiInputBase-input': {
+            height: '40px',
+            padding: '0 14px',
+            boxSizing: 'border-box',
           },
           '& .MuiInputLabel-root': {
-            // Estilos para el label
-            transform: 'translate(14px, 14px) scale(1)',
+            transform: 'translate(14px, 10px) scale(1)',
             '&.Mui-focused': {
               transform: 'translate(14px, -9px) scale(0.75)',
             },
@@ -223,13 +224,6 @@ const theme = createTheme({
             color: theme.palette.text.secondary,
           },
         }),
-      },
-    },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        input: {
-          padding: '14px',
-        },
       },
     },
     MuiDivider: {

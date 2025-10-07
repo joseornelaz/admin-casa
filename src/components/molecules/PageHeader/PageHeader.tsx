@@ -1,19 +1,20 @@
 import Box from "@mui/material/Box";
-import DsSvgIcon from "../../atoms/Icon/Icon";
-import { PlusWhite } from "@iconsCustomizeds";
 import Typography from "@mui/material/Typography";
 import Button from "../../atoms/Button/Button";
+import type { SvgIconProps } from "@mui/material/SvgIcon";
 
 type PageHeaderProps = {
   title: string;
-  icon?: any;
+  icon?: React.ComponentType<SvgIconProps>;
   counter?: number;
   buttonText?: string;
   buttonWidth?: number;
+  buttonIcon?: any;
+  buttonVariant?: 'text' | 'outlined' | 'contained';
   onButtonClick?: () => void;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title, icon, counter, buttonText, onButtonClick }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, icon: Icon, counter, buttonText, buttonIcon: ButtonIcon, buttonVariant = 'contained', onButtonClick }) => {
     
     const handleSubmit = () => {
         if(onButtonClick) onButtonClick();
@@ -24,10 +25,10 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, icon, counter, bu
             sx={{ display: 'flex', justifyContent: 'space-between' }}
         >
             <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
-                { icon && <DsSvgIcon component={icon} /> }
+                { Icon && <Icon /> }
                 <Box sx={{ display: 'flex', gap: '10px' }}>
-                    <Typography component="h3" color="primary" variant="h3">{title}</Typography>
-                    {(counter! > 0) && <Typography component="h3" color="primary" variant="h3">({counter})</Typography>}
+                    <Typography component="h5" color="primary" variant="h5">{title}</Typography>
+                    {(counter! > 0) && <Typography component="h5" color="primary" variant="h5">({counter})</Typography>}
                 </Box>
             </Box>
             <Box>
@@ -35,8 +36,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, icon, counter, bu
                     <Button
                         onClick={handleSubmit}
                         fullWidth
-                        icon={<DsSvgIcon component={PlusWhite} />}
+                        icon={ButtonIcon}
                         iconPosition="start"
+                        variant={buttonVariant}
                     >{ buttonText }</Button>
                 }
             </Box>

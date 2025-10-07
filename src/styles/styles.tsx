@@ -30,6 +30,58 @@ export const innerHTMLStyle = {
     pl: 3, pr: 3
 };
 
+export const textFieldDisabled = {
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        border: 0,
+      },
+      '&:hover fieldset': {
+        border: 0,
+      },
+      '&.Mui-focused fieldset': {
+        border: 0,
+      },
+      '& .MuiInputBase-input.Mui-disabled': {
+        WebkitTextFillColor: theme.palette.primary[600], // Para navegadores webkit (Chrome, Safari)
+        color: theme.palette.primary[600], // Para otros navegadores
+      },
+    },
+}
+
+export const textFieldLabelDisabled = {
+    inputLabel: {
+        sx: {
+            '&.Mui-disabled': {
+                color: theme.palette.primary[600], // Disabled (gris claro)
+            },
+            
+        }
+    }
+}
+
+export const selectDisabled = {
+    '& .MuiOutlinedInput-notchedOutline': {
+      border: 0,
+    },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+      border: 0,
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      border: 0,
+    },
+    '& .MuiSelect-icon': {
+      display: 'none', // Oculta la flecha
+    },
+    '& .MuiInputBase-input.Mui-disabled': {
+        WebkitTextFillColor: theme.palette.primary[600], // Para navegadores webkit (Chrome, Safari)
+        color: theme.palette.primary[600], // Para otros navegadores
+    },
+}
+
+export const InputLabelDisabled = {
+    color: theme.palette.primary[600], // Color cuando está deshabilitado
+}
+
 export const StateColors = { 
     idleForeground: '#067ad8',
     idleBackground: '#e5f3fe',
@@ -39,14 +91,14 @@ export const StateColors = {
     enabledBackground: '#e1fae8',
     disabledForeground: '#bf284d',
     disabledBackground: '#fdeef1',
-}
+};
 
 export const BorderRadius = {
     sm: '4px', 
     md: '8px', 
     lg: '16px', 
     full: '9999px'
-}
+};
 
 export const Paddings = {
     xs: '4px', 
@@ -56,4 +108,4 @@ export const Paddings = {
     xl: '32px',
     xxl: '64px',
     xxxl: '96px',
-}
+};
