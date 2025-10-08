@@ -162,8 +162,9 @@ const theme = createTheme({
     MuiAccordion: {
       styleOverrides: {
         root: ({ theme }) => ({
-          border: `1px solid ${theme.palette.primary.main}`,
-          borderRadius: '4px',
+          border: `1px solid ${theme.palette.primary[200]}`,
+          backgroundColor: theme.palette.primary[50],
+          borderRadius: '6px',
           marginBottom: theme.spacing(2),
           '&:before': {
             display: 'none',
@@ -218,10 +219,10 @@ const theme = createTheme({
             },
           },
           '& .Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
-            color: theme.palette.primary.light,
+            color: theme.palette.primary.main,
           },
           '& .MuiInputAdornment-root .MuiSvgIcon-root': {
-            color: theme.palette.text.secondary,
+            color: theme.palette.primary.main,
           },
         }),
       },
@@ -264,6 +265,13 @@ const theme = createTheme({
         }),
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: () => ({
+          textTransform: 'none',
+        })
+      }
+    }
   },
   breakpoints: {
     values: {

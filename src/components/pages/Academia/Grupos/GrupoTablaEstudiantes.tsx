@@ -8,7 +8,6 @@ import {
   TableRow,
   Paper,
   Avatar,
-  Chip,
   IconButton,
   Box,
   Typography,
@@ -21,6 +20,7 @@ import { BoxContainer } from '../../../atoms/BoxContainer/BoxContainer';
 import { TitleHeader } from '../../../molecules/TitleHeader/TitleHeader';
 
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import { TagsContainer } from '../../../molecules/TagsContainer/TagsContainer';
 
 type Student = {
   id: string;
@@ -89,6 +89,8 @@ export const GrupoTablaEstudiantes: React.FC = () => {
     return words[0]?.[0]?.toUpperCase() || 'A';
   };
 
+  const getTagContainer = (text: string, status: any = 'transparent') => <TagsContainer text={text} status={status} />;
+
   return (
     <BoxContainer
         sxProps={{ display: 'flex', flexDirection: 'column' }}
@@ -155,32 +157,8 @@ export const GrupoTablaEstudiantes: React.FC = () => {
                                 {student.name}
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 1 }}>
-                                <Chip 
-                                label={`NUM. EMPLEADO ${student.employeeNumber}`}
-                                size="small"
-                                sx={{ 
-                                    height: 22,
-                                    fontSize: '14px',
-                                    bgcolor: 'transparent',
-                                    color: theme.palette.primary[600],
-                                    fontWeight: 700,
-                                    border: `1px solid ${ theme.palette.primary[500]}`,
-                                    borderRadius: '4px'
-                                }}
-                                />
-                                <Chip 
-                                label={`ID MOODLE ${student.moodleId}`}
-                                size="small"
-                                sx={{ 
-                                    height: 22,
-                                    fontSize: '14px',
-                                    bgcolor: 'transparent',
-                                    color: theme.palette.primary[600],
-                                    fontWeight: 700,
-                                    border: `1px solid ${ theme.palette.primary[500]}`,
-                                    borderRadius: '4px'
-                                }}
-                                />
+                                { getTagContainer(`NUM. EMPLEADO ${student.employeeNumber}`) }
+                                { getTagContainer(`ID MOODLE ${student.moodleId}`) }
                             </Box>
                             </Box>
                         </Box>
