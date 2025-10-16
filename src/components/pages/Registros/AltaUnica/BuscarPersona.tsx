@@ -6,6 +6,7 @@ import {
   Typography,
   Alert,
   InputAdornment,
+  useTheme,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TuneIcon from '@mui/icons-material/Tune';
@@ -31,6 +32,7 @@ export const BuscarPersonaForm: React.FC<BuscarPersonaFormProps> = ({
   onSearch, 
   onRegisterProspect 
 }) => {
+  const theme = useTheme();
   const [formData, setFormData] = useState<SearchFormData>({
     employeeNumber: '',
     moodleId: '',
@@ -58,16 +60,9 @@ export const BuscarPersonaForm: React.FC<BuscarPersonaFormProps> = ({
   };
 
   return (
-    <BoxContainer>
-      <AltaUnicaHeader 
-        text='Paso 1: Buscar persona' 
-        subText='Ingresa alguno de los datos disponibles para localizar a la persona en el sistema.' 
-        estatus='ADMISIÓN'
-        valueProgress={33}
-        currentStep={1}
-      />
-      {/* Form */}
-      <BoxContainer>
+    <>
+    {/* Form */}
+      <BoxContainer sxProps={{ backgroundColor: theme.palette.primary[50]}}>
         <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 3 }}>
           Búsqueda General
         </Typography>
@@ -226,7 +221,8 @@ export const BuscarPersonaForm: React.FC<BuscarPersonaFormProps> = ({
         >
           Buscar persona
         </Button>
-      </Box>
-    </BoxContainer>
+      </Box> 
+    </>
+         
   );
 };

@@ -2,6 +2,13 @@
 import { IMask } from "react-imask";
 import { format } from 'date-fns';
 
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ImageIcon from '@mui/icons-material/Image';
+import DescriptionIcon from '@mui/icons-material/Description';
+import TableChartIcon from '@mui/icons-material/TableChart';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import type { JSX } from "react";
+
 export const CustomMask = {
   phone: "(000) 000-0000",
   zip: "00000",
@@ -65,4 +72,58 @@ export const getSubdomainKey = () => {
   const subdomain = parts.length > 2 ? parts[0] : "root";
 
   return `_${subdomain}`;
+};
+
+
+interface FileTypeResult {
+  icon: JSX.Element;
+  descripcion: string;
+  color: 'error' | 'primary' | 'success' | 'info' | 'warning';
+}
+
+export const GetFileType = (fileName: string): FileTypeResult => {
+  const esImagen = (file: string) =>
+    /\.(jpg|jpeg|png|gif|webp)$/i.test(file);
+
+  const esPdf = (file: string) => /\.pdf$/i.test(file);
+  const esWord = (file: string) => /\.(doc|docx)$/i.test(file);
+  const esExcel = (file: string) => /\.(xls|xlsx)$/i.test(file);
+
+  if (esPdf(fileName)) {
+    return {
+      icon: <PictureAsPdfIcon color="error" />,
+      descripcion: 'Documento PDF',
+      color: 'error',
+    };
+  }
+
+  if (esImagen(fileName)) {
+    return {
+      icon: <ImageIcon color="success" />,
+      descripcion: 'Imagen',
+      color: 'success',
+    };
+  }
+
+  if (esWord(fileName)) {
+    return {
+      icon: <DescriptionIcon color="primary" />,
+      descripcion: 'Documento Word',
+      color: 'primary',
+    };
+  }
+
+  if (esExcel(fileName)) {
+    return {
+      icon: <TableChartIcon color="success" />,
+      descripcion: 'Hoja de cálculo',
+      color: 'success',
+    };
+  }
+
+  return {
+    icon: <InsertDriveFileIcon color="info" />,
+    descripcion: 'Archivo',
+    color: 'info',
+  };
 };

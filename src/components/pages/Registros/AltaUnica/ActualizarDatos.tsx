@@ -1,38 +1,85 @@
-import { useTheme } from "@mui/material"
+import { Box, useTheme } from "@mui/material"
 import { Accordion } from "../../../molecules/Accordion/Accordion"
 import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer"
-import { AltaUnicaHeader } from "./AltaUnicaHeader"
 import { DatosPersonalesForm } from "./DatosPersonalesForm"
 import { DatosLaboralesForm } from "./DatosLaboralesForm"
 import { DatosContactoForm } from "./DatosContacto"
 import { NotasObservacionesForm } from "./NotasObservacionesForm"
+import { FormProvider, useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { AltaUnicaFormSchema, type AltaUnicaFormData } from "../../../../schemas/altaUnicaSchema"
+import { flexRows } from "@styles"
+import Button from "../../../atoms/Button/Button"
+import TuneIcon from '@mui/icons-material/Tune';
+import React from "react"
 
-export const ActualizarDatos: React.FC = () => {
+type ActualizarDatosProps = {
+    onBack: () => void;
+    onNext: () => void;
+}
+
+export const ActualizarDatos: React.FC<ActualizarDatosProps> = ({onBack, onNext}) => {
     const theme = useTheme();
     
+    const methods = useForm<AltaUnicaFormData>({
+        resolver: zodResolver(AltaUnicaFormSchema()),
+        defaultValues: {
+            numeroEmpleado: '',
+            apellidoPaterno: '',
+            apellidoMaterno: '',
+            nombre: '',
+            fechaNacimiento: '',
+            curp: '',
+            edad: '',
+            sexo: '',
+            estadoCivil: '',
+            escolaridad: '',
+            socialMedia: [{ link: '', platform: '' }],
+            phones: [{ number: '', type: 'Móvil' }],
+        },
+    });
+
+    const handleBack = () => {
+        if(onBack) onBack();
+    }
+
+    const handleNext = () => {
+        if(onNext) onNext();
+        // setCurrentStep((prev) => (prev < altaUnicaHeaderArray.length - 1 ? prev + 1 : prev));
+
+        // methods.trigger().then((isValid) => {
+        //     if (isValid) {
+        //         // proceed to next step
+        //         console.log("Form is valid, proceed to next step");
+        //     } else {
+        //         console.log("Form is invalid, please correct the errors");
+        //     }
+        // });
+    }
+
     return(
-        <BoxContainer
-            sxProps={{ backgroundColor: theme.palette.primary[100]}}
-        >
-            <AltaUnicaHeader 
-                text='Paso 2: Llena o actualiza datos (Registro A1)' 
-                subText='Captura o corrige la información que se solicita.' 
-                estatus='ADMISIÓN'
-                valueProgress={66}
-                currentStep={2}
-            />
-            <Accordion title="Datos Personales">
-                <DatosPersonalesForm />
-            </Accordion>
-            <Accordion title="Datos Laborales">
-                <DatosLaboralesForm />
-            </Accordion>
-            <Accordion title="Datos de Contacto">
-                <DatosContactoForm />
-            </Accordion>
-            <Accordion title="Notas y Observaciones">
-                <NotasObservacionesForm />
-            </Accordion>
-        </BoxContainer>
+        <>
+            <FormProvider {...methods}>
+                <Accordion title="Datos Personales">
+                    <DatosPersonalesForm />
+                </Accordion>
+                <Accordion title="Datos Laborales">
+                    <DatosLaboralesForm />
+                </Accordion>
+                <Accordion title="Datos de Contacto">
+                    <DatosContactoForm />
+                </Accordion>
+                <Accordion title="Notas y Observaciones">
+                    <NotasObservacionesForm />
+                </Accordion>
+            </FormProvider>
+            <Box sx={{...flexRows, alignItems: 'flex-start', justifyContent: 'space-between', mt: 3, mb: 1, gap: 2}}>
+                <Button variant="outlined" onClick={handleBack}>Anterior</Button>
+                <Box>
+                    <Button variant="outlined" onClick={() => {}} icon={<TuneIcon />} iconPosition="start">Guardar borrador</Button>
+                    <Button sxProps={{ ml: 2 }} onClick={handleNext} >Siguiente</Button>
+                </Box>
+            </Box>
+        </>
     )
 }

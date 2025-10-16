@@ -108,7 +108,7 @@ const theme = createTheme({
     overline: {
       fontWeight: 400,
       fontSize: '14px',
-      lineHeight: '16px'
+      lineHeight: '130%'
     },
     code: {
       fontWeight: 400,
@@ -146,11 +146,10 @@ const theme = createTheme({
     MuiSelect: {
       styleOverrides: {
         root: {
-          height: '40px'
+          height: '40px',
         },
       }
     },
-
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -200,14 +199,11 @@ const theme = createTheme({
       styleOverrides: {
         root: ({theme}) => ({
           marginBottom: '1rem',
-          '& .MuiOutlinedInput-root': {
-            borderRadius: '4px',
-            height: '40px',
-          },
           '& .MuiInputBase-input': {
             height: '40px',
             padding: '0 14px',
             boxSizing: 'border-box',
+             borderRadius: '4px',
           },
           '& .MuiInputLabel-root': {
             transform: 'translate(14px, 10px) scale(1)',
