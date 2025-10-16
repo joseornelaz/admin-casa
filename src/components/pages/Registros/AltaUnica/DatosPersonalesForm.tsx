@@ -14,7 +14,7 @@ import { StateColors } from "@styles";
 
 export const DatosPersonalesForm: React.FC = () => {
 
-    const { control, register, formState: { errors } } = useFormContext();
+    const { control, formState: { errors } } = useFormContext();
 
     const labelRequired = (text: string) => <>{text} <span style={{ color: StateColors.disabledForeground }}>*</span></>;
 

@@ -12,7 +12,7 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 export const DatosContactoForm: React.FC = () => {
     const theme = useTheme();
 
-    const { control, register, formState: { errors } } = useFormContext();
+    const { control, formState: { errors } } = useFormContext();
 
     // useFieldArray para redes sociales
     const { fields: socialFields, append: appendSocial, remove: removeSocial } = useFieldArray({

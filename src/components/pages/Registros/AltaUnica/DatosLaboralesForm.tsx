@@ -7,7 +7,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 export const DatosLaboralesForm: React.FC = () => {
 
-    const { control, register, formState: { errors } } = useFormContext();
+    const { control } = useFormContext();
 
     return(
         <Grid container spacing={2}>

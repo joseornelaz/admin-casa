@@ -6,12 +6,12 @@ import React from "react";
 import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
 import { AltaUnicaHeader } from "./AltaUnicaHeader";
 import { useTheme } from "@mui/material";
-import { ValidacionDocumentos } from "./ValidacionDocumentos";
 
 const altaUnicaHeaderArray = [
     { step: 1, text: 'Paso 1: Buscar persona', status: 'ADMISIÓN', subText: 'Ingresa alguno de los datos disponibles para localizar a la persona en el sistema.', valueProgress: 33, currentStep: 1 },
     { step: 2, text: 'Paso 2: Llena o actualiza datos (Registro A1)', status: 'ADMISIÓN', subText: 'Captura o corrige la información que se solicita.', valueProgress: 66, currentStep: 2 },
     { step: 3, text: 'Paso 3: Validación de documentos (Inscripción A2)', status: 'GESTIÓN ESCOLAR', subText: 'Verifica que la información esté respaldada con la documentación correspondiente.', valueProgress: 90, currentStep: 3 },
+    { step: 3, text: 'Paso 3: Confirmación', status: 'GESTIÓN ESCOLAR', subText: 'Se ha enviado un correo de confirmación y la persona ha sido registrada correctamente en el sistema.', valueProgress: 100, currentStep: 4 },
 ];
 
 const AltaUnica: React.FC = () => {
@@ -23,7 +23,10 @@ const AltaUnica: React.FC = () => {
     }
 
     const handleNext = () => {
-        setCurrentStep((prev) => (prev < altaUnicaHeaderArray.length - 1 ? prev + 1 : prev));
+        setCurrentStep((prev) => {
+            return (prev < altaUnicaHeaderArray.length - 1 ? prev + 1 : prev);
+        }
+        );
     }
 
     return (
@@ -40,15 +43,11 @@ const AltaUnica: React.FC = () => {
                     currentStep={altaUnicaHeaderArray[currentStep].step}
                 />
                 {
-                    <ValidacionDocumentos />
-                    // <ActualizarDatos onBack={handleBack} onNext={handleNext} />
-                }
-                {/* {
                     currentStep === 0 ?
                         <BuscarPersonaForm onRegisterProspect={handleNext}/>
                     :
                         <ActualizarDatos onBack={handleBack} onNext={handleNext} />
-                } */}
+                }
             </BoxContainer>
         </Box>
     );

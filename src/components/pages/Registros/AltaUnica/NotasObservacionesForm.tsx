@@ -1,6 +1,5 @@
 import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
@@ -9,7 +8,7 @@ import { InputLabelRequired } from "../../../molecules/InputLabelRequired/InputL
 
 export const NotasObservacionesForm: React.FC = () => {
 
-    const { control, register, formState: { errors } } = useFormContext();
+    const { control, formState: { errors } } = useFormContext();
 
     return(
         <Grid container spacing={2}>

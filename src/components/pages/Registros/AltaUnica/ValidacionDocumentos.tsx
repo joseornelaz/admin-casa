@@ -14,9 +14,7 @@ import {
   useTheme,
 } from '@mui/material';
 
-import UploadOutlinedIcon from '@mui/icons-material/UploadOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Accordion } from '../../../molecules/Accordion/Accordion';
 import { LinearProgress } from '../../../molecules/LinearProgress/LinearProgress';
 import { BorderRadius, flexColumn, Paddings } from '@styles';
@@ -112,11 +110,11 @@ const DOCUMENTACION_ESCOLAR: Documento[] = [
 
 export const ValidacionDocumentos: React.FC = () => {
     const theme = useTheme();
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, _setExpanded] = useState(true);
     const [modalidad, setModalidad] = useState('Físico/Digital/Físico y Digital');
     const [estatusRecepcion, setEstatusRecepcion] = useState('');
-    const [condicion, setCondicion] = useState('Aceptable');
-    const [observaciones, setObservaciones] = useState('');  
+    const [_condicion, _setCondicion] = useState('Aceptable');
+    const [_observaciones, _setObservaciones] = useState('');  
     const [observacionesGenerales, setObservacionesGenerales] = useState('');  
 
 
@@ -124,7 +122,6 @@ export const ValidacionDocumentos: React.FC = () => {
     const [progress, setProgress] = useState(0);
 
     const [documentacion, setDocumentacion] = useState(DOCUMENTACION_ESCOLAR);
-
 
     const handleUploadFile = (fileData: { step: number, file: File }) => {
         setDocumentacion((prev) => 
@@ -182,26 +179,26 @@ export const ValidacionDocumentos: React.FC = () => {
         // Aquí puedes enviar al servidor
     };
 
-    const handleGuardarFormulario = () => {
-        const formularioCompleto = {
-            modalidad,
-            estatusRecepcion,
-            observacionesGenerales,
-            documentos: documentacion.map(doc => ({
-                step: doc.step,
-                title: doc.title,
-                subtitle: doc.subtitle,
-                isRequired: doc.isRequired,
-                file: doc.file,
-                condicion: doc.condicion,
-                observaciones: doc.observaciones,
-            })),
-        };
+    // const handleGuardarFormulario = () => {
+    //     const formularioCompleto = {
+    //         modalidad,
+    //         estatusRecepcion,
+    //         observacionesGenerales,
+    //         documentos: documentacion.map(doc => ({
+    //             step: doc.step,
+    //             title: doc.title,
+    //             subtitle: doc.subtitle,
+    //             isRequired: doc.isRequired,
+    //             file: doc.file,
+    //             condicion: doc.condicion,
+    //             observaciones: doc.observaciones,
+    //         })),
+    //     };
 
-        console.log('Formulario completo:', formularioCompleto);
-        // Aquí puedes enviar al servidor
-        return formularioCompleto;
-    };
+    //     console.log('Formulario completo:', formularioCompleto);
+    //     // Aquí puedes enviar al servidor
+    //     return formularioCompleto;
+    // };
 
     const fileType = (file: string) => {
         if(file === '') return <></>;
@@ -381,6 +378,7 @@ export const ValidacionDocumentos: React.FC = () => {
             multiline
             rows={2}
         />
+        
     </Accordion>
   );
 }

@@ -11,7 +11,6 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import TuneIcon from '@mui/icons-material/Tune';
 import { BoxContainer } from '../../../atoms/BoxContainer/BoxContainer';
-import { AltaUnicaHeader } from './AltaUnicaHeader';
 import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 
 type BuscarPersonaFormProps = {
