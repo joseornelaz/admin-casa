@@ -8,7 +8,7 @@ import { flexColumn, flexRows } from "@styles";
 
 import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
 import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
-import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -61,7 +61,7 @@ const VigenciasDetalles: React.FC = () => {
         return(<ContextBreadcrumb list={list} />)
     }
 
-    const VigenciaColumn = (tituloFecha: string, fechaInicio: string, fechaFin: string) => (
+    const VigenciaColumn = (tituloFecha: string, fechaInicio: string) => (
         <Grid size={{ xs: 12, md: 6 }}>
             <Box sx={{...flexColumn, alignItems: 'flex-start', gap: '9px'}}>
                 <IconText 
@@ -74,12 +74,6 @@ const VigenciasDetalles: React.FC = () => {
                     <Typography variant="caption" sx={{color: theme.palette.primary[700]}}>
                         { fechaInicio }
                     </Typography>
-                    <Box display="flex" alignItems="center" gap={1}>
-                        <ArrowRightAltOutlinedIcon color="primary" />
-                        <Typography variant="caption" sx={{color: theme.palette.primary[700]}}>
-                            { fechaFin }
-                        </Typography>
-                    </Box>
                 </Box>
             </Box>
         </Grid>
@@ -89,37 +83,37 @@ const VigenciasDetalles: React.FC = () => {
         return(
             <BoxContainer 
                 key={item.idVigencia}
-                sxProps={{
-                    minHeight: '236px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px'
-                }}
+                backgroundColor="grey"
             >
-                { getTagContainer("VIGENCIA-0001", "default") }
-                { getContextBreadcrumb('Logo', item) }
-                <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
-                    <Typography component="h5" variant="h5">
-                        Diseño de Interfaces I IDS COPPEL C2 - Sep 25
-                    </Typography>
-                    <TagsContainer text="NORMAL" status="normal" />
-                    <TagsContainer text="ACTIVA" status="activa" />
-                </Box>
-                { getContextBreadcrumb('User', item) }
-                <BoxContainer
+                <BoxContainer 
                     sxProps={{
-                        backgroundColor: theme.palette.primary[100],
-                        borderColor: theme.palette.primary[100],
+                        minHeight: '236px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        backgroundColor: theme.palette.primary[50]
                     }}
                 >
-                    <Grid container spacing={2}>
-                        {VigenciaColumn("Fecha de inscripción del estudiante","1 de Septiembre del 2025","1 de Septiembre del 2025")}
-                        {VigenciaColumn("Fecha de inscripción del estudiante","1 de Septiembre del 2025","1 de Septiembre del 2025")}
-                    </Grid>
-                    <Grid container spacing={2} sx={{pt: 2}}>
-                        {VigenciaColumn("Duración del curso","1 de Septiembre del 2025","1 de Septiembre del 2025")}
-                        {VigenciaColumn("Duración del curso","1 de Septiembre del 2025","1 de Septiembre del 2025")}
-                    </Grid>
+                    { getTagContainer("VIGENCIA-0001", "default") }
+                    { getContextBreadcrumb('Logo', item) }
+                    <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
+                        <Typography component="h5" variant="h5">
+                            Diseño de Interfaces I IDS COPPEL C2 - Sep 25
+                        </Typography>
+                        <TagsContainer text="NORMAL" status="normal" />
+                        <TagsContainer text="ACTIVA" status="activa" />
+                    </Box>
+                    { getContextBreadcrumb('User', item) }
+                    <BoxContainer backgroundColor="grey">
+                        <Grid container spacing={2}>
+                            {VigenciaColumn("Fecha inicio de Asesor","1 de Septiembre del 2025")}
+                            {VigenciaColumn("Fecha limite de carga","1 de Septiembre del 2025")}
+                        </Grid>
+                        <Grid container spacing={2} sx={{pt: 2}}>
+                            {VigenciaColumn("Fecha inicio del Estudiante","1 de Septiembre del 2025")}
+                            {VigenciaColumn("Fecha fin del curso","1 de Septiembre del 2025")}
+                        </Grid>
+                    </BoxContainer>
                 </BoxContainer>
             </BoxContainer>
         )
@@ -129,11 +123,22 @@ const VigenciasDetalles: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <TitleHeader text="Detalles de la Vigencia" subTitle="Monitorea y gestiona fechas importantes, grupos y alumnos" />
             { VigenciaCard(itemDetalle) }
-            <Box sx={{ display: 'flex', gap: '16px' }}>
-                {
-                    MetricCardArray.map((item, i) => <MetricCard {...item} key={i} />)
-                }
-            </Box>
+            <BoxContainer backgroundColor="grey">
+                <TitleHeader 
+                    icon={PeopleAltOutlinedIcon}
+                    text="Estado de la Vigencia" 
+                    subTitle="Resumen de la vigencia y su contenido." 
+                />
+                <BoxContainer
+                    sxProps={{ backgroundColor: theme.palette.primary[50]}}
+                >
+                    <Box sx={{ display: 'flex', gap: '16px' }}>
+                        {
+                            MetricCardArray.map((item, i) => <MetricCard {...item} key={i} />)
+                        }
+                    </Box>
+                </BoxContainer>
+            </BoxContainer>
             <Grupos />
         </Box>
     );

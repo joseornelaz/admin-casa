@@ -13,6 +13,7 @@ import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlin
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 
 import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
 import Typography from "@mui/material/Typography";
@@ -21,6 +22,7 @@ import { useTheme } from "@mui/material/styles";
 import StackedAvatars from "../../../molecules/StackedAvatars/StackedAvatars";
 import { Drawer, IconButton } from "@mui/material";
 import { GrupoEdit } from "./GrupoEdit";
+import { SegmentedControl } from "../../../molecules/SegmentedControl/SegmentedControl";
 
 const InfoCardArray = [
     {
@@ -42,14 +44,24 @@ const Grupos: React.FC = () => {
     const [counter, _setCounter] = React.useState<number>(0);
     const [isOpenDrawer, setIsOpenDrawer] = React.useState<boolean>(false);
 
+    const [selected, setSelected] = React.useState('Activas');
+    
+    const handleChange = (value: string) => {
+        setSelected(value);
+        console.log('Opción seleccionada:', value);
+    };
+
     const handleAction = () => {
         setIsEmptyState(false);
     }
+
+
 
     const pageHeader = () => {
 
         return(
             <PageHeader 
+                icon={DynamicFeedOutlinedIcon}
                 title="Grupos" 
                 buttonText="Crear grupo" 
                 onButtonClick={handleAction} 
@@ -85,7 +97,8 @@ const Grupos: React.FC = () => {
                     minHeight: '232px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px'
+                    gap: '16px',
+                    backgroundColor: theme.palette.primary[50]
                 }}
             >
                 <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -129,6 +142,7 @@ const Grupos: React.FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <BoxContainer
+                backgroundColor="grey"
                 sxProps={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -138,6 +152,12 @@ const Grupos: React.FC = () => {
                 }}
             >
                 { pageHeader() }
+
+                <SegmentedControl
+                    options={['Coppel','Normal', 'Activas', 'Habilitadas']}
+                    value={selected}
+                    onChange={handleChange}
+                />
                 {
                     !isEmptyState 
                     ?

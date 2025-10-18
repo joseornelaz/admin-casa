@@ -10,7 +10,7 @@ import DsSvgIcon from "../../../atoms/Icon/Icon";
 import { Calendar, Search } from "@iconsCustomizeds";
 import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
 import { RegistroVigenciasDialog } from "../../../molecules/Dialogs/RegistroVigenciasDialog/RegistroVigenciasDialog";
-import { flexRows } from "@styles";
+import { BorderRadius, flexRows, Paddings } from "@styles";
 import { TitleHeader } from "../../../molecules/TitleHeader/TitleHeader";
 import { TagsContainer } from "../../../molecules/TagsContainer/TagsContainer";
 
@@ -20,11 +20,13 @@ import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
 import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextBreadcrumb";
 import { useNavigate } from "react-router-dom";
 import { AppRoutingPaths } from "@constants";
+import { SegmentedControl } from "../../../molecules/SegmentedControl/SegmentedControl";
 
 const InfoCardArray = [
     {
@@ -63,6 +65,12 @@ const Vigencias: React.FC = () => {
     // const [showDetails, setShowDetails] = React.useState<boolean>(true);
     const [counter, _setCounter] = React.useState<number>(0);
     
+    const [selected, setSelected] = React.useState('Activas');
+
+    const handleChange = (value: string) => {
+        setSelected(value);
+        console.log('Opción seleccionada:', value);
+    };
 
     const handleAction = () => {
         setIsEmptyState(false);
@@ -120,7 +128,8 @@ const Vigencias: React.FC = () => {
                     minHeight: '236px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px'
+                    gap: '16px',
+                    backgroundColor: theme.palette.primary[50],
                 }}
             >
                 { getTagContainer("VIGENCIA-0001", "default") }
@@ -160,113 +169,136 @@ const Vigencias: React.FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <TitleHeader text="Vigencias" subTitle="Monitorea y gestiona fechas importantes, grupos y alumnos" />
-            <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Controller
-                        name="planEstudios"
-                        control={control}
-                        render={({ field }) => (
-                            <FormControl fullWidth error={!!errors.planEstudios}>
-                                <InputLabel id="grupo-label">Plan de Estudios</InputLabel>
-                                <Select
-                                    // disabled={isLoading}
-                                    labelId="grupo-label"
-                                    label="Plan de Estudios"
-                                    {...field}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        field.onChange(value);
-                                        // setIsDisabledListadoForos(true);
-                                        // handleForos();
-                                    }}
-                                >
-                                    {
-                                    materias && materias.map((item) => (
-                                            <MenuItem key={item.id} value={item.id}>
-                                                {item.nombre}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                        )}
-                    />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Controller
-                        name="rutaEstudios"
-                        control={control}
-                        render={({ field }) => (
-                            <FormControl fullWidth error={!!errors.rutaEstudios}>
-                                <InputLabel id="grupo-label">Ruta de estudios</InputLabel>
-                                <Select
-                                    // disabled={isLoading}
-                                    labelId="grupo-label"
-                                    label="Ruta de estudios"
-                                    {...field}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        field.onChange(value);
-                                        // setIsDisabledListadoForos(true);
-                                        // handleForos();
-                                    }}
-                                >
-                                    {
-                                    materias && materias.map((item) => (
-                                            <MenuItem key={item.id} value={item.id}>
-                                                {item.nombre}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                        )}
-                    />
-                </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 10 }}>
-                    <Controller
-                        name="materias"
-                        control={control}
-                        render={({ field }) => (
-                            <FormControl fullWidth error={!!errors.materias}>
-                                <InputLabel id="grupo-label">Materia</InputLabel>
-                                <Select
-                                    // disabled={isLoading}
-                                    labelId="grupo-label"
-                                    label="Materia"
-                                    {...field}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        field.onChange(value);
-                                        // setIsDisabledListadoForos(true);
-                                        // handleForos();
-                                    }}
-                                >
-                                    {
-                                    materias && materias.map((item) => (
-                                            <MenuItem key={item.id} value={item.id}>
-                                                {item.nombre}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                        )}
-                    />
-                </Grid>
-                <Grid size={{ xs: 12, md: 2 }}>
-                    <Button
-                        variant="outlined"
-                        onClick={handleSearch}
-                        fullWidth
-                        icon={<DsSvgIcon component={Search} />}
-                        iconPosition="start"
-                    >Buscar</Button>
-                </Grid>
-            </Grid>
+            <BoxContainer backgroundColor="grey">
+                <PageHeader 
+                    title="Filtros de Consulta" 
+                    icon={SearchOutlinedIcon}
+                />
+
+                <Box
+                    sx={{
+                        mt: 2,
+                        padding: Paddings.m,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        backgroundColor: theme.palette.primary[50],
+                        border: 1,
+                        borderColor: theme.palette.primary[200],
+                        borderRadius: BorderRadius.sm,
+                    }}
+                >
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <Controller
+                                name="planEstudios"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControl fullWidth error={!!errors.planEstudios}>
+                                        <InputLabel id="grupo-label">Plan de Estudios</InputLabel>
+                                        <Select
+                                            // disabled={isLoading}
+                                            labelId="grupo-label"
+                                            label="Plan de Estudios"
+                                            {...field}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                field.onChange(value);
+                                                // setIsDisabledListadoForos(true);
+                                                // handleForos();
+                                            }}
+                                        >
+                                            {
+                                            materias && materias.map((item) => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.nombre}
+                                                    </MenuItem>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <Controller
+                                name="rutaEstudios"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControl fullWidth error={!!errors.rutaEstudios}>
+                                        <InputLabel id="grupo-label">Ruta de estudios</InputLabel>
+                                        <Select
+                                            // disabled={isLoading}
+                                            labelId="grupo-label"
+                                            label="Ruta de estudios"
+                                            {...field}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                field.onChange(value);
+                                                // setIsDisabledListadoForos(true);
+                                                // handleForos();
+                                            }}
+                                        >
+                                            {
+                                            materias && materias.map((item) => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.nombre}
+                                                    </MenuItem>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, md: 10 }}>
+                            <Controller
+                                name="materias"
+                                control={control}
+                                render={({ field }) => (
+                                    <FormControl fullWidth error={!!errors.materias}>
+                                        <InputLabel id="grupo-label">Materia</InputLabel>
+                                        <Select
+                                            // disabled={isLoading}
+                                            labelId="grupo-label"
+                                            label="Materia"
+                                            {...field}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                field.onChange(value);
+                                                // setIsDisabledListadoForos(true);
+                                                // handleForos();
+                                            }}
+                                        >
+                                            {
+                                            materias && materias.map((item) => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.nombre}
+                                                    </MenuItem>
+                                                ))
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                )}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 2 }}>
+                            <Button
+                                variant="outlined"
+                                onClick={handleSearch}
+                                fullWidth
+                                icon={<DsSvgIcon component={Search} />}
+                                iconPosition="start"
+                            >Buscar</Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </BoxContainer>
+            
             <BoxContainer
+                backgroundColor="grey"
                 sxProps={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -288,6 +320,11 @@ const Vigencias: React.FC = () => {
                         />
                     :
                     <>
+                        <SegmentedControl
+                            options={['Normal', 'Activas', 'Habilitadas']}
+                            value={selected}
+                            onChange={handleChange}
+                        />
                         {
                             InfoCardArray.map((item) => VigenciaCard(item))
                         }

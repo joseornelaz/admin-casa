@@ -5,7 +5,6 @@ import { ActualizarDatos } from "./ActualizarDatos";
 import React from "react";
 import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
 import { AltaUnicaHeader } from "./AltaUnicaHeader";
-import { useTheme } from "@mui/material";
 
 const altaUnicaHeaderArray = [
     { step: 1, text: 'Paso 1: Buscar persona', status: 'ADMISIÓN', subText: 'Ingresa alguno de los datos disponibles para localizar a la persona en el sistema.', valueProgress: 33, currentStep: 1 },
@@ -15,7 +14,6 @@ const altaUnicaHeaderArray = [
 ];
 
 const AltaUnica: React.FC = () => {
-    const theme = useTheme();
     const [currentStep, setCurrentStep] = React.useState(0);
     
     const handleBack = () => {
@@ -32,9 +30,7 @@ const AltaUnica: React.FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px'}}>
             <TitleHeader text="Registro de Alta Única" subTitle="Realiza el alta única ingresando y confirmando la información requerida en cada una de las etapas." />
-            <BoxContainer
-                sxProps={{ backgroundColor: theme.palette.primary[100]}}
-            >
+            <BoxContainer backgroundColor="grey">
                 <AltaUnicaHeader 
                     text={altaUnicaHeaderArray[currentStep].text}
                     subText={altaUnicaHeaderArray[currentStep].subText} 

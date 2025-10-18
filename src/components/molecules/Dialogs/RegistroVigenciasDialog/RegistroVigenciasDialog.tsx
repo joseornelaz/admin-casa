@@ -89,11 +89,11 @@ export const RegistroVigenciasDialog: React.FC<DialogProps> = ({isOpen, close}) 
                         <Typography component="h4" variant="h4">Nueva Vigencia</Typography>
                     </Box>
                     <BoxContainer 
+                        backgroundColor="grey"
                         sxProps={{
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '16px',
-                            backgroundColor: `${theme.palette.primary[50]}`
                         }}
                     >
                         <Controller
