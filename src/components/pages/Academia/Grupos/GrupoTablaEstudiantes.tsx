@@ -11,16 +11,16 @@ import {
   IconButton,
   Box,
   Typography,
-  LinearProgress,
-  useTheme
+  useTheme,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { BoxContainer } from '../../../atoms/BoxContainer/BoxContainer';
-import { TitleHeader } from '../../../molecules/TitleHeader/TitleHeader';
-
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import { TagsContainer } from '../../../molecules/TagsContainer/TagsContainer';
+import Button from '../../../atoms/Button/Button';
+import { StateColors } from '@styles';
 
 type Student = {
   id: string;
@@ -91,37 +91,34 @@ export const GrupoTablaEstudiantes: React.FC = () => {
 
   const getTagContainer = (text: string, status: any = 'transparent') => <TagsContainer text={text} status={status} />;
 
+  const handlePromediar = () => {
+
+  }
+
+
   return (
-    <BoxContainer
-        sxProps={{ display: 'flex', flexDirection: 'column' }}
-    >
-        <TitleHeader 
-            text="Estudiantes (64)" 
-            subTitle="Resumen de estudiantes activos en este grupo"
-            icon={PeopleAltOutlinedIcon}
-            fontSize="h3"
-        />
+    <BoxContainer backgroundColor='light'>
         <TableContainer component={Paper} sx={{ boxShadow: 'none', border: '1px solid #e0e0e0' }}>
             <Table>
                 <TableHead>
                 <TableRow sx={{ backgroundColor: '#f5f5f7' }}>
                     <TableCell sx={{ fontWeight: 600, color: '#5f6368' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        Nombre del estudiante
-                        <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
-                    </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            Nombre del estudiante
+                            <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
+                        </Box>
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, color: '#5f6368' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        Progreso
-                        <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
-                    </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            Progreso
+                            <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
+                        </Box>
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600, color: '#5f6368' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        Calificación
-                        <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
-                    </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            Calificación
+                            <UnfoldMoreIcon sx={{ fontSize: 18, color: '#9aa0a6' }} />
+                        </Box>
                     </TableCell>
                     <TableCell sx={{ width: 50 }}></TableCell>
                 </TableRow>
@@ -141,46 +138,30 @@ export const GrupoTablaEstudiantes: React.FC = () => {
                         <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Avatar 
-                            src={student.avatar}
-                            sx={{ 
-                                width: 40, 
-                                height: 40,
-                                bgcolor: student.avatarBgColor || '#1976d2',
-                                fontSize: '1rem',
-                                fontWeight: 600
-                            }}
+                                src={student.avatar}
+                                sx={{ 
+                                    width: 40, 
+                                    height: 40,
+                                    bgcolor: student.avatarBgColor || '#1976d2',
+                                    fontSize: '1rem',
+                                    fontWeight: 600
+                                }}
                             >
-                            {!student.avatar && getInitials(student.name)}
+                                {!student.avatar && getInitials(student.name)}
                             </Avatar>
-                            <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5, color: theme.palette.primary[700]}}>
-                                {student.name}
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 1 }}>
-                                { getTagContainer(`NUM. EMPLEADO ${student.employeeNumber}`) }
-                                { getTagContainer(`ID MOODLE ${student.moodleId}`) }
-                            </Box>
+                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                                <Typography variant="body1" sx={{ fontWeight: 600, color: theme.palette.primary[700]}}>
+                                    {student.name}
+                                </Typography>
+                                { getTagContainer(`EMP. ${student.employeeNumber}`) }
                             </Box>
                         </Box>
                         </TableCell>
-                        <TableCell sx={{ width: 250 }}>
+                        <TableCell sx={{ width: 100 }}>
                         <Box>
-                            <Typography variant="overline" sx={{ mb: 0.5, color: theme.palette.primary[500], textTransform: 'none' }}>
-                                {student.progress}% Completado
+                            <Typography variant="overline" sx={{ mb: 0.5, color: theme.palette.primary[700], textTransform: 'none', fontWeight: '600' }}>
+                                {student.progress}%
                             </Typography>
-                            <LinearProgress 
-                            variant="determinate" 
-                            value={student.progress}
-                            sx={{
-                                height: 8,
-                                borderRadius: 4,
-                                backgroundColor: '#e0e0e0',
-                                '& .MuiLinearProgress-bar': {
-                                    // backgroundColor: progressColor,
-                                    borderRadius: 4
-                                }
-                            }}
-                            />
                         </Box>
                         </TableCell>
                         <TableCell sx={{ textAlign: 'center'}}>
@@ -198,7 +179,22 @@ export const GrupoTablaEstudiantes: React.FC = () => {
                 })}
                 </TableBody>
             </Table>
-            </TableContainer>
+        </TableContainer>
+        <Box sx={{display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'space-between', mt: 2}}>
+            <Box sx={{display: 'flex', gap: 1, alignItems: 'center', cursor: 'pointer' }}>
+                <Typography variant='button' sx={{ color: StateColors.idleForeground }} >
+                    Ver todos los estudiantes
+                </Typography>
+                <KeyboardArrowRightOutlinedIcon sx={{ color: StateColors.idleForeground }} />
+            </Box>
+            
+            <Button
+                onClick={handlePromediar}
+                icon={<TuneOutlinedIcon />}
+                iconPosition="start"
+                variant='outlined'
+            >Promediar Grupo</Button>
+        </Box>
     </BoxContainer>
   );
 };

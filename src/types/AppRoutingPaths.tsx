@@ -4,16 +4,17 @@ export const AppRoutingPaths = {
     BLANK: "",
     CONSULTA: "/registros/consulta",
     ERROR: "/error",
+    EVALUACIONES: "/academia/evaluaciones",
     FOROS: "/academia/foros",
     GRUPOS: "/academia/grupos",
     HISTORIAL_CAMBIOS: "/registros/historial-cambios",
     HOME: "/home",
     LOGIN: "/login",
-    RAIZ: "/",
+    MI_PERFIL: '/perfil',
     NOTFOUND: '*',
+    RAIZ: "/",
     SESSION_EXPIRED: "/expired",
-    VIGENCIAS: "/academia/vigencias",
     VIGENCIAS_DETALLE: "/academia/vigencias/details/:id",
-    MI_PERFIL: '/perfil'
+    VIGENCIAS: "/academia/vigencias",
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

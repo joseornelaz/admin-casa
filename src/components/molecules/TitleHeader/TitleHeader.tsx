@@ -4,7 +4,7 @@ import { Typography } from "../../atoms/Typography/Typography";
 type TitleHeaderProps = {
     text: string;
     subTitle?: string;
-    fontSize?: "h1" | "h2" | "h3" | "h4";
+    fontSize?: "h1" | "h2" | "h3" | "h4" | "h5";
     icon?: React.ElementType;
 };
 

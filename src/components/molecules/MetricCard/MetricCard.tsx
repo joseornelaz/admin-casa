@@ -17,6 +17,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({ icon: Icon, title, value
 
     return (
         <BoxContainer
+            backgroundColor="light"
             sxProps={{
                 p: Paddings.l,
                 minHeight: '140px',

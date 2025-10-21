@@ -57,6 +57,10 @@ export const AppRouting = createHashRouter([
                                 path: AppRoutingPaths.HISTORIAL_CAMBIOS,
                                 Component: Component.HistorialCambios
                             },
+                            {
+                                path: AppRoutingPaths.EVALUACIONES,
+                                Component: Component.Evaluaciones
+                            },
                         ]
                     }
                 ]

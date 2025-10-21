@@ -32,10 +32,11 @@ export const MenuRoutes: Menu[] = [
     },
     { id: 3, text: TitleScreen.ACADEMIA, icon: Icons.Academia, path: '', order: 2, visible: 1, 
         children:[
-            { text: TitleScreen.ACTIVIDADES, path: AppRoutingPaths.ACTIVIDADES, visible: 1},
-            { text: TitleScreen.GRUPOS, path: AppRoutingPaths.GRUPOS, visible: 1},
+            // { text: TitleScreen.ACTIVIDADES, path: AppRoutingPaths.ACTIVIDADES, visible: 1},
+            // { text: TitleScreen.GRUPOS, path: AppRoutingPaths.GRUPOS, visible: 1},
+            { text: TitleScreen.EVALUACIONES, path: AppRoutingPaths.EVALUACIONES, visible: 1},
             { text: TitleScreen.VIGENCIAS, path: AppRoutingPaths.VIGENCIAS, visible: 1},
-            { text: TitleScreen.FOROS, path: AppRoutingPaths.FOROS, visible: 1},
+            // { text: TitleScreen.FOROS, path: AppRoutingPaths.FOROS, visible: 1},
         ], 
         menu: 'main' },
 ];
