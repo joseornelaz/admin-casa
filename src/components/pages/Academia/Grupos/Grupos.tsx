@@ -20,7 +20,7 @@ import Typography from "@mui/material/Typography";
 import { flexRows, Paddings } from "@styles";
 import { useTheme } from "@mui/material/styles";
 import StackedAvatars from "../../../molecules/StackedAvatars/StackedAvatars";
-import { Drawer, IconButton } from "@mui/material";
+import { Drawer, IconButton, Menu, MenuItem } from "@mui/material";
 import { GrupoEdit } from "./GrupoEdit";
 import { SegmentedControl } from "../../../molecules/SegmentedControl/SegmentedControl";
 
@@ -39,6 +39,11 @@ const InfoCardArray = [
 
 const Grupos: React.FC = () => {
     const theme = useTheme();
+
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const menuGroupOpen = Boolean(anchorEl);
+
+
     const [isEmptyState, setIsEmptyState] = React.useState<boolean>(true);
     // const [showDetails, setShowDetails] = React.useState<boolean>(true);
     const [counter, _setCounter] = React.useState<number>(0);
@@ -89,52 +94,96 @@ const Grupos: React.FC = () => {
         return(<ContextBreadcrumb list={list} />)
     }
 
+    const setOpenMenuGrupo = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const onCloseMenuGroup = () => {
+
+    }
+
+    const handleOpenDrawer = () => {
+        setAnchorEl(null);
+        setIsOpenDrawer(true);
+    }
+
     const GrupoCard = (item: any) => {
         return(
-            <BoxContainer 
-                key={item.idVigencia}
-                sxProps={{
-                    minHeight: '232px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px',
-                    backgroundColor: theme.palette.primary[50]
-                }}
-            >
-                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    { getTagContainer("VIGENCIA-0001", "default") }
-                    <IconButton>
-                        <MoreHorizOutlinedIcon onClick={() => setIsOpenDrawer(true)} />
-                    </IconButton>
-                </Box>
-                { getContextBreadcrumb('Logo', item) }
-                <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
-                    <Typography component="h5" variant="h5">
-                        Diseño de Interfaces I IDS COPPEL C2 - Sep 25
-                    </Typography>
-                    { getTagContainer("NORMAL", "normal") }
-                    { getTagContainer("ACTIVA", "activa") }
-                </Box>
-                { getContextBreadcrumb('User', item) }
-                <StackedAvatars 
-                    avatars={[
-                        'url-imagen-1.jpg',
-                        'url-imagen-2.jpg',
-                        'url-imagen-3.jpg',
-                        'url-imagen-4.jpg',
-                        'url-imagen-5.jpg'
-                    ]} 
-                    total={67}
-                    label="estudiantes"
-                    max={5}
-                />
-                <Box display="flex" gap={1} alignItems={'center'}>
-                    <CalendarMonthOutlinedIcon sx={{fontSize: '13px'}} />
-                    <Typography variant="overline" sx={{color: theme.palette.primary[600], textTransform: 'none'}}>
-                        Registrado el 1 de Septiembre del 2025
-                    </Typography>
-                </Box>
-            </BoxContainer>
+            <>
+                <BoxContainer 
+                    key={item.idVigencia}
+                    sxProps={{
+                        minHeight: '232px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        backgroundColor: theme.palette.primary[50]
+                    }}
+                >
+                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        { getTagContainer("VIGENCIA-0001", "default") }
+                        <IconButton onClick={(event) => setOpenMenuGrupo(event)}>
+                            <MoreHorizOutlinedIcon />
+                        </IconButton>
+                    </Box>
+                    { getContextBreadcrumb('Logo', item) }
+                    <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
+                        <Typography component="h5" variant="h5">
+                            Diseño de Interfaces I IDS COPPEL C2 - Sep 25
+                        </Typography>
+                        { getTagContainer("NORMAL", "normal") }
+                        { getTagContainer("ACTIVA", "activa") }
+                    </Box>
+                    { getContextBreadcrumb('User', item) }
+                    <StackedAvatars 
+                        avatars={[
+                            'url-imagen-1.jpg',
+                            'url-imagen-2.jpg',
+                            'url-imagen-3.jpg',
+                            'url-imagen-4.jpg',
+                            'url-imagen-5.jpg'
+                        ]} 
+                        total={67}
+                        label="estudiantes"
+                        max={5}
+                    />
+                    <Box display="flex" gap={1} alignItems={'center'}>
+                        <CalendarMonthOutlinedIcon sx={{fontSize: '13px'}} />
+                        <Typography variant="overline" sx={{color: theme.palette.primary[600], textTransform: 'none'}}>
+                            Registrado el 1 de Septiembre del 2025
+                        </Typography>
+                    </Box>
+                </BoxContainer>
+
+
+
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={menuGroupOpen}
+                    onClose={onCloseMenuGroup}
+                >
+                        
+                    <MenuItem 
+                        onClick={handleOpenDrawer}
+                    >
+                        Ver Grupo
+                    </MenuItem>
+                        
+                        
+                </Menu>
+
+            </>
+            
         )
     }
 

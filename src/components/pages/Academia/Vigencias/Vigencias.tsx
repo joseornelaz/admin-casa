@@ -44,6 +44,7 @@ const InfoCardArray = [
 const Vigencias: React.FC = () => {
     const theme = useTheme();
     const navigate = useNavigate();
+    
 
     const [isOpenRegistrar, setIsOpenRegistrar] = React.useState(false);
 
