@@ -11,9 +11,6 @@ import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurned
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import CommitOutlinedIcon from '@mui/icons-material/CommitOutlined';
 import { MetricCard, type MetricCardProps } from "../../../molecules/MetricCard/MetricCard";
 import { FormControl, Grid, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import { PageHeader } from "../../../molecules/PageHeader/PageHeader";
@@ -25,8 +22,9 @@ import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
 import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
 import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
 import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextBreadcrumb";
-import { flexColumn, flexRows } from "@styles";
+import { flexRows } from "@styles";
 import { Avatar } from "../../../atoms/Avatar/Avatar";
+import { ResponsableCard } from "./ResponsableCard";
 
 
 const MetricCardArray: MetricCardProps[] = [
@@ -58,37 +56,6 @@ const HistorialCambios: React.FC = () => {
         ];
 
         return(<ContextBreadcrumb list={list} />)
-    }
-
-    const cardResponsable = () => {
-        return(
-            <Box sx={{...flexRows, alignItems: 'center', justifyContent: 'space-between'}}>
-                <Box sx={{...flexColumn, alignItems: 'flex-start', justifyContent: 'flex-start'}}>
-                    <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
-                        <ArrowForwardOutlinedIcon />
-                        <Avatar width={24} height={24}></Avatar>
-                        <Typography component="h6" variant="h6">
-                            Rosa Armida Espinoza Angulo
-                        </Typography>
-                        <Typography component="span" variant="caption">
-                            (Hace 1 día)
-                        </Typography>
-                        <TagsContainer text="GESTION ESCOLAR" status="transparent" />                
-                    </Box>
-                    <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
-                        <CommitOutlinedIcon />
-                        <ContextBreadcrumb list={[
-                            {text: 'Validó documentos e inscribió alumno (5 Campos modificados)', type: 'iconText'},
-                            {text: '24 de Septiembre del 2025 10:03', type: 'iconText'},
-                            ]} 
-                        />
-                    </Box>
-                </Box>
-                <IconButton>
-                    <VisibilityOffOutlinedIcon />
-                </IconButton>
-            </Box>
-        );
     }
 
     return (
@@ -153,11 +120,10 @@ const HistorialCambios: React.FC = () => {
                 isExpanded={true}
                 sxProps={{ backgroundColor: theme.palette.primary[100] }}
             >
-                
                     <BoxContainer 
-                        backgroundColor="grey"
+                        sxProps={{ backgroundColor: theme.palette.primary[200], p: '16px 24px' }}
                     >
-                        <Box sx={{...flexRows, justifyContent: 'space-between', mb: 2}}>
+                        <Box sx={{...flexRows, justifyContent: 'space-between' }}>
                             <Box>
                                 { getTagContainer("REG-0001", "default") }
                                 { getContextBreadcrumb('') }
@@ -175,9 +141,8 @@ const HistorialCambios: React.FC = () => {
                                 <MoreHorizOutlinedIcon />
                             </IconButton>
                         </Box>
-                        {cardResponsable()}
                     </BoxContainer>
-                
+                    <ResponsableCard />
             </Accordion>
         </Box>
     );
