@@ -47,7 +47,7 @@ type ResponsableCardProps = {
     item?: any;
 }
 
-export const ResponsableCard: React.FC<ResponsableCardProps> = ({ item }) => {
+export const ResponsableCard: React.FC<ResponsableCardProps> = () => {
     const theme = useTheme();
     const [openCollapse, setOpenCollapse] = React.useState<boolean>(false);
 
@@ -102,7 +102,8 @@ export const ResponsableCard: React.FC<ResponsableCardProps> = ({ item }) => {
         >
             {
                 documents.map((doc, index) => (
-                    <Box sx={{
+                    <Box key={index}
+                        sx={{
                             ...flexColumn, 
                             alignItems: 'flex-start',
                             justifyContent: 'flex-start', 
