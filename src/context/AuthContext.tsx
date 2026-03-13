@@ -1,9 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { checkAuthStatus, cleanStorage, setToken } from '../hooks/useLocalStorage'; //setAuthModel, getAuthModel,
 // import { encryptData } from '../utils/crypto';
-import type { User } from '@constants';
+import { AppRoutingPaths, type User } from '@constants';
 import { useAuthLogin, useAuthNewPassword, useLogout } from '../services/AuthService';
+import { apiClient } from '../services/ApiConfiguration/httpClient';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 // useGetPerfilUsuario,
 
 interface AuthContextType {
@@ -23,6 +25,9 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const SESSION_EXPIRED_MODAL_KEY = 'sessionExpiredModalPending';
+const SESSION_EXPIRED_MESSAGE_KEY = 'sessionExpiredModalMessage';
+const SESSION_EXPIRED_DEFAULT_MESSAGE = 'Inicio de sesión expirado.';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,10 +38,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isLogout, setIsLogout] = useState(false);
+    const [showSessionExpiredModal, setShowSessionExpiredModal] = useState(() => localStorage.getItem(SESSION_EXPIRED_MODAL_KEY) === 'true');
+    const [sessionExpiredMessage, setSessionExpiredMessage] = useState(() => localStorage.getItem(SESSION_EXPIRED_MESSAGE_KEY) || SESSION_EXPIRED_DEFAULT_MESSAGE);
+    const unauthorizedHandledRef = useRef(false);
 
     // const { refetch } = useGetPerfilUsuario("Login", { enabled: false });
     
     const queryClient = useQueryClient();
+
+    const setSessionExpiredModalState = useCallback((message?: string) => {
+        const modalMessage = message || SESSION_EXPIRED_DEFAULT_MESSAGE;
+        localStorage.setItem(SESSION_EXPIRED_MODAL_KEY, 'true');
+        localStorage.setItem(SESSION_EXPIRED_MESSAGE_KEY, modalMessage);
+        setSessionExpiredMessage(modalMessage);
+        setShowSessionExpiredModal(true);
+    }, []);
+
+    const clearSessionExpiredModalState = useCallback(() => {
+        localStorage.removeItem(SESSION_EXPIRED_MODAL_KEY);
+        localStorage.removeItem(SESSION_EXPIRED_MESSAGE_KEY);
+        setSessionExpiredMessage(SESSION_EXPIRED_DEFAULT_MESSAGE);
+        setShowSessionExpiredModal(false);
+    }, []);
+
+    const handleUnauthorizedSession = useCallback((message?: string) => {
+        if (unauthorizedHandledRef.current) return;
+        unauthorizedHandledRef.current = true;
+
+        setSessionExpiredModalState(message);
+        cleanStorage();
+        setUser(null);
+        setIsLogout(true);
+        setIsAuthenticated(false);
+        setIsTokenExpired(true);
+        setIsLoading(false);
+        setError(message || SESSION_EXPIRED_DEFAULT_MESSAGE);
+
+        queryClient.clear();
+        window.location.hash = AppRoutingPaths.RAIZ;
+    }, [queryClient, setSessionExpiredModalState]);
 
     // Verificar autenticación al montar el componente
     useEffect(() => {
@@ -60,6 +100,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         checkAuth();
     }, []);
+
+    useEffect(() => {
+        if (localStorage.getItem(SESSION_EXPIRED_MODAL_KEY) !== 'true') return;
+
+        cleanStorage();
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsTokenExpired(true);
+        setIsLoading(false);
+        queryClient.clear();
+        window.location.hash = AppRoutingPaths.RAIZ;
+    }, [queryClient]);
+
+    useEffect(() => {
+        const unsubscribe = apiClient.subscribeUnauthorized((message) => {
+            handleUnauthorizedSession(message);
+        });
+
+        return () => {
+            unsubscribe();
+        };
+    }, [handleUnauthorizedSession]);
 
     const loginMutation = useMutation({
         mutationFn: useAuthLogin,
@@ -116,6 +178,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const handleLoginWithToken = async (token: string) => {
         try {
+            unauthorizedHandledRef.current = false;
+            clearSessionExpiredModalState();
             setToken(token);
             setIsAuthenticated(true);
             await procesarPerfil();
@@ -201,6 +265,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     const handleLogout = async () => {
+        unauthorizedHandledRef.current = false;
+        clearSessionExpiredModalState();
         setIsLogout(true);
         setIsAuthenticated(false);
         setIsTokenExpired(false);
@@ -212,6 +278,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const initValues = () => {
+        unauthorizedHandledRef.current = false;
+        clearSessionExpiredModalState();
         setUser(null);
         setIsLoading(true);
         setIsAuthenticated(false);
@@ -236,7 +304,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         newPassword: handleNewPassword,
     }
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    const handleSessionExpiredConfirm = () => {
+        clearSessionExpiredModalState();
+        setError(null);
+        window.location.hash = AppRoutingPaths.RAIZ;
+    };
+
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+            <Dialog open={showSessionExpiredModal} disableEscapeKeyDown onClose={() => {}}>
+                <DialogTitle>Inicio de sesión expirado</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{sessionExpiredMessage}</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" onClick={handleSessionExpiredConfirm} autoFocus>
+                        Aceptar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </AuthContext.Provider>
+    );
 }
 
 export const useAuth = (): AuthContextType => {

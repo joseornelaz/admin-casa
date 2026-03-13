@@ -6,8 +6,8 @@ export const ApiProvider = ({ children }: { children: React.ReactNode }) => {
   const { showNotification } = useNotification();
 
   useEffect(() => {
-    const unsubscribe = apiClient.subscribeUnauthorized(() => {
-      showNotification("Tu sesión ha expirado.", "error");
+    const unsubscribe = apiClient.subscribeUnauthorized((message) => {
+      showNotification(message || "Inicio de sesión expirado.", "error");
     });
 
     return () => {

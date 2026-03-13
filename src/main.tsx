@@ -11,6 +11,7 @@ import { RouterProvider } from 'react-router-dom';
 import theme from './themes/theme';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './providers/NotificationProvider';
+import { ApiProvider } from './providers/ApiProvider';
 
 
 createRoot(document.getElementById('root')!).render(
@@ -20,9 +21,11 @@ createRoot(document.getElementById('root')!).render(
         <CssBaseline />
         <AuthProvider>
           <NotificationProvider>
-            <StyledEngineProvider injectFirst>
-              <RouterProvider router={router} />
-            </StyledEngineProvider>
+            <ApiProvider>
+              <StyledEngineProvider injectFirst>
+                <RouterProvider router={router} />
+              </StyledEngineProvider>
+            </ApiProvider>
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>

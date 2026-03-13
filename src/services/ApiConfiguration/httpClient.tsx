@@ -9,7 +9,7 @@ const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
 class httpClient {
   private readonly instance: AxiosInstance;
 
-  private unauthorizedSubscribers: Array<() => void> = [];
+  private unauthorizedSubscribers: Array<(message?: string) => void> = [];
 
   constructor() {
     this.instance = axios.create({
@@ -41,10 +41,12 @@ class httpClient {
     // Interceptor de respuesta
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
-      (error) => {
-        if (error.response?.status === 401) {
-          console.warn("Token expirado. Notificando suscriptores...");
-          this.unauthorizedSubscribers.forEach((cb) => cb());
+      (error: AxiosError) => {
+        const unauthorizedErrorMessage = this.getUnauthorizedErrorMessage(error);
+
+        if (unauthorizedErrorMessage) {
+          console.warn("Token inválido o expirado. Notificando suscriptores...");
+          this.unauthorizedSubscribers.forEach((cb) => cb(unauthorizedErrorMessage));
         }else{
           if (error.response) {
             console.error('Error response:', error.response.status, error.response.data);
@@ -60,8 +62,53 @@ class httpClient {
     );
   }
 
+  private getUnauthorizedErrorMessage(error: AxiosError): string | null {
+    const status = error.response?.status;
+    const message = this.extractErrorMessage(error);
+
+    const normalizedMessage = this.normalizeText(message);
+    const hasInvalidTokenMessage = normalizedMessage.includes('token invalido o expirado');
+
+    const hasAuthHeader = this.hasAuthorizationHeader(error.config?.headers);
+    const isUnauthorizedStatusWithAuth = status === 401 && hasAuthHeader;
+
+    if (hasInvalidTokenMessage || isUnauthorizedStatusWithAuth) {
+      return message || 'Token inválido o expirado.';
+    }
+
+    return null;
+  }
+
+  private extractErrorMessage(error: AxiosError): string {
+    const data = error.response?.data;
+
+    if (typeof data === 'string') return data;
+
+    if (data && typeof data === 'object' && 'message' in data) {
+      const message = (data as { message?: unknown }).message;
+      return typeof message === 'string' ? message : '';
+    }
+
+    return '';
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  private hasAuthorizationHeader(headers?: AxiosRequestConfig['headers']): boolean {
+    if (!headers || typeof headers !== 'object') return false;
+
+    const normalizedHeaders = headers as Record<string, unknown>;
+
+    return Boolean(normalizedHeaders.Authorization || normalizedHeaders.authorization);
+  }
+
   // Método para registrar handlers
-  public subscribeUnauthorized(callback: () => void): () => void {
+  public subscribeUnauthorized(callback: (message?: string) => void): () => void {
     this.unauthorizedSubscribers.push(callback);
     // Retorna función para cancelar la suscripción
     return () => {
