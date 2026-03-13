@@ -22,11 +22,23 @@ export const GetGruposAsignados = (options?: { enabled?: boolean }) => {
 }
 
 export const GetForos = (payload: { grupo: number, foro: number, calificados: number}, options?: { enabled?: boolean }) => {
-    const calificados = payload.calificados === 0 ? 'null' : payload.calificados === 1 ? 'true' : 'false';
+    // 0: Todas -> null
+    // 1: Pendientes de calificar -> false
+    // 2: Calificados -> true
+    
+    let calificadosParam = 'null';
+    const val = Number(payload.calificados);
+
+    if (val === 1) {
+        calificadosParam = 'false';
+    } else if (val === 2) {
+        calificadosParam = 'true';
+    }
 
     return useQuery<ForosResponse, Error>({
-        queryKey: [FOROS_ADMIN.GET_FORO_CALIFICAR.key],
-        queryFn: () => apiClient.get<ForosResponse>(`${FOROS_ADMIN.GET_FORO_CALIFICAR.path}?id_grupo=${payload.grupo}&id_recurso=${payload.foro}&calificado=${calificados}`),
+        // Include parameters in queryKey to differentiate cache entries
+        queryKey: [FOROS_ADMIN.GET_FORO_CALIFICAR.key, payload.grupo, payload.foro, calificadosParam],
+        queryFn: () => apiClient.get<ForosResponse>(`${FOROS_ADMIN.GET_FORO_CALIFICAR.path}?id_grupo=${payload.grupo}&id_recurso=${payload.foro}&calificado=${calificadosParam}`),
         staleTime: 1000 * 60 * 10, // 10 minutos de stale time
         ...options
     });
@@ -80,4 +92,13 @@ export const DeleteMensaje = async (id_mensaje: number) => {
     const payload = {id_mensaje};
     const encryptedPayload = await apiClient.encryptData({ ...payload });
     return await apiClient.post(SALA_CONVERSACION.DELETE_MENSAJES.path, { data: encryptedPayload });
+};
+
+import type { CalificarForoPayload, CalificarForoResponse } from "../types/Foros.interface";
+
+export const CalificarForo = async (payload: CalificarForoPayload): Promise<CalificarForoResponse> => {
+    
+    
+    const encryptedPayload = await apiClient.encryptData({ ...payload });
+    return await apiClient.post<CalificarForoResponse>('/calificaciones/calificar', { data: encryptedPayload });
 };

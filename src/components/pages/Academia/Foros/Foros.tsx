@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select } from "@mui/material";
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { innerHTMLStyle } from "@styles";
 import { Controller, useForm } from "react-hook-form";
 import { ForoSchema, type ForoData } from "../../../../schemas/foroSchema";
@@ -9,6 +9,8 @@ import { DividerSection } from "../../../molecules/DividerSection/DividerSection
 import React, { useEffect } from "react";
 import { RespuestaAlumno } from "./RespuestaAlumno";
 import { GetForoGrupo, GetForos, GetGruposAsignados } from "../../../../services/ForosService";
+import { ModalSeleccionGrupos } from "./ModalSeleccionGrupos";
+import type { ListadoGrupoAlumnos } from "../../../../types/Foros.interface";
 // import { useMutation } from "@tanstack/react-query";
 import type { Foros } from "../../../../types/Foros.interface";
 import { LoadingCircular } from "../../../molecules/LoadingCircular/LoadingCircular";
@@ -24,11 +26,13 @@ const AdminForos: React.FC = () => {
     const [respuestas, setRespuestas] = React.useState<Foros[]>([]);
     const [loadingRespuestas, setLoadingRespuestas] = React.useState<boolean>(false);
 
-    const [gruposAsignadosList, setGruposAsignadosList] = React.useState([{ id_grupo: 0, nombre_grupo: "Seleccionar"}]);    
+    const [gruposAsignadosList, setGruposAsignadosList] = React.useState<ListadoGrupoAlumnos[]>([]);    
+    const [openModal, setOpenModal] = React.useState(false);
+    const [selectedGroupName, setSelectedGroupName] = React.useState('');
     const [foroGrupoList, setForoGrupoList] = React.useState([{ id_recurso: 0, titulo: "Seleccionar"}]);
     const limite = [{ id: 0, nombre: 'Todas'}, { id: 1, nombre: 'Pendientes de calificar'}, { id: 2, nombre: 'Calificados'}];
 
-    const { control, formState: { errors }, watch } = useForm<ForoData>({
+    const { control, formState: { errors }, watch, setValue } = useForm<ForoData>({
             resolver: zodResolver(
                 ForoSchema(
                     (gruposAsignadosList?.map((m) => m.id_grupo)) ?? [],
@@ -59,7 +63,7 @@ const AdminForos: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const response = await refetchGruposAsignados();
-            const data = gruposAsignadosList.concat(response.data?.data ?? []);
+            const data = response.data?.data?.grupos ?? [];
             setGruposAsignadosList(data);
         };
 
@@ -106,27 +110,19 @@ const AdminForos: React.FC = () => {
                         control={control}
                         render={({ field }) => (
                             <FormControl fullWidth error={!!errors.grupo_alumnos}>
-                                <InputLabel id="grupo-label">Grupos de alumnos asignados</InputLabel>
-                                <Select
-                                    disabled={isLoading}
-                                    labelId="grupo-label"
+                                <TextField
                                     label="Grupos de alumnos asignados"
-                                    {...field}
-                                    onChange={(event) => {
-                                        const value = event.target.value;
-                                        field.onChange(value);
-                                        setIsDisabledListadoForos(true);
-                                        handleForos();
+                                    value={selectedGroupName}
+                                    onClick={() => setOpenModal(true)}
+                                    disabled={isLoading}
+                                    InputProps={{
+                                        readOnly: true,
+                                        style: { cursor: 'pointer' }
                                     }}
-                                >
-                                    {
-                                    gruposAsignadosList && gruposAsignadosList.map((item) => (
-                                            <MenuItem key={item.id_grupo} value={item.id_grupo}>
-                                                {item.nombre_grupo}
-                                            </MenuItem>
-                                        ))
-                                    }
-                                </Select>
+                                    error={!!errors.grupo_alumnos}
+                                    inputRef={field.ref}
+                                />
+                                {/* Hidden input to maintain form state if needed, though Controller handles it */}
                             </FormControl>
                         )}
                     />
@@ -225,6 +221,17 @@ const AdminForos: React.FC = () => {
                     ))
                 }
             </Box>
+            <ModalSeleccionGrupos 
+                open={openModal} 
+                onClose={() => setOpenModal(false)} 
+                groups={gruposAsignadosList} 
+                onSelect={(group) => {
+                    setValue("grupo_alumnos", group.id_grupo, { shouldValidate: true });
+                    setSelectedGroupName(group.nombre_grupo);
+                    setOpenModal(false);
+                    setTimeout(() => handleForos(), 0);
+                }}
+            />
         </ContainerDesktop>
     )
 }

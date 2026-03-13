@@ -23,3 +23,13 @@ export const SALA_CONVERSACION = {
     DELETE_MENSAJES: { path: '/sala-conversacion/mensajes/eliminar', key: 'sala-conversacion-eliminar' },
     GET_TEMA_FORO_BY_ID: { path: '/sala-conversacion', key: 'tema-foro-by-id' },
 }
+
+export const ACTIVIDADES = {
+    GET_ACTIVIDADES_GRUPO: { path: '/actividades/grupo', key: 'actividades-grupo' },
+    GET_ACTIVIDAD_DETALLE: { path: '/calificaciones/actividades', key: 'actividades-detalle' },
+}
+
+export const CLASES = {
+    GET_CLASES_GRUPO: { path: '/clases', key: 'clases-grupo' },
+    CREATE_CLASE: { path: '/clases/nueva-clase', key: 'create-clase' },
+}

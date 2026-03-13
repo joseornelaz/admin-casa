@@ -29,12 +29,19 @@ export interface Foros {
 
 export interface ListadoGrupoAlumnosResponse {
     success: boolean;
-    data:    ListadoGrupoAlumnos[];
+    data: {
+        grupos: ListadoGrupoAlumnos[];
+    };
 }
 
 export interface ListadoGrupoAlumnos {
-    id_grupo:     number;
-    nombre_grupo: string;
+    id_grupo:       number;
+    id_curso:       number;
+    nombre_grupo:   string;
+    fecha_inicio:   string;
+    fecha_fin:      string;
+    estatus:        string;
+    estatus_codigo: number;
 }
 
 export interface RespuestasForoResponse {
@@ -52,4 +59,17 @@ export interface RespuestasForo {
     alumno:            string;
     mensaje:           string;
     fecha_envio:       Date;
+}
+
+export interface CalificarForoPayload {
+    id_recurso: number;
+    id_entrega: number | null;
+    id_mensaje: number;
+    calificacion: number;
+    retroalimentacion: string;
+}
+
+export interface CalificarForoResponse {
+    success: boolean;
+    message: string;
 }

@@ -21,7 +21,12 @@ import Grid from "@mui/material/Grid";
 // import MenuItem from "@mui/material/MenuItem";
 // import FormControl from "@mui/material/FormControl";
 // import InputLabel from "@mui/material/InputLabel";
-// import { useMutation } from "@tanstack/react-query";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
+// import InputLabel from "@mui/material/InputLabel";
+import { useMutation } from "@tanstack/react-query";
+import { CalificarForo } from "../../../../services/ForosService";
+import type { CalificarForoPayload } from "../../../../types/Foros.interface";
 
 export const RespuestaAlumno: React.FC<Foros> = (item) => {
     const theme = useTheme();
@@ -67,12 +72,23 @@ export const RespuestaAlumno: React.FC<Foros> = (item) => {
                 </Typography>
               </Box>
             </Box>
-            <Box
-                sx={{backgroundColor: '#AAB1B6', height: '28px', display: 'flex', alignItems: 'center', p: 1, gap: '3px', borderRadius: '4px'}}
-            >
-                <StarOutlineOutlinedIcon sx={{ color: '#FFFFFF' }} />
-                <Typography component="span" variant="body1" sxProps={{ color: '#FFFFFF'}}>Pendiente de calificar</Typography>
-            </Box>
+            {
+                (item.calificacion !== null && Number(item.calificacion) > 0) ? (
+                    <Box
+                        sx={{backgroundColor: '#2E7D32', height: '28px', display: 'flex', alignItems: 'center', p: 1, gap: '3px', borderRadius: '4px'}}
+                    >
+                        <StarOutlineOutlinedIcon sx={{ color: '#FFFFFF' }} />
+                        <Typography component="span" variant="body1" sxProps={{ color: '#FFFFFF'}}>Calificado</Typography>
+                    </Box>
+                ) : (
+                    <Box
+                        sx={{backgroundColor: '#AAB1B6', height: '28px', display: 'flex', alignItems: 'center', p: 1, gap: '3px', borderRadius: '4px'}}
+                    >
+                        <StarOutlineOutlinedIcon sx={{ color: '#FFFFFF' }} />
+                        <Typography component="span" variant="body1" sxProps={{ color: '#FFFFFF'}}>Pendiente de calificar</Typography>
+                    </Box>
+                )
+            }
         </Box>
     )
 
@@ -84,9 +100,36 @@ export const RespuestaAlumno: React.FC<Foros> = (item) => {
         setHover(newValue);
     };
 
+    // const queryClient = useQueryClient();
+
+    const calificarMutation = useMutation({
+        mutationFn: CalificarForo,
+        onSuccess: (response) => {
+            if (response.success) {
+                // Invalidate queries to refresh data
+                // Assuming we want to refresh messages or forums list
+                // queryClient.invalidateQueries([FOROS_ADMIN.GET_FORO_CALIFICAR.key]); 
+                // Or just force update local state if needed, but invalidation is better if we knew the keys clearly.
+                // For now, simple success log or alert as we don't have the notification hook visible.
+                console.log('Calificación registrada con éxito');
+                setReadonlyRating(true);
+            }
+        },
+        onError: (error) => {
+            console.error('Error al calificar:', error);
+        }
+    });
+
     const handleCalificar = () => {
-        // calificarMutation.mutate({ })
-        console.log(watch());
+        const payload: CalificarForoPayload = {
+            id_recurso: item.id_recurso,
+            id_entrega: item.id_entrega || null,
+            id_mensaje: item.id_mensaje,
+            calificacion: valueRating || 0,
+            retroalimentacion: watch('comentario') || ''
+        };
+        
+        calificarMutation.mutate(payload);
     }
 
     const handleCancelar = () => {
@@ -94,22 +137,6 @@ export const RespuestaAlumno: React.FC<Foros> = (item) => {
         setValueRating(0);
         setHover(-1);
     };
-
-    // const calificarMutation = useMutation({
-    //     mutationFn: registrarRetroalimentacion,
-    //     onSuccess: () => {
-    //         // showNotification(`Solicitud de Ayuda enviada satisfactorimente`,"success");
-    //         // reset();
-    //         // setLoading(false);
-    //     },
-    //     onError: (error) => {
-    //         // showNotification(`Error al registrar: ${error.message}`, "error");
-    //         // setLoading(false);
-    //     },
-    //     onSettled: () => {
-    //         console.log('La mutación ha finalizado');
-    //     }
-    // });
 
     return(
         <Accordion

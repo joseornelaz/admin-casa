@@ -39,5 +39,7 @@ export const MenuRoutes: Menu[] = [
             // { text: TitleScreen.FOROS, path: AppRoutingPaths.FOROS, visible: 1},
         ], 
         menu: 'main' },
-    { id: 4, text: TitleScreen.FOROS, icon: Icons.Academia, path: AppRoutingPaths.FOROS, order: 3, visible: 1, children: [], menu: 'main'}
+    { id: 4, text: TitleScreen.FOROS, icon: Icons.Academia, path: AppRoutingPaths.FOROS, order: 3, visible: 1, children: [], menu: 'main'},
+    { id: 6, text: TitleScreen.CLASES, icon: Icons.Academia, path: AppRoutingPaths.CLASES, order: 3, visible: 1, children: [], menu: 'main'},
+    { id: 5, text: TitleScreen.ACTIVIDADES, icon: Icons.Academia, path: AppRoutingPaths.ACTIVIDADES, order: 4, visible: 1, children: [], menu: 'main'}
 ];

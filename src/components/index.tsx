@@ -9,3 +9,4 @@ export { default as Home } from './pages/Home/Home';
 export { default as Login } from './pages/Authorization/Login/Login';
 export { default as Vigencias } from './pages/Academia/Vigencias/Vigencias';
 export { default as VigenciasDetalles } from './pages/Academia/Vigencias/VigenciasDetalles';
+export { default as Clases } from './pages/Academia/Clases/Clases';

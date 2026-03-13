@@ -38,6 +38,10 @@ export const AppRouting = createHashRouter([
                                 Component: Component.Foros
                             },
                             {
+                                path: AppRoutingPaths.CLASES,
+                                Component: Component.Clases
+                            },
+                            {
                                 path: AppRoutingPaths.VIGENCIAS,
                                 Component: Component.Vigencias
                             },

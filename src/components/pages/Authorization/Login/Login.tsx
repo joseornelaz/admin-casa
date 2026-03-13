@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -8,6 +8,7 @@ import {
   Paper,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 import { Visibility, VisibilityOff, Lock } from '@mui/icons-material';
 
@@ -20,10 +21,16 @@ import { useNotification } from '../../../../providers/NotificationProvider';
 import { AppRoutingPaths } from '@constants';
 
 const Login: React.FC = () => {
-    const { login, isLoading } = useAuth();
+    const { login, isLoading, isAuthenticated } = useAuth();
     const navigate = useNavigate();
     const { showNotification } = useNotification();
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate(AppRoutingPaths.HOME);
+        }
+    }, [isAuthenticated, navigate]);
 
     const { register, handleSubmit, formState: { errors }, } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
@@ -147,7 +154,7 @@ const Login: React.FC = () => {
               disabled={isLoading}
               onClick={handleSubmit(onSubmit)}
             >
-              Ingresar
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Ingresar"}
             </Button>
 
             <Box sx={{ textAlign: 'center' }}>

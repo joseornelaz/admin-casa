@@ -16,5 +16,6 @@ export const AppRoutingPaths = {
     SESSION_EXPIRED: "/expired",
     VIGENCIAS_DETALLE: "/academia/vigencias/details/:id",
     VIGENCIAS: "/academia/vigencias",
+    CLASES: "/academia/clases",
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

@@ -16,6 +16,7 @@ interface AuthContextType {
   isLogout: boolean;
   clearError: () => void;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string; cambiarPassword?: boolean; aceptoTerminos?: boolean }>;
+  loginWithToken: (token: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
   newPassword: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
@@ -112,6 +113,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return { success: false, message: errorMessage, cambiarPassword: false };
         }
     }
+
+    const handleLoginWithToken = async (token: string) => {
+        try {
+            setToken(token);
+            setIsAuthenticated(true);
+            await procesarPerfil();
+            queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error logging in with token:", error);
+            setIsLoading(false);
+        }
+    };
 
     const handleNewPassword = async(email: string, password: string) => {
         try {
@@ -215,6 +229,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isTokenExpired,
         isLogout,
         login: handleLogin,
+        loginWithToken: handleLoginWithToken,
         logout: handleLogout,
         clearError,
         setUser,
