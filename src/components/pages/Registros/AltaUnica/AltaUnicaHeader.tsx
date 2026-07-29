@@ -18,7 +18,7 @@ export const AltaUnicaHeader: React.FC<AltaUnicaHeaderProps> = ({ text, subText,
     
     return(
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-            <CircularProgress value={valueProgress} current={currentStep} total={3} />
+            <CircularProgress value={valueProgress} current={currentStep} total={3} type="step" />
             <Box sx={{...flexColumn, gap: '8px', alignItems: 'flex-start'}}>
             <Box sx={{...flexColumn, gap: '4px', alignItems: 'flex-start'}}>
                 <Typography variant="h3" color="primary">
