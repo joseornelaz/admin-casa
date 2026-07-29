@@ -156,6 +156,7 @@ export const Login: React.FC = () => {
             size="small"
             placeholder="nombre@institucion.edu.mx"
             disabled={isLoading}
+            value={"prueba@institucion.edu.mx"}
             sx={{
               mb: "3px",
               backgroundColor: "#FFFFFF",
@@ -204,6 +205,7 @@ export const Login: React.FC = () => {
             type={showPassword ? "text" : "password"}
             placeholder="••••••••"
             disabled={isLoading}
+            value={"prueba123"}
             slotProps={{
               input: {
                 endAdornment: (
