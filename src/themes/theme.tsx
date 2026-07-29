@@ -126,6 +126,12 @@ const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
+        contained: {
+          backgroundColor: '#B82338',
+          '&:hover': {
+            backgroundColor: '#A71D33', // Un tono más oscuro para el hover
+          },
+        },
         outlined: {
           backgroundColor: '#EFF0F6',
           borderColor: '#D3D9E4',
@@ -275,7 +281,7 @@ const theme = createTheme({
       sm: 600,
       md: 900,
       lg: 1200,
-      xl: 1536,
+      xl: 1560,
     },
   },
 });

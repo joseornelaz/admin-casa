@@ -2,11 +2,11 @@ name: Deploy to Main
 
 on:
   push:
-    branches: [ main ]
+    branches: [ admin_GRG ]
 
 jobs:
     build-and-deploy:
-        name: Deploy ${{ github.ref_name }} to main
+        name: Deploy ${{ github.ref_name }} to admin_GRG
         runs-on: ubuntu-latest
         permissions:
             contents: write

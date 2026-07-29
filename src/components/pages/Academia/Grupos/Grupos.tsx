@@ -8,59 +8,48 @@ import { TagsContainer } from "../../../molecules/TagsContainer/TagsContainer";
 import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextBreadcrumb";
 
 import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
-import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 
-import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
+import LogoGRG from '../../../../assets/grg-logos/grg-icon-red.png';
 import Typography from "@mui/material/Typography";
 import { flexRows, Paddings } from "@styles";
 import { useTheme } from "@mui/material/styles";
 import StackedAvatars from "../../../molecules/StackedAvatars/StackedAvatars";
-import { Drawer, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, Drawer } from "@mui/material";
 import { GrupoEdit } from "./GrupoEdit";
 import { SegmentedControl } from "../../../molecules/SegmentedControl/SegmentedControl";
-
-const InfoCardArray = [
-    {
-        estatus: 'NORMAL',
-        descripcion: 'Diseño de Interfaces I IDS COPPEL C2 - Sep 25',
-        fechaInicio: '1 de Septiembre del 2025',
-        fechaFin: '1 de Septiembre del 2025',
-        idVigencia: '650',
-        planEstudio: 'IDS Coppel',
-        materia: 'Diseño de Interfaces',
-        administrador: 'Cecilia Fornari'
-    },
-];
+import { RegistroGruposDialog } from "../../../molecules/Dialogs/RegistroGruposDialog/RegistroGruposDialog";
+import { GetGrupos } from "../../../../services/GruposService";
+import { LoadingCircular } from "../../../molecules/LoadingCircular/LoadingCircular";
+import { tipoGrupoOptions, type Grupo } from "../../../../types/Grupos.interface";
+import { formatFriendlyDate } from "../../../../utils/Helpers";
 
 const Grupos: React.FC = () => {
     const theme = useTheme();
-
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const menuGroupOpen = Boolean(anchorEl);
-
 
     const [isEmptyState, setIsEmptyState] = React.useState<boolean>(true);
     // const [showDetails, setShowDetails] = React.useState<boolean>(true);
     const [counter, _setCounter] = React.useState<number>(0);
     const [isOpenDrawer, setIsOpenDrawer] = React.useState<boolean>(false);
-
+    const [openRegistrarGrupo, setOpenRegistrarGrupo] = React.useState<boolean>(false);
     const [selected, setSelected] = React.useState('Activas');
     
+    const { data: gruposData, isLoading: isGruposLoading } = GetGrupos();
+
+    const tipoGrupo = tipoGrupoOptions;
+
     const handleChange = (value: string) => {
         setSelected(value);
         console.log('Opción seleccionada:', value);
     };
 
     const handleAction = () => {
-        setIsEmptyState(false);
+        //setIsEmptyState(false);
+        setOpenRegistrarGrupo(true);
     }
-
-
 
     const pageHeader = () => {
 
@@ -77,43 +66,50 @@ const Grupos: React.FC = () => {
     }
 
     const getTagContainer = (text: string, status: any) => <TagsContainer text={text} status={status} />;
-    const getContextBreadcrumb = (section: 'Logo' | 'User', _item: any) => {
-        let list: any[];
-        if(section === 'Logo'){
-            list = [
-                { text: '', icon: LogoCoppel, type: 'logo' },
-                { text: 'Prepa Coppel', icon: ImportContactsOutlinedIcon, type: 'iconText' },
-                { text: 'Coppel 2022', icon: SchemaOutlinedIcon, type: 'iconText' },
+    const getContextBreadcrumb = (item: Grupo) => {
+        
+        const list: any[] = [
+                { text: '', icon: LogoGRG, type: 'logo' },
+                { text: 'GRG', icon: ImportContactsOutlinedIcon, type: 'iconText' },
+                { text: item.nombreTutor, icon: ManageAccountsOutlinedIcon, type: 'iconText' },
+                { text: `Registrado el ${formatFriendlyDate(item.fechaRegistro)}`, icon: CalendarMonthOutlinedIcon, type: 'iconText' },
             ];
-        }else {
-            list = [
-                { text: 'Cecilia Fornari', icon: ManageAccountsOutlinedIcon, type: 'iconText' },
-            ];
-        }
 
         return(<ContextBreadcrumb list={list} />)
     }
 
-    const setOpenMenuGrupo = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const onCloseMenuGroup = () => {
-
-    }
-
     const handleOpenDrawer = () => {
-        setAnchorEl(null);
         setIsOpenDrawer(true);
     }
 
-    const GrupoCard = (item: any) => {
+    const handleCloseDialog = (isSaved: boolean) => {
+        setOpenRegistrarGrupo(false);
+        if(isSaved){
+            // Aquí puedes realizar acciones adicionales si se guardó el grupo
+            setIsEmptyState(false);
+        }
+    }
+
+    const parseTipoGrupo = (tipoGrupoId: number) => {
+        const tipo = tipoGrupo.find((tipo) => tipo.id === tipoGrupoId);
+        return tipo ? tipo.label : 'n/a';
+    };
+
+    const parseEstatusGrupo = (estatus: number) => {        
+        if(estatus === 0){
+            return getTagContainer("INACTIVO", "inactivo");
+        }else{
+            return getTagContainer("ACTIVO", "activa");
+        }
+    }
+
+    const GrupoCard = (item: Grupo) => {
         return(
             <>
                 <BoxContainer 
-                    key={item.idVigencia}
+                    key={item.id}
                     sxProps={{
-                        minHeight: '232px',
+                        minHeight: '180px',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '16px',
@@ -121,94 +117,85 @@ const Grupos: React.FC = () => {
                     }}
                 >
                     <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        { getTagContainer("VIGENCIA-0001", "default") }
-                        <IconButton onClick={(event) => setOpenMenuGrupo(event)}>
-                            <MoreHorizOutlinedIcon />
-                        </IconButton>
+                        { getTagContainer(`GRUPO - ${item.id}`, "default") }
+                        <Box sx={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                            { getTagContainer(parseTipoGrupo(item.tipoGrupo), "default") }
+                            { parseEstatusGrupo(item.estatus) }
+                        </Box>
                     </Box>
-                    { getContextBreadcrumb('Logo', item) }
                     <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
                         <Typography component="h5" variant="h5">
-                            Diseño de Interfaces I IDS COPPEL C2 - Sep 25
+                            {item.nombre}
                         </Typography>
-                        { getTagContainer("NORMAL", "normal") }
-                        { getTagContainer("ACTIVA", "activa") }
                     </Box>
-                    { getContextBreadcrumb('User', item) }
-                    <StackedAvatars 
-                        avatars={[
-                            'url-imagen-1.jpg',
-                            'url-imagen-2.jpg',
-                            'url-imagen-3.jpg',
-                            'url-imagen-4.jpg',
-                            'url-imagen-5.jpg'
-                        ]} 
-                        total={67}
-                        label="estudiantes"
-                        max={5}
-                    />
-                    <Box display="flex" gap={1} alignItems={'center'}>
-                        <CalendarMonthOutlinedIcon sx={{fontSize: '13px'}} />
-                        <Typography variant="overline" sx={{color: theme.palette.primary[600], textTransform: 'none'}}>
-                            Registrado el 1 de Septiembre del 2025
-                        </Typography>
+                    
+                    { getContextBreadcrumb(item) }
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <StackedAvatars 
+                            avatars={[
+                                'url-imagen-1.jpg',
+                                'url-imagen-2.jpg',
+                                'url-imagen-3.jpg',
+                                'url-imagen-4.jpg',
+                                'url-imagen-5.jpg'
+                            ]} 
+                            total={item.totalAlumnos}
+                            label="estudiantes"
+                            max={5}
+                        />
+                        <Button 
+                            variant="outlined"
+                            onClick={() => handleOpenDrawer()}
+                        >
+                            Ver detalles
+                        </Button>
                     </Box>
                 </BoxContainer>
-
-
-
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    open={menuGroupOpen}
-                    onClose={onCloseMenuGroup}
-                >
-                        
-                    <MenuItem 
-                        onClick={handleOpenDrawer}
-                    >
-                        Ver Grupo
-                    </MenuItem>
-                        
-                        
-                </Menu>
-
             </>
-            
         )
     }
 
+    if(isGruposLoading){
+        return(
+            <LoadingCircular />
+        );
+    }else if(gruposData && gruposData.length > 0 && isEmptyState){
+        setIsEmptyState(false);
+    }
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <BoxContainer
-                backgroundColor="grey"
                 sxProps={{
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: `${InfoCardArray.length > 0 ? 'initial' : 'space-between'}`,
+                    justifyContent: `${isEmptyState ? 'center' : gruposData.length > 0 ? 'initial' : 'space-between'}`,
                     minHeight: '532px',
                     gap: '16px',
                 }}
             >
-                { pageHeader() }
-
-                <SegmentedControl
-                    options={['Coppel','Normal', 'Activas', 'Habilitadas']}
-                    value={selected}
-                    onChange={handleChange}
-                />
-                {
+                { 
                     !isEmptyState 
+                    ? 
+                    <>
+                        { pageHeader() }
+                        <SegmentedControl
+                            options={['Normal', 'Activas', 'Habilitadas']}
+                            value={selected}
+                            onChange={handleChange}
+                        />
+                    </>
+                    : null
+                }
+                
+                {
+                    isEmptyState 
                     ?
                         <EmptyState 
                             title="No existen grupos para esta materia/ruta de estudios." 
@@ -219,7 +206,7 @@ const Grupos: React.FC = () => {
                     :
                     <>
                         {
-                            InfoCardArray.map((item) => GrupoCard(item))
+                            gruposData.map((item: Grupo) => GrupoCard(item))
                         }
                     </>
                 }
@@ -237,8 +224,8 @@ const Grupos: React.FC = () => {
                 // onClose={toggleDrawer(anchor, false)}
             >
                 <GrupoEdit closeDrawer={() => setIsOpenDrawer(false)} />
-                
             </Drawer>
+            <RegistroGruposDialog isOpen={openRegistrarGrupo} close={handleCloseDialog} />
         </Box>
     );
 }

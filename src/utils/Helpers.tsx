@@ -127,3 +127,66 @@ export const GetFileType = (fileName: string): FileTypeResult => {
     color: 'info',
   };
 };
+
+/**
+ * Transforma una fecha en formato ISO (YYYY-MM-DD) a formato amigable (D Mmm YYYY).
+ * Ejemplo: "2025-09-01" -> "1 Sep 2025"
+ * "2025-10-30" -> "30 Oct 2025"
+ * * @param dateString Fecha en formato "YYYY-MM-DD"
+ * @returns Fecha formateada como "D Mmm YYYY" o un string vacío si la entrada es inválida.
+ */
+
+type FriendlyDateFormat = 'full' | 'short';
+
+export const formatFriendlyDate = (
+  dateString: string, 
+  format: FriendlyDateFormat = 'full'
+): string => {
+  if (!dateString) return '';
+
+  // Evitamos el desfase de zona horaria forzando la hora local local
+  const date = new Date(`${dateString}T00:00:00`);
+
+  if (isNaN(date.getTime())) {
+    return '';
+  }
+
+  // Formateamos el mes abreviado (ej: "sep.", "oct.")
+  const monthFormatter = new Intl.DateTimeFormat('es-ES', { month: 'short' });
+  const month = monthFormatter.format(date).replace('.', '');
+  const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+
+  // Retornamos según el formato solicitado
+  if (format === 'short') {
+    // Obtenemos los últimos 2 dígitos del año (ej: 2025 -> "25")
+    const shortYear = date.getFullYear().toString().slice(-2);
+    return `${capitalizedMonth} ${shortYear}`;
+  }
+
+  // Formato 'full' (por defecto)
+  const day = date.getDate();
+  const year = date.getFullYear();
+  return `${day} ${capitalizedMonth} ${year}`;
+};
+
+const VALID_STATUSES: Set<string> = new Set([
+  "normal",
+  "transparent",
+  "default",
+  "prueba",
+  "activa",
+  "inactivo",
+]);
+
+export const parseStatus = (valor?: string): any => {
+    if (!valor) return "default"; // Valor por defecto
+    
+    const normalized = valor.trim().toLowerCase();
+    
+    // Validamos que realmente pertenezca a los tipos permitidos
+    if (VALID_STATUSES.has(normalized)) {
+        return normalized as any;
+    }
+    
+    return "default";
+};

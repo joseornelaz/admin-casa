@@ -11,9 +11,10 @@ type ContextBreadcrumbProps = {
     }>;
     fontSize?: string;
     separator?: string | React.ReactNode;
+    imageSize?: string;
 }
 
-export const ContextBreadcrumb: React.FC<ContextBreadcrumbProps> = ({ list, fontSize='16px', separator='|' }) => {
+export const ContextBreadcrumb: React.FC<ContextBreadcrumbProps> = ({ list, fontSize='16px', separator='|', imageSize='16px' }) => {
     const theme = useTheme();
 
     return(
@@ -26,7 +27,7 @@ export const ContextBreadcrumb: React.FC<ContextBreadcrumbProps> = ({ list, font
                 {
                     list.map((item, index) => {
                         if(item.type === 'logo'){
-                            return <img src={item.icon} key={index} />;
+                            return <img src={item.icon} key={index} width={imageSize} />;
                         }else{
                             return <IconText text={item.text} Icon={item.icon} key={index} />;
                         }

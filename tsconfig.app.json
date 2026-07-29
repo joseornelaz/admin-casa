@@ -30,7 +30,8 @@
       "@constants": ["./src/types/index.tsx"],
       "@components": ["./src/components/index.tsx"],
       "@iconsCustomizeds": ["./src/assets/IconsCustomize/index.tsx"],
-      "@styles":["./src/styles/styles.tsx"]
+      "@styles":["./src/styles/styles.tsx"],
+      "@assets/*": ["./src/assets/*"]
     }
   },
   "include": ["src"]

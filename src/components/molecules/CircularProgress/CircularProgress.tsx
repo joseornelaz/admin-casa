@@ -11,6 +11,7 @@ type CircularProgressProps = {
   thickness?: number;
   progressColor?: string;
   backgroundColor?: string;
+  type: 'progress' | 'step'; // Tipo de indicador: 'progress' para barra de progreso, 'step' para pasos
 };
 
 export const CircularProgress: React.FC<CircularProgressProps> = ({
@@ -20,7 +21,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   size = 50,
   thickness = 4,
   progressColor = StateColors.enabledForeground,
-  backgroundColor = '#e8eaf6'
+  backgroundColor = '#e8eaf6',
+  type = 'step'
 }) => {
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
@@ -66,10 +68,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           sx={{ 
             color: '#30394A',
             fontWeight: 700,
-            fontSize: `14px` // Tamaño relativo al círculo
+            fontSize: `12px` // Tamaño relativo al círculo
           }}
         >
-          {current}/{total}
+          {
+            type === 'progress' ? `${value}%` : `${current}/${total}`
+          }
+          
         </Typography>
       </Box>
     </Box>

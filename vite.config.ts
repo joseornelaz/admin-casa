@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
         '@components': path.resolve(__dirname,'./src/components/index.tsx'),
         '@iconsCustomizeds': path.resolve(__dirname, './src/assets/IconsCustomize'),
         '@styles': path.resolve(__dirname, './src/styles/styles.tsx'),
+        '@assets': path.resolve(__dirname, './src/assets')
       },
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
     },

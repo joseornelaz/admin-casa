@@ -15,10 +15,13 @@ import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextB
 import { ButtonFileUpload } from "../../../molecules/ButtonFileUpload/ButtonFileUpload";
 // import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import Button from "../../../atoms/Button/Button";
+import { RegistrarClaseDialog } from "../../../molecules/Dialogs/RegistrarClaseDialog/RegistrarClaseDialog";
+import React from "react";
 
 
 export const GrupoTutorias: React.FC = () => {
     const theme = useTheme();
+    const [openDialog, setOpenDialog] = React.useState<boolean>(false);
     const getTagContainer = (text: string, status: any) => <TagsContainer text={text} status={status} />;
     const getContextBreadcrumb = (_item: any) => {
         const list: any[] = [
@@ -144,15 +147,14 @@ export const GrupoTutorias: React.FC = () => {
                 }
             </BoxContainer>
             <Box display={'flex'} justifyContent={'flex-end'}>
-                    <Button
-                        variant="outlined"
-                        icon={<AddOutlinedIcon />}
-                        iconPosition="start"
-                        onClick={() => {}}
-                    >Nueva tutoría</Button>
-                </Box>
+                <Button
+                    variant="outlined"
+                    icon={<AddOutlinedIcon />}
+                    iconPosition="start"
+                    onClick={() => setOpenDialog(true)}
+                >Nueva clase</Button>
+            </Box>
+            <RegistrarClaseDialog isOpen={openDialog} close={() => setOpenDialog(false)} />
         </Box>
-            
-        
     )
 }

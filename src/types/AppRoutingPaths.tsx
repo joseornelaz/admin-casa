@@ -1,13 +1,13 @@
 export const AppRoutingPaths = {    
     ACTIVIDADES: "/academia/actividades",
-    ALTA_UNICA: "/registros/alta-unica",
+    ALTA_UNICA: "/alumnos/alta-unica",
     BLANK: "",
-    CONSULTA: "/registros/consulta",
+    CONSULTA: "/alumnos/consulta",
     ERROR: "/error",
     EVALUACIONES: "/academia/evaluaciones",
     FOROS: "/academia/foros",
     GRUPOS: "/academia/grupos",
-    HISTORIAL_CAMBIOS: "/registros/historial-cambios",
+    HISTORIAL_CAMBIOS: "/alumnos/historial-cambios",
     HOME: "/home",
     LOGIN: "/login",
     MI_PERFIL: '/perfil',
@@ -16,5 +16,8 @@ export const AppRoutingPaths = {
     SESSION_EXPIRED: "/expired",
     VIGENCIAS_DETALLE: "/academia/vigencias/details/:id",
     VIGENCIAS: "/academia/vigencias",
+    PERIODOS: "/academia/periodos",
+    CURSOS: "/academia/cursos",
+    REPORTES: "/academia/reportes",
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

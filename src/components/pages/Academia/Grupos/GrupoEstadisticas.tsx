@@ -8,8 +8,9 @@ import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurned
 
 const MetricCardArray: MetricCardProps[] = [
     { title: 'Estudiantes activos', icon: ShowChartOutlinedIcon, value: 3, subtitle: 'Inscritos en esta materia' },
-    { title: 'Pendientes', icon: ManageAccountsOutlinedIcon, value: 345, subtitle: 'Por calificar' },
-    { title: 'Progreso', icon: AssignmentTurnedInOutlinedIcon, value: 8.6, subtitle: 'Avance total' },
+    { title: 'Promedio', icon: AssignmentTurnedInOutlinedIcon, value: 8.6, subtitle: 'Avance total' },
+    { title: 'Avance Grupal', icon: ManageAccountsOutlinedIcon, value: '72%', subtitle: 'Por calificar' },
+    { title: 'Completados', icon: ManageAccountsOutlinedIcon, value: 345, subtitle: 'Por calificar' },
 ];
 
 export const GrupoEstadisticas: React.FC = () => {

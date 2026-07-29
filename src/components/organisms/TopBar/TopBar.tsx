@@ -44,7 +44,7 @@ export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
             sx={{ backgroundColor: 'transparent', boxShadow: 'none', borderBottom: '1px solid #D3D9E4', p: 0 }}
         >
             <Container maxWidth="xl">
-                <Toolbar disableGutters>
+                <Toolbar disableGutters >
                     <Box sx={{ flexGrow: 1 }}>
                         <Stack spacing={2}>
                             <Breadcrumbs 
@@ -68,7 +68,7 @@ export const TopBar: React.FC<TopBarProps> = ({ path, isHome }) => {
                             </Breadcrumbs>
                         </Stack>
                     </Box>
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, m:0 }}>
                         <IconButton>
                             <Avatar alt={ name } src={avatar} width={48} height={48} onClick={(event) => handleMenuClick(event)} />
                         </IconButton>

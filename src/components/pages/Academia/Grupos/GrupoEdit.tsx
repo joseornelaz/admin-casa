@@ -40,8 +40,8 @@ const AccordionsArray = [
         content: <GrupoTablaEstudiantes />
     },
     {
-        text: "Tutorias",
-        subTitle: "Detalle de tutorías activas para este grupo.",
+        text: "Clases",
+        subTitle: "Detalle de clases activas para este grupo.",
         icon: VideoCameraFrontOutlinedIcon,
         content: <GrupoTutorias />
     }

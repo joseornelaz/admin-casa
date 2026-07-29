@@ -61,6 +61,18 @@ export const AppRouting = createHashRouter([
                                 path: AppRoutingPaths.EVALUACIONES,
                                 Component: Component.Evaluaciones
                             },
+                            {
+                                path: AppRoutingPaths.PERIODOS,
+                                Component: Component.PeriodoInscripcion
+                            },
+                            {
+                                path: AppRoutingPaths.CURSOS,
+                                Component: Component.Cursos
+                            },
+                            {
+                                path: AppRoutingPaths.REPORTES,
+                                Component: Component.Reportes
+                            },
                         ]
                     }
                 ]

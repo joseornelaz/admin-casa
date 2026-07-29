@@ -23,3 +23,14 @@ export const SALA_CONVERSACION = {
     DELETE_MENSAJES: { path: '/sala-conversacion/mensajes/eliminar', key: 'sala-conversacion-eliminar' },
     GET_TEMA_FORO_BY_ID: { path: '/sala-conversacion', key: 'tema-foro-by-id' },
 }
+
+export const PERIODOS_INSCRIPCION = {
+    GET_PERIODOS_INSCRIPCION: { path: '/periodos-inscripcion', key: 'periodos-inscripcion' },
+    POST_REGISTRAR_PERIODO: { path: '/periodos-inscripcion/registrar', key: 'registrar-periodo' },
+    PUT_ACTUALIZAR_PERIODO: { path: '/periodos-inscripcion/actualizar', key: 'actualizar-periodo' },
+    DELETE_ELIMINAR_PERIODO: { path: '/periodos-inscripcion/eliminar', key: 'eliminar-periodo' },
+}
+
+export const MATERIAS = {
+    GET_MATERIAS: { path: '/materias', key: 'materias' },
+}

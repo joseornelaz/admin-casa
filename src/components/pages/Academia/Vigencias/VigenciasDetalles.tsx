@@ -6,13 +6,10 @@ import { ContextBreadcrumb } from "../../../molecules/ContextBreadcrumb/ContextB
 import Typography from "@mui/material/Typography";
 import { flexColumn, flexRows } from "@styles";
 
-import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
-import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 
 import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import LogoCoppel from '../../../../assets/Img/logo_coppel.png';
 import { useTheme } from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
 import { IconText } from "../../../molecules/IconText/IconText";
@@ -21,6 +18,7 @@ import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined';
 import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
 import { Grupos } from "@components";
+import { ContextBreadcrumbLogo } from "../../../molecules/ContextBreadcrumbLogo/ContextBreadcrumbLogo";
 
 const MetricCardArray: MetricCardProps[] = [
     { title: 'Grupos activos', icon: ShowChartOutlinedIcon, value: 3, subtitle: 'En los últimos 2 meses' },
@@ -42,21 +40,12 @@ const VigenciasDetalles: React.FC = () => {
     };
 
     const getTagContainer = (text: string, status: any) => <TagsContainer text={text} status={status} />;
-    const getContextBreadcrumb = (section: 'Logo' | 'User', _item: any) => {
-        let list: any[];
-        if(section === 'Logo'){
-            list = [
-                { text: '', icon: LogoCoppel, type: 'logo' },
-                { text: 'Prepa Coppel', icon: ImportContactsOutlinedIcon, type: 'iconText' },
-                { text: 'Coppel 2022', icon: SchemaOutlinedIcon, type: 'iconText' },
-            ];
-        }else {
-            list = [
-                { text: 'Cecilia Fornari', icon: ManageAccountsOutlinedIcon, type: 'iconText' },
-                { text: '3 Grupos asignados', icon: DynamicFeedOutlinedIcon, type: 'iconText' },
-                { text: 'Fecha de creación el 26 de Septiembre del 2025', icon: CalendarMonthOutlinedIcon, type: 'iconText' },
-            ];
-        }
+    const getContextBreadcrumb = (_item: any) => {
+        const list: any[] = [
+            { text: 'Cecilia Fornari', icon: ManageAccountsOutlinedIcon, type: 'iconText' },
+            { text: '3 Grupos asignados', icon: DynamicFeedOutlinedIcon, type: 'iconText' },
+            { text: 'Fecha de creación el 26 de Septiembre del 2025', icon: CalendarMonthOutlinedIcon, type: 'iconText' },
+        ];
 
         return(<ContextBreadcrumb list={list} />)
     }
@@ -83,7 +72,6 @@ const VigenciasDetalles: React.FC = () => {
         return(
             <BoxContainer 
                 key={item.idVigencia}
-                backgroundColor="grey"
             >
                 <BoxContainer 
                     sxProps={{
@@ -94,17 +82,21 @@ const VigenciasDetalles: React.FC = () => {
                         backgroundColor: theme.palette.primary[50]
                     }}
                 >
-                    { getTagContainer("VIGENCIA-0001", "default") }
-                    { getContextBreadcrumb('Logo', item) }
+                    <Box sx={{...flexRows, justifyContent: 'space-between', alignItems: 'center'}}>
+                        { getTagContainer("VIGENCIA-0001", "default") }
+                        <Box sx={{display: 'flex', gap: '16px'}}>
+                            <TagsContainer text="NORMAL" status="normal" />
+                            <TagsContainer text="ACTIVA" status="activa" />
+                        </Box>
+                    </Box>
                     <Box sx={{...flexRows, justifyContent: 'flex-start', gap: '10px'}}>
                         <Typography component="h5" variant="h5">
                             Diseño de Interfaces I IDS COPPEL C2 - Sep 25
                         </Typography>
-                        <TagsContainer text="NORMAL" status="normal" />
-                        <TagsContainer text="ACTIVA" status="activa" />
                     </Box>
-                    { getContextBreadcrumb('User', item) }
-                    <BoxContainer backgroundColor="grey">
+                    <ContextBreadcrumbLogo />
+                    { getContextBreadcrumb(item) }
+                    <BoxContainer backgroundColor="blank">
                         <Grid container spacing={2}>
                             {VigenciaColumn("Fecha inicio de Asesor","1 de Septiembre del 2025")}
                             {VigenciaColumn("Fecha limite de carga","1 de Septiembre del 2025")}
@@ -123,7 +115,7 @@ const VigenciasDetalles: React.FC = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <TitleHeader text="Detalles de la Vigencia" subTitle="Monitorea y gestiona fechas importantes, grupos y alumnos" />
             { VigenciaCard(itemDetalle) }
-            <BoxContainer backgroundColor="grey">
+            <BoxContainer>
                 <TitleHeader 
                     icon={PeopleAltOutlinedIcon}
                     text="Estado de la Vigencia" 

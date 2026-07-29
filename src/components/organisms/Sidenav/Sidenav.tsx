@@ -19,6 +19,7 @@ import DsSvgIcon from '../../atoms/Icon/Icon';
 import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material';
 import { TopBar } from '../TopBar/TopBar';
+import LogoGRG from '@assets/grg-logos/grg-logo-white.png';
 
 const drawerWidth = 280;
 
@@ -38,13 +39,13 @@ const Sidenav: React.FC = () => {
     const menuWithIndices = React.useMemo(() => {
         let globalIndex = 0;
         return menuRoutes.filter((item) => item.visible === 1).map((item) => {
-            const hasChildren = item.children.length > 0;
+            const hasChildren = item.children.filter((item) => item.visible === 1).length > 0;
             
             if (hasChildren) {
                 return {
                     ...item,
                     index: undefined,
-                    children: item.children.map((child) => ({
+                    children: item.children.filter((item) => item.visible === 1).map((child) => ({
                         ...child,
                         index: globalIndex++
                     }))
@@ -98,8 +99,10 @@ const Sidenav: React.FC = () => {
     }
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#EFF0F6' }}>
+    <Box sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'rgb(15, 17, 21)' }}>
       <CssBaseline />
+      
+      {/* DRAWER LATERAL (FIJO) */}
       <Drawer
         sx={{
             width: drawerWidth,
@@ -108,21 +111,22 @@ const Sidenav: React.FC = () => {
                 width: drawerWidth,
                 boxSizing: 'border-box',
                 position: 'relative',
-                minHeight: '100%',
+                height: '100vh',
                 border: 'none',
-                backgroundColor: '#EFF0F6',
+                backgroundColor: 'rgb(15, 17, 21)',
                 boxShadow: 'none',
-                overflow: 'hidden'
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                color: '#FFF',
             },
         }}
         variant="permanent"
         anchor="left"
       >
-        <Toolbar sx={{pt: 2, pb: 2 }}>
-            <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                <Typography variant='h4' sx={{ color: theme.palette.primary[600] }}>Academia Global</Typography>
-                <Typography variant='h3' sx={{ color: theme.palette.primary[700] }}>C A S A</Typography>
-            </Box>            
+        <Toolbar sx={{ pt: 4, pb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                <Box component="img" src={LogoGRG} alt="Logo GRG" />
+            </Box>
         </Toolbar>
         
         <List>
@@ -140,7 +144,9 @@ const Sidenav: React.FC = () => {
                                     borderRadius: '4px', 
                                     ml: '5px', 
                                     backgroundColor: selectedIndex === item.index ? '#F6F7F9' : 'transparent',
-                                    borderLeft: selectedIndex === item.index ? '3px solid #30394A' : '3px solid transparent', 
+                                                borderLeft: selectedIndex === item.index ? `3px solid #B82338` : '3px solid transparent', 
+                                    display: 'flex',
+                                    height: '50px',
                                 }}
                             >
                                 <ListItemButton
@@ -148,9 +154,15 @@ const Sidenav: React.FC = () => {
                                     sx={{ borderRadius: '8px', gap: '8px' }}
                                 >
                                     <ListItemIcon sx={{ minWidth: '0px'}}>
-                                        <DsSvgIcon component={item.icon}  />
+                                        {item.icon && <DsSvgIcon component={item.icon} color={selectedIndex !== item.index ? 'white' : 'primary' } />}
                                     </ListItemIcon>
-                                    <Typography variant='body2' sx={{ color: theme.palette.primary[600]}}>{item.text}</Typography>
+                                    <Typography 
+                                        variant='body1'
+                                        sx={{ 
+                                            color: selectedIndex === item.index ? '#000' : '#FFF',
+                                            fontWeight: 'bold'
+                                        }}
+                                    >{item.text}</Typography>
                                 </ListItemButton>
                             </Box>
                             {hasChildren && (isOpen ? <ExpandLess /> : <ExpandMore />)}
@@ -165,7 +177,9 @@ const Sidenav: React.FC = () => {
                                                 borderRadius: '4px', 
                                                 ml: '5px', 
                                                 backgroundColor: selectedIndex === child.index ? '#F6F7F9' : 'transparent',
-                                                borderLeft: selectedIndex === child.index ? '3px solid #30394A' : '3px solid transparent', 
+                                                borderLeft: selectedIndex === child.index ? `3px solid #B82338` : '3px solid transparent', 
+                                                display: 'flex',
+                                                height: '50px',
                                             }}
                                             key={child.text}
                                         >
@@ -176,7 +190,12 @@ const Sidenav: React.FC = () => {
                                                     justifyContent: 'initial',
                                                 }}
                                             >
-                                                <Typography variant='body2' sx={{ color: theme.palette.primary[600]}}>{child.text}</Typography>
+                                                <Typography variant='body1' 
+                                                    sx={{ 
+                                                        color: selectedIndex === child.index ? '#000' : '#FFF',
+                                                        fontWeight: selectedIndex === child.index ? 'bold' : 'normal'
+                                                    }}
+                                                >{child.text}</Typography>
                                             </ListItemButton>
                                         </Box>
                                     ))}
@@ -186,14 +205,20 @@ const Sidenav: React.FC = () => {
                     </React.Fragment>
                 )
             })
-        }
+          }
         </List>
       </Drawer>
+
+      {/* ÁREA DE CONTENIDO PRINCIPAL (SCROLL INDEPENDIENTE) */}
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 1, height: '100vh' }}
+        sx={{ 
+            flexGrow: 1, 
+            p: 1, 
+            height: '100vh', 
+            overflowY: 'auto' // <-- Esto soluciona que el Sidenav se corte al expandir contenido
+        }}
       >
-        
         <Box
             sx={{ 
                 border: '1px solid #D3D9E4', 
@@ -203,11 +228,7 @@ const Sidenav: React.FC = () => {
             }}
         >
             <TopBar path={pathSelected} isHome={handleHome}/>
-            <Box
-                sx={{
-                    p: 4,
-                }}
-            >
+            <Box sx={{ p: 4 }}>
                 <Outlet />
             </Box>
         </Box>

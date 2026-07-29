@@ -4,10 +4,10 @@ import Box from "@mui/material/Box";
 type BoxContainerProps = {
     children: React.ReactNode;
     sxProps?: SxProps<Theme>;
-    backgroundColor?: 'grey' | 'light' | 'blank';
+    backgroundColor?: 'grey' | 'light' | 'blank' | 'default';
 }
 
-export const BoxContainer: React.FC<BoxContainerProps> = ({ children, sxProps, backgroundColor = 'blank' }) => {
+export const BoxContainer: React.FC<BoxContainerProps> = ({ children, sxProps, backgroundColor = 'default' }) => {
     const theme = useTheme();
     
     const setBackground = () => {
@@ -15,6 +15,8 @@ export const BoxContainer: React.FC<BoxContainerProps> = ({ children, sxProps, b
             case "grey": return theme.palette.primary[100];
             case "light": return theme.palette.primary[50];
             case "blank": return undefined;
+            default: return "#E6EFFC";
+
         }
     }
 
