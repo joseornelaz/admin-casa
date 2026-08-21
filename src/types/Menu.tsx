@@ -37,7 +37,7 @@ export const MenuRoutes: Menu[] = [
         children:[
             { text: TitleScreen.PERIODOS, path: AppRoutingPaths.PERIODOS, visible: 1},
             { text: TitleScreen.VIGENCIAS, path: AppRoutingPaths.VIGENCIAS, visible: 1},
-            { text: TitleScreen.CURSOS, path: AppRoutingPaths.CURSOS, visible: 0},
+            { text: TitleScreen.CURSOS, path: AppRoutingPaths.CURSOS, visible: 1},
         ], 
         menu: 'main' },
     { id: 4, text: TitleScreen.REPORTES, icon: AreaChartOutlinedIcon, path: AppRoutingPaths.REPORTES, order: 3, visible: 1, children: [], menu: 'main'}

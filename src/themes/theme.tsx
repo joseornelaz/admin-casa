@@ -127,9 +127,9 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         contained: {
-          backgroundColor: '#B82338',
+          backgroundColor: '#191919',
           '&:hover': {
-            backgroundColor: '#A71D33', // Un tono más oscuro para el hover
+            backgroundColor: '#2e2e2c', // Un tono más oscuro para el hover
           },
         },
         outlined: {

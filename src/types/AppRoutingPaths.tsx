@@ -19,5 +19,7 @@ export const AppRoutingPaths = {
     PERIODOS: "/academia/periodos",
     CURSOS: "/academia/cursos",
     REPORTES: "/academia/reportes",
+    SELECCION_ESPACIO: "/seleccionar-espacio",
+    ALTA_UNICA_NUEVA: "/alumnos/alta-unica/nueva",
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

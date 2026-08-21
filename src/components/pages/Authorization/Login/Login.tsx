@@ -44,19 +44,7 @@ export const Login: React.FC = () => {
   // data: LoginFormData
   const onSubmit = async () => {
     // const _result = await login(data.username, data.password);
-    navigate(AppRoutingPaths.HOME);
-    /*if (result.success) {
-      navigate(AppRoutingPaths.HOME);
-    } else {
-      if (result.cambiarPassword) {
-        showNotification("Mostrar Cambiar Password", "info");
-      } else {
-        showNotification(
-          result.message ?? "Ocurrió un error inesperado",
-          "warning"
-        );
-      }
-    }*/
+    navigate(AppRoutingPaths.SELECCION_ESPACIO);
   };
 
   return (

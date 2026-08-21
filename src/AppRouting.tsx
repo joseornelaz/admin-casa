@@ -1,7 +1,7 @@
 // , createBrowserRouter
 import { createHashRouter } from "react-router-dom";
 import App from "./App";
-import MainTemplate from "./components/templates/MainTemplate/MainTemplate";
+// import MainTemplate from "./components/templates/MainTemplate/MainTemplate";
 import { AppRoutingPaths } from "@constants";
 import * as Component from "@components";
 
@@ -16,10 +16,14 @@ export const AppRouting = createHashRouter([
                 Component: Component.Login
             },
             {
+                path: AppRoutingPaths.SELECCION_ESPACIO,
+                Component: Component.SeleccionEspacio
+            },
+            {
                 // Component: ProtectedRoute,
                 children: [
                     {
-                        Component: MainTemplate,
+                        Component: Component.GlobalTemplate,
                         children: [
                             {
                                 path: AppRoutingPaths.HOME,
@@ -48,6 +52,10 @@ export const AppRouting = createHashRouter([
                             {
                                 path: AppRoutingPaths.ALTA_UNICA,
                                 Component: Component.AltaUnica
+                            },
+                            {
+                                path: AppRoutingPaths.ALTA_UNICA_NUEVA,
+                                Component: Component.NuevaAltaUnica
                             },
                             {
                                 path: AppRoutingPaths.CONSULTA,
