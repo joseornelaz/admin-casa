@@ -131,10 +131,20 @@ Se han implementado nuevas pantallas y componentes de arquitectura siguiendo las
 | `src/components/pages/Alumnos/Consultas/AlumnosTable.tsx` | **Modificado** | Rediseño completo de la tabla de alumnos según la maqueta. |
 | `src/components/pages/Alumnos/AltaUnica/AltaUnica.tsx` | **Modificado** | Rediseño completo de la página de Alta Única con pipeline y filtros. |
 | `src/components/pages/Alumnos/AltaUnica/AltaUnicaTable.tsx` | **Modificado** | Tabla de prospectos con checkboxes, chips de estado y paginación. |
-| `src/components/pages/Alumnos/AltaUnica/NuevaAltaUnica.tsx` | **[NUEVO]** | Wizard de registro de Nueva Alta Única (Paso 1 completo). |
+| `src/components/pages/Alumnos/AltaUnica/NuevaAltaUnica.tsx` | **Modificado** | Componente orquestador padre con ancla de scroll automático al inicio al avanzar o retroceder de paso. |
+| `src/components/pages/Alumnos/AltaUnica/ConfirmacionInscripcionDialog.tsx` | **Modificado** | Agregada la prop opcional `onConfirm` para desacoplar el trigger de confirmación. |
+| `src/components/pages/Alumnos/AltaUnica/steps/AltaUnicaStepper.tsx` | **[NUEVO]** | Componente Stepper dinámico y reutilizable con la paleta de colores del Paso 1 para todos los pasos. |
+| `src/components/pages/Alumnos/AltaUnica/steps/types.ts` | **[NUEVO]** | Interfaces y tipos compartidos para las props de cada paso y del Stepper. |
+| `src/components/pages/Alumnos/AltaUnica/steps/Step1DatosPersonales.tsx` | **[NUEVO]** | Sub-componente del Paso 1 (Datos Personales, Laborales, Contacto y Observaciones). |
+| `src/components/pages/Alumnos/AltaUnica/steps/Step2Documentos.tsx` | **[NUEVO]** | Sub-componente del Paso 2 (Expediente Documental y Acordeón Escolar). |
+| `src/components/pages/Alumnos/AltaUnica/steps/Step3Inscripcion.tsx` | **[NUEVO]** | Sub-componente del Paso 3 (Inscripción y selección de periodo). |
+| `src/components/pages/Alumnos/AltaUnica/steps/Step4Confirmacion.tsx` | **[NUEVO]** | Sub-componente del Paso 4 (Resumen de prospecto y confirmación). |
+| `src/components/pages/Alumnos/AltaUnica/steps/index.ts` | **[NUEVO]** | Archivo de exportación de sub-componentes de pasos. |
+| `src/components/pages/Academia/Cursos/Cursos.tsx` | **Modificado** | Conectado el botón "Agregar curso" con el nuevo Sidenav lateral. |
+| `src/components/pages/Academia/Cursos/AgregarCursoDrawer.tsx` | **[NUEVO]** | Sidenav lateral optimizado en dimensiones y espaciado compacto para visualizar el 100% de los campos sin necesidad de scroll. |
 | `src/components/index.tsx` | **Modificado** | Exportación de `SeleccionEspacio`, `GlobalTemplate` y `NuevaAltaUnica`. |
 | `src/AppRouting.tsx` | **Modificado** | Configuración de rutas asociadas al nuevo layout y formulario. |
-| `src/components/pages/Authorization/Login/Login.tsx` | **Modificado** | Redirección de submit hacia `/seleccionar-espacio`. |
+| `src/components/pages/Authorization/Login/Login.tsx` | **Modificado** | Rediseño visual pixel-perfect de "Iniciar Sesión" y "Recuperar contraseña" con soporte dinámico de hero banner en modo oscuro y crema. |
 
 ---
 

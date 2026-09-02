@@ -8,6 +8,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { CursoCard } from "../../../molecules/CursoCard/CursoCard";
 import Grid from "@mui/material/Grid";
 import type { ViewMode } from "../../../../types/Cursos.interface";
+import { AgregarCursoDrawer } from "./AgregarCursoDrawer";
 
 const mockCourse = {
   id: '#ID-0001',
@@ -25,7 +26,7 @@ const mockCourse = {
 const Cursos: React.FC = () => {
 
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
-    const [_isOpenRegistrar, setIsOpenRegistrar] = React.useState(false);
+    const [isOpenRegistrar, setIsOpenRegistrar] = React.useState(false);
     const [isLoading, _setIsLoading] = React.useState(false);
 
     // Estado para saber qué curso está expandido (guardamos su ID o índice)
@@ -54,55 +55,55 @@ const Cursos: React.FC = () => {
                     {
                         mockCourse && (
                             viewMode === 'grid' ? (
-                            <Grid container spacing={2.5}>
-                                {[1, 2, 3].map((item) => {
-                                
-                                const isCurrentlyExpanded = expandedCourseId === item;
-
-                                return (
-                                    <Grid
-                                    // Si la tarjeta actual está expandida pasa a ocupar 12 columnas (ancho completo)
-                                    size={{
-                                        xs: 12,
-                                        sm: isCurrentlyExpanded ? 12 : 6,
-                                        md: isCurrentlyExpanded ? 12 : 4
-                                    }}
-                                    key={item}
-                                    sx={{ transition: 'all 0.3s ease-in-out' }} // Transición suave al cambiar de tamaño
-                                    >
-                                    <CursoCard
-                                        data={{ ...mockCourse, id: `#ID-000${item}` }}
-                                        viewMode="grid"
-                                        isExpanded={isCurrentlyExpanded}
-                                        onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
-                                    />
-                                    </Grid>
-                                );
-                                })}
-                            </Grid>
-                            ) : (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                {[1, 2, 3].map((item) => {
-                                    // Hacemos exactamente lo mismo para la vista de lista
+                                <Grid container spacing={2.5}>
+                                    {[1, 2, 3].map((item) => {
+                                    
                                     const isCurrentlyExpanded = expandedCourseId === item;
 
                                     return (
-                                        <CursoCard 
-                                            key={item} 
-                                            data={{ ...mockCourse, id: `#ID-000${item}` }} 
-                                            viewMode="list" 
-                                            isExpanded={isCurrentlyExpanded}
-                                            onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
-                                        />
+                                        <Grid
+                                            // Si la tarjeta actual está expandida pasa a ocupar 12 columnas (ancho completo)
+                                            size={{
+                                                xs: 12,
+                                                sm: isCurrentlyExpanded ? 12 : 6,
+                                                md: isCurrentlyExpanded ? 12 : 4
+                                            }}
+                                            key={item}
+                                            sx={{ transition: 'all 0.3s ease-in-out' }} // Transición suave al cambiar de tamaño
+                                        >
+                                            <CursoCard
+                                                data={{ ...mockCourse, id: `#ID-000${item}` }}
+                                                viewMode="grid"
+                                                isExpanded={isCurrentlyExpanded}
+                                                onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
+                                            />
+                                        </Grid>
                                     );
                                     })}
-                            </Box>
+                                </Grid>
+                            ) : (
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    {[1, 2, 3].map((item) => {
+                                        // Hacemos exactamente lo mismo para la vista de lista
+                                        const isCurrentlyExpanded = expandedCourseId === item;
+
+                                        return (
+                                            <CursoCard 
+                                                key={item} 
+                                                data={{ ...mockCourse, id: `#ID-000${item}` }} 
+                                                viewMode="list" 
+                                                isExpanded={isCurrentlyExpanded}
+                                                onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
+                                            />
+                                        );
+                                        })}
+                                </Box>
                             )
                         )
                     }
                 </>
             }
-            {/* <RegistroPeriodoInscripcionDialog isOpen={isOpenRegistrar} close={() => setIsOpenRegistrar(false)} /> */}
+            <AgregarCursoDrawer open={isOpenRegistrar} onClose={() => setIsOpenRegistrar(false)} />
         </Box>
     );
 }

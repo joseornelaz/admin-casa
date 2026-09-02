@@ -8,13 +8,13 @@ import Button from "@mui/material/Button";
 
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 
-type ConfirmacionInscripcionDialogProps = {
+type GuardarSalirDialogProps = {
     open: boolean;
     onClose?: (close: boolean) => void;
     onConfirm?: () => void;
   };
 
-export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDialogProps> = ({ open, onClose, onConfirm }) => {
+export const GuardarSalirDialog: React.FC<GuardarSalirDialogProps> = ({ open, onClose, onConfirm }) => {
 
     const handleClose = (close: boolean) => {
         if (onClose)
@@ -23,19 +23,19 @@ export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDial
 
     return (
         <Dialog
-                open={open}
-                onClose={() => handleClose(false)}
-                slotProps={{
-                    paper: {
-                        sx: {
-                            borderRadius: "16px",
-                            p: 2.5,
-                            maxWidth: "460px",
-                            width: "100%",
-                        },
-                    },
-                }}
-              >
+          open={open}
+          onClose={() => handleClose(false)}
+          slotProps={{
+              paper: {
+                  sx: {
+                      borderRadius: "16px",
+                      p: 2.5,
+                      maxWidth: "460px",
+                      width: "100%",
+                  },
+              },
+          }}
+        >
                 <DialogContent sx={{ p: 0 }}>
                   <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ mb: 2 }}>
                     <Box
@@ -54,13 +54,13 @@ export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDial
                     </Box>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 800, color: "#111827", fontSize: "1.05rem", lineHeight: 1.3 }}>
-                        ¿Seguro que deseas inscribir a este alumno?
+                        ¿Seguro que deseas salir sin guardar?
                       </Typography>
                     </Box>
                   </Stack>
         
                   <Typography variant="body2" sx={{ color: "#4B5563", fontSize: "0.88rem", lineHeight: 1.5, mb: 3 }}>
-                    Se generará la matrícula, se creará su Alta Única y se enviará un correo de bienvenida. Esta acción no se puede deshacer desde aquí.
+                    Puedes guardar tu progreso como borrador y continuar después, o salir sin guardar los cambios de esta Alta Única.
                   </Typography>
         
                   <Stack direction="row" spacing={1.5} justifyContent="flex-end">
@@ -80,7 +80,7 @@ export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDial
                         "&:hover": { backgroundColor: "#F9FAFB", borderColor: "#D1D5DB" },
                       }}
                     >
-                      Seguir editando
+                      Salir sin guardar
                     </Button>
         
                     <Button
@@ -93,7 +93,7 @@ export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDial
                         }
                       }}
                       sx={{
-                        backgroundColor: "#16A34A",
+                        backgroundColor: "#191919",
                         color: "#FFFFFF",
                         borderRadius: "8px",
                         textTransform: "none",
@@ -101,10 +101,10 @@ export const ConfirmacionInscripcionDialog: React.FC<ConfirmacionInscripcionDial
                         px: 2.8,
                         py: 0.8,
                         fontSize: "0.85rem",
-                        "&:hover": { backgroundColor: "#15803D" },
+                        "&:hover": { backgroundColor: "rgb(46, 46, 44) !important" },
                       }}
                     >
-                      Inscribir
+                      Guardar
                     </Button>
                   </Stack>
                 </DialogContent>

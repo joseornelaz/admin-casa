@@ -9,7 +9,12 @@ import {
   Stack,
   Divider,
   Collapse,
-  Switch
+  Switch,
+  Tooltip,
+  Checkbox,
+  LinearProgress,
+  type SxProps,
+  type Theme
 } from '@mui/material';
 
 // Iconos MUI
@@ -27,10 +32,11 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 
 import { AgregarElementoDialog } from '../Dialogs/AgregarElementoDialog/AgregarElementoDialog';
-import type { ViewMode } from './res_CursoCard';
-import type { ModuleData } from '../../../types/Cursos.interface';
+import type { ModuleData, ViewMode } from '../../../types/Cursos.interface';
 import { ModuleItem } from './ModuleItem';
 
 interface CourseCardProps {
@@ -42,6 +48,12 @@ interface CourseCardProps {
   onEdit?: () => void;
   onAddModule?: () => void;
   onAddElement?: (moduleId: string | number, elementData: any) => void;
+}
+
+interface StatusChipProps {
+  label: string;
+  styles?: SxProps<Theme>;
+  variant?: 'outlined' | 'filled';
 }
 
 export const CursoCard: React.FC<CourseCardProps> = ({
@@ -122,6 +134,155 @@ export const CursoCard: React.FC<CourseCardProps> = ({
     }
   };
 
+  const StatusChip: React.FC<StatusChipProps> = ({
+    label,
+    styles,
+    variant = 'outlined'
+  }) => (
+    <Chip
+      label={label}
+      size="small"
+      variant={variant}
+      sx={{...styles, fontSize: '0.75rem', fontWeight: 500, borderRadius: '12px', height: '20px'}}
+    />
+  );
+
+  const headerAcordion = () => (
+    <Box
+        sx={{
+          p: 1,
+          px: 2.5,
+          display: 'flex',
+          alignItems: 'center',
+          justify: 'space-between',
+          flexWrap: 'wrap',
+          gap: 2,
+          borderBottom: isExpanded ? '1px solid #F3F4F6' : 'none'
+        }}
+      >
+        {/* Lado izquierdo */}
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <Checkbox size="small" sx={{ p: 0, color: '#D1D5DB', '&.Mui-checked': { color: '#2563EB' } }} />
+
+          <IconButton size="small" onClick={handleExpandToggle} sx={{ color: '#9CA3AF', p: 0.5 }}>
+            {isExpanded ? <KeyboardArrowDownIcon sx={{ fontSize: 20 }} /> : <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />}
+          </IconButton>
+
+          <Chip
+            label={data?.id || '#ID-0001'}
+            size="small"
+            sx={{
+              backgroundColor: '#EAEAEA',
+              color: '#555555',
+              fontWeight: 700,
+              fontSize: '0.75rem',
+              borderRadius: '8px',
+              height: '32px',
+              px: 0.5,
+              fontFamily: 'monospace'
+            }}
+          />
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.3 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2, fontSize: '0.95rem' }}>
+              {data?.title || 'Fundamentos de Administración'}
+            </Typography>
+
+            <Stack direction="row" spacing={0.5} alignItems="center">
+              <PersonOutlineIcon sx={{ fontSize: 15, color: '#9CA3AF' }} />
+              <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.8rem' }}>
+                {data?.author || 'Ana Belén Ávila'}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.3 }}>
+              <LinearProgress
+                variant="determinate"
+                value={100}
+                sx={{
+                  width: 100,
+                  height: 4,
+                  borderRadius: 2,
+                  backgroundColor: '#E5E7EB',
+                  '& .MuiLinearProgress-bar': { backgroundColor: '#C2410C', borderRadius: 2 }
+                }}
+              />
+              <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+                {data?.modulesCount || '10'}/{data?.totalModules || '10'} mód.
+              </Typography>
+            </Stack>
+          </Box>
+        </Stack>
+
+        {/* Lado derecho */}
+        <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ ml: 'auto' }}>
+          <StatusChip 
+            label={data?.period || 'Ene-Jun 2026'}
+            styles={{ backgroundColor: '#F3F4F6', color: '#4B5563' }}
+            variant="filled"
+          />
+
+          <StatusChip
+            label={data?.isMandatory ? 'Obligatorio' : 'Optativo'}
+            styles={{ borderColor: '#BFDBFE', color: '#2563EB', backgroundColor: '#EFF6FF' }}
+          />
+
+          <StatusChip
+            label={data?.status || 'Publicado'}
+            styles={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4', mr: 1 }}
+          />
+
+          <Tooltip title="Vista previa" arrow placement="top">
+            <IconButton size="small" onClick={onView} sx={{ p: '5px', color: '#6B7280' }}>
+              <VisibilityOutlinedIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Descargar" arrow placement="top">
+            <IconButton size="small" sx={{ p: '5px', color: '#6B7280' }}>
+              <FileDownloadOutlinedIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Sincronizar" arrow placement="top">
+            <IconButton size="small" sx={{ p: '5px', color: '#16A34A' }}>
+              <CloudQueueIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}
+            onClick={onEdit}
+            sx={{ background: 'transparent', borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px', height: '32px', fontSize: '0.8rem', px: 1.5 }}
+          >
+            Editar
+          </Button>
+
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+            onClick={onAddModule}
+            sx={{ background: 'transparent', borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px', height: '32px', fontSize: '0.8rem', px: 1.5 }}
+          >
+            Agregar módulo
+          </Button>
+
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />}
+            sx={{ background: 'transparent', borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px', height: '32px', fontSize: '0.8rem', px: 1.5 }}
+          >
+            Duplicar
+          </Button>
+        </Stack>
+      </Box>
+  );
+
+
   // ==========================================
   // RENDER: VISTA DESPLEGADA COMPLETA (FULL DETAIL)
   // ==========================================
@@ -138,69 +299,9 @@ export const CursoCard: React.FC<CourseCardProps> = ({
       }}
     >
       {/* Header Expandido */}
-      <Box
-        sx={{
-          p: 1.5,
-          px: 2.5,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 2,
-          borderBottom: '1px solid #F3F4F6'
-        }}
-      >
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <IconButton size="small" onClick={handleExpandToggle} sx={{ color: '#9CA3AF' }}>
-            <KeyboardArrowDownIcon />
-          </IconButton>
-
-          <Chip
-            label={data.id}
-            size="small"
-            sx={{
-              backgroundColor: '#EAEAEA',
-              color: '#555555',
-              fontWeight: 700,
-              fontSize: '0.75rem',
-              borderRadius: '6px',
-              fontFamily: 'monospace'
-            }}
-          />
-
-          <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>
-              {data.title}
-            </Typography>
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <PersonOutlineIcon sx={{ fontSize: 14, color: '#9CA3AF' }} />
-              <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
-                {data.author}
-              </Typography>
-            </Stack>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-          {data.period && <Chip label={data.period} size="small" sx={{ backgroundColor: '#F3F4F6', color: '#4B5563' }} />}
-          {data.isMandatory && <Chip label="Obligatorio" size="small" variant="outlined" sx={{ borderColor: '#BFDBFE', color: '#2563EB', backgroundColor: '#EFF6FF' }} />}
-          <Chip label={data.status || 'Publicado'} size="small" variant="outlined" sx={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4' }} />
-          <Chip label={`${data.modulesCount} mód.`} size="small" variant="outlined" sx={{ borderColor: '#FECDD3', color: '#E11D48', backgroundColor: '#FFF1F2' }} />
-
-          <Stack direction="row" spacing={1} sx={{ ml: 1 }}>
-            <IconButton size="small" onClick={handleExpandToggle} sx={{ border: '1px solid #E5E7EB', borderRadius: '8px' }}>
-              <VisibilityOutlinedIcon sx={{ fontSize: 18, color: '#6B7280' }} />
-            </IconButton>
-            <Button variant="outlined" size="small" startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />} onClick={onEdit} sx={{ borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px' }}>
-              Editar
-            </Button>
-            <Button variant="outlined" size="small" startIcon={<AddIcon sx={{ fontSize: 16 }} />} onClick={onAddModule} sx={{ borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px' }}>
-              Agregar módulo
-            </Button>
-          </Stack>
-        </Stack>
-      </Box>
-
+      {
+        headerAcordion()
+      }
       {/* Contenido Completo del Detalle */}
       <Box sx={{ p: 2.5, backgroundColor: '#FAFAFA' }}>
         {/* Información de la Materia */}
@@ -225,70 +326,168 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         </Box>
 
         {/* RENDEREADO DINÁMICO DE N MÓDULOS */}
-        {modulesList.map((module) => {
-          const isModuleExpanded = expandedModules[module.id] ?? true;
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: '8px',
+            border: '1px solid #E5E7EB',
+            backgroundColor: '#FFFFFF',
+            overflow: 'hidden'
+          }}
+        >
+          {modulesList.map((module, index) => {
+            const isModuleExpanded = expandedModules[module.id] ?? true;
+            const isLastModule = index === modulesList.length - 1;
 
-          return (
-            <Paper key={module.id} elevation={0} sx={{ borderRadius: '12px', border: '1px solid #E5E7EB', overflow: 'hidden', mb: 2 }}>
-              <Box sx={{ p: 1.5, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#FFFFFF' }}>
-                <Stack direction="row" spacing={1} alignItems="center" onClick={() => toggleModuleCollapse(module.id)} sx={{ cursor: 'pointer' }}>
-                  {isModuleExpanded ? <KeyboardArrowDownIcon sx={{ color: '#9CA3AF' }} /> : <KeyboardArrowRightIcon sx={{ color: '#9CA3AF' }} />}
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#111827' }}>
-                    {module.title}
-                  </Typography>
-                </Stack>
-
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip label={module.status || 'Publicado'} size="small" variant="outlined" sx={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4', height: '24px', fontSize: '0.75rem' }} />
-                  <IconButton size="small"><EditOutlinedIcon sx={{ fontSize: 16, color: '#6B7280' }} /></IconButton>
-                  <IconButton size="small"><FileDownloadOutlinedIcon sx={{ fontSize: 16, color: '#6B7280' }} /></IconButton>
-                  <IconButton size="small"><ContentCopyOutlinedIcon sx={{ fontSize: 16, color: '#6B7280' }} /></IconButton>
-                  <IconButton size="small"><VisibilityOutlinedIcon sx={{ fontSize: 16, color: '#6B7280' }} /></IconButton>
-                </Stack>
-              </Box>
-
-              <Collapse in={isModuleExpanded}>
-                <Box sx={{ p: 2, backgroundColor: '#F9FAFB', borderTop: '1px solid #E5E7EB' }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280' }}>
-                        ACCIONES DEL MÓDULO
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        startIcon={<AddIcon />}
-                        onClick={() => handleOpenAddDialog(module)} // 👈 PASA EL MÓDULO AL ESTADO
-                        sx={{ backgroundColor: '#111827', color: '#FFF', borderRadius: '20px', textTransform: 'none', fontSize: '0.75rem', py: 0.5, px: 2, '&:hover': { backgroundColor: '#1F2937' } }}
-                      >
-                        Agregar elemento
-                      </Button>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.8rem' }}>
-                        Marcar como obligatorio
-                      </Typography>
-                      <Switch size="small" defaultChecked={module.isMandatory} />
-                    </Stack>
+            return (
+              <Box 
+                key={module.id} 
+                sx={{ 
+                  borderBottom: isLastModule ? 'none' : '1px solid #E5E7EB',
+                  backgroundColor: '#FFFFFF'
+                }}
+              >
+                {/* 1. HEADER DEL MÓDULO */}
+                <Box
+                  sx={{
+                    p: 1.5,
+                    px: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Stack 
+                    direction="row" 
+                    spacing={1} 
+                    alignItems="center" 
+                    onClick={() => toggleModuleCollapse(module.id)} 
+                    sx={{ cursor: 'pointer', flexGrow: 1 }}
+                  >
+                    {isModuleExpanded ? (
+                      <KeyboardArrowDownIcon sx={{ color: '#6B7280', fontSize: 20 }} />
+                    ) : (
+                      <KeyboardArrowRightIcon sx={{ color: '#6B7280', fontSize: 20 }} />
+                    )}
+                    <Typography variant="subtitle2" sx={{ fontWeight: 500, color: '#111827', fontSize: '0.9rem' }}>
+                      {module.title}
+                    </Typography>
                   </Stack>
 
-                  <Stack spacing={2}>
-                    {module.items?.map((item) => (
-                      <ModuleItem
-                        key={item.id}
-                        sectionTitle={item.sectionTitle}
-                        title={item.title}
-                        format={item.format}
-                        icon={renderItemIcon(item.type)}
-                      />
+                  {/* Badges y Botones de Acción */}
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Chip 
+                      label={module.status || 'Publicado'} 
+                      size="small" 
+                      sx={{ 
+                        backgroundColor: '#10B981', 
+                        color: '#FFFFFF', 
+                        fontWeight: 600, 
+                        height: '24px', 
+                        fontSize: '0.75rem',
+                        mr: 1
+                      }} 
+                    />
+                    
+                    {/* Botones cuadrados con borde como en la imagen */}
+                    {[
+                      <Tooltip title="Editar módulo" arrow  key="edit">
+                        <EditOutlinedIcon sx={{ fontSize: 16 }} />
+                      </Tooltip>,
+                      <Tooltip title="Duplicar módulo" arrow  key="copy">
+                        <ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />
+                      </Tooltip>,
+                      <Tooltip title="Descargar módulo" arrow key="down">
+                        <FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />                        
+                      </Tooltip>,
+                      <Tooltip title="Publicar módulo" arrow key="up">
+                        <CloudUploadOutlinedIcon sx={{ fontSize: 16 }} />
+                      </Tooltip>,
+                      <Tooltip title="Ver módulo" arrow key="view">
+                        <VisibilityOutlinedIcon sx={{ fontSize: 16 }} />
+                      </Tooltip>,
+                    ].map((icon, idx) => (
+                      <IconButton 
+                        key={idx} 
+                        size="small" 
+                        sx={{
+                          p: '4px',
+                          color: '#9CA3AF',
+                          '&:hover': { backgroundColor: '#F3F4F6' }
+                        }}
+                      >
+                        {icon}
+                      </IconButton>
                     ))}
                   </Stack>
                 </Box>
-              </Collapse>
-            </Paper>
-          );
-        })}
+
+                {/* 2. BARRA DE ACCIONES (Siempre visible, alineada al texto) */}
+                <Box 
+                  sx={{ 
+                    px: 2, 
+                    py: 1, 
+                    pl: 4.5, // Indentado para esquivar el icono del chevron
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    borderTop: '1px solid #F9FAFB',
+                    background: 'rgb(249, 248, 246)'
+                  }}
+                >
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Typography variant="caption" sx={{ fontSize: '12px', fontWeight: 500, color: '#767470', letterSpacing: '0.5px' }}>
+                      ACCIONES DEL MÓDULO
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<AddIcon sx={{ fontSize: '16px !important' }}/>}
+                      onClick={() => handleOpenAddDialog(module)}
+                      sx={{ 
+                        backgroundColor: '#111827', 
+                        color: '#FFF', 
+                        borderRadius: '4px', 
+                        textTransform: 'none', 
+                        fontSize: '0.75rem', 
+                        fontWeight: 400,                        
+                        boxShadow: 'none',
+                        height: '24px',
+                        '&:hover': { backgroundColor: '#374151', boxShadow: 'none' } 
+                      }}
+                    >
+                      Agregar elemento
+                    </Button>
+                  </Stack>
+
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.75rem' }}>
+                      Marcar como obligatorio
+                    </Typography>
+                    <Switch size="small" defaultChecked={module.isMandatory} sx={{ transform: 'scale(0.9)' }} />
+                  </Stack>
+                </Box>
+
+                {/* 3. CONTENIDO COLAPSABLE (Solo oculta los items) */}
+                <Collapse in={isModuleExpanded}>
+                  <Box sx={{ p: 2, pl: 4.5, pt: 0, backgroundColor: '#FFFFFF' }}>
+                    <Stack spacing={2} sx={{ mt: 2 }}>
+                      {module.items?.map((item) => (
+                        <ModuleItem
+                          key={item.id}
+                          sectionTitle={item.sectionTitle}
+                          title={item.title}
+                          format={item.format}
+                          icon={renderItemIcon(item.type)}
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+                </Collapse>
+              </Box>
+            );
+          })}
+        </Paper>
       </Box>
 
       {/* DIÁLOGO ÚNICO COMPARTIDO PARA CUALQUIER MÓDULO */}
@@ -431,6 +630,88 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   // ==========================================
   // RENDER 2: VISTA EN LISTA (LIST ROW)
   // ==========================================
+
+  return (
+    <Paper
+      elevation={0}
+      sx={{
+        borderRadius: '16px',
+        border: '1px solid #E5E7EB',
+        backgroundColor: '#FFFFFF',
+        overflow: 'hidden',
+        width: '100%',
+      }}
+    >
+      {/* HEADER LISTA */}
+      {
+        headerAcordion()
+      }
+
+      {/* DETALLE DESPLEGABLE */}
+      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+        <Box sx={{ p: 2.5, backgroundColor: '#FAFAFA' }}>
+          <Box sx={{ mb: 2.5 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+              <Stack direction="row" spacing={0.8} alignItems="center">
+                <InfoOutlinedIcon sx={{ fontSize: 16, color: '#6B7280' }} />
+                <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280', letterSpacing: '0.5px' }}>
+                  INFORMACIÓN DE LA MATERIA
+                </Typography>
+              </Stack>
+              <Typography variant="caption" sx={{ color: '#9CA3AF', fontWeight: 600, fontSize: '0.7rem' }}>
+                FIJO · NO EDITABLE
+              </Typography>
+            </Stack>
+
+            <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
+              <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.875rem' }}>
+                {data?.description || 'Introduce los principios básicos de la administración moderna...'}
+              </Typography>
+            </Paper>
+          </Box>
+
+          <Paper elevation={0} sx={{ borderRadius: '8px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF', overflow: 'hidden' }}>
+            {modulesList.map((module, index) => {
+              const isModuleExpanded = expandedModules[module.id] ?? true;
+              return (
+                <Box key={module.id} sx={{ borderBottom: index === modulesList.length - 1 ? 'none' : '1px solid #E5E7EB' }}>
+                  <Box sx={{ p: 1.5, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Stack direction="row" spacing={1} alignItems="center" onClick={() => toggleModuleCollapse(module.id)} sx={{ cursor: 'pointer', flexGrow: 1 }}>
+                      {isModuleExpanded ? <KeyboardArrowDownIcon sx={{ color: '#6B7280', fontSize: 20 }} /> : <KeyboardArrowRightIcon sx={{ color: '#6B7280', fontSize: 20 }} />}
+                      <Typography variant="subtitle2" sx={{ fontWeight: 500, color: '#111827', fontSize: '0.9rem' }}>
+                        {module.title}
+                      </Typography>
+                    </Stack>
+                  </Box>
+
+                  <Collapse in={isModuleExpanded}>
+                    <Box sx={{ p: 2, pl: 4.5, pt: 0 }}>
+                      <Stack spacing={2} sx={{ mt: 2 }}>
+                        {module.items?.map((item) => (
+                          <ModuleItem key={item.id} sectionTitle={item.sectionTitle} title={item.title} format={item.format} icon={renderItemIcon(item.type)} />
+                        ))}
+                      </Stack>
+                    </Box>
+                  </Collapse>
+                </Box>
+              );
+            })}
+          </Paper>
+        </Box>
+      </Collapse>
+
+      <AgregarElementoDialog
+        open={Boolean(activeModuleForAdd)}
+        onClose={() => setActiveModuleForAdd(null)}
+        onSave={(elementData) => {
+          if (activeModuleForAdd) onAddElement?.(activeModuleForAdd.id, elementData);
+          setActiveModuleForAdd(null);
+        }}
+      />
+    </Paper>
+  );
+
+
   return (
     <Paper
       elevation={0}
@@ -438,8 +719,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         p: 1.5,
         px: 2,
         borderRadius: '16px',
-        border: '1px solid',
-        borderColor: '#E5E7EB',
+        border: '1px solid #E5E7EB',
         backgroundColor: '#FFFFFF',
         display: 'flex',
         alignItems: 'center',
