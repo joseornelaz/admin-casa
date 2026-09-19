@@ -7,7 +7,6 @@ import { BoxContainer } from "../../../atoms/BoxContainer/BoxContainer";
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import VideoCameraFrontOutlinedIcon from '@mui/icons-material/VideoCameraFrontOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { GrupoEstadisticas } from "./GrupoEstadisticas";
 import { GrupoTablaEstudiantes } from "./GrupoTablaEstudiantes";
@@ -21,12 +20,12 @@ type GrupoEditProps = {
 }
 
 const AccordionsArray = [
-    {
-        text: "Detalles del Grupo",
-        subTitle: "Detalles generales del grupo.",
-        icon: InfoOutlinedIcon,
-        content: <GrupoEditForm />
-    },
+    // {
+    //     text: "Detalles del Grupo",
+    //     subTitle: "Detalles generales del grupo.",
+    //     icon: InfoOutlinedIcon,
+    //     content: <GrupoEditForm />
+    // },
     {
         text: "Estadisticas",
         subTitle: "Resumen de estudiantes activos en este grupo.",
@@ -64,6 +63,7 @@ export const GrupoEdit: React.FC<GrupoEditProps> = ({closeDrawer}) => {
             subTitle={item.subTitle}
             fontSize="h5"
             icon={item.icon}
+            marginBottom={0}
         />
     )
 
@@ -75,7 +75,10 @@ export const GrupoEdit: React.FC<GrupoEditProps> = ({closeDrawer}) => {
                     <CloseOutlinedIcon />
                 </IconButton>
             </Box>
-            <BoxContainer backgroundColor="grey">
+            <BoxContainer backgroundColor="blank" sxProps={{border: '0px !important', padding: '8px !important'}}>
+                <Box sx={{mb: 1}}>
+                    <GrupoEditForm />
+                </Box>
                 {
                     AccordionsArray.map((item, index) => (
                         <Accordion 
@@ -83,6 +86,7 @@ export const GrupoEdit: React.FC<GrupoEditProps> = ({closeDrawer}) => {
                             customHeader={customHeader(item)} 
                             isExpanded={expanded === `panel${index}`} 
                             onChange={() => { handleChange(`panel${index}`) }}
+                            backgroundDetails={{backgroundColor: '#FFFFFF'}}
                         >
                             { item.content }
                         </Accordion>

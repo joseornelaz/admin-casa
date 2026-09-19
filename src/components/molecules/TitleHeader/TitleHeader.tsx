@@ -9,24 +9,22 @@ type TitleHeaderProps = {
     marginBottom?: number;
 };
 
-export const TitleHeader: React.FC<TitleHeaderProps> = ({text, subTitle, fontSize = "h2", icon: Icon, marginBottom = 2}) => {
+export const TitleHeader: React.FC<TitleHeaderProps> = ({text, subTitle, fontSize = "h2", icon: Icon, marginBottom = 0}) => {
     const theme = useTheme();
 
     return (
-        <>
-            <Box sx={{ display: "flex", flexDirection: 'column', mb: marginBottom, gap: 1 }} >
-                <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }} >
-                    {Icon && <Icon />}
-                    <Typography color="primary" component={fontSize} variant={fontSize}>
-                        { text }
-                    </Typography>
-                </Box>
-                { 
-                    subTitle && <Typography component="span" variant="caption" sxProps={{ color: theme.palette.primary[600]}}>
-                        { subTitle }
-                    </Typography>
-                }
+        <Box sx={{ display: "flex", flexDirection: 'column', mb: marginBottom, gap: 0.3 }} >
+            <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }} >
+                {Icon && <Icon />}
+                <Typography color="primary" component={fontSize} variant={fontSize}>
+                    { text }
+                </Typography>
             </Box>
-        </>
+            { 
+                subTitle && <Typography component="span" variant="caption" sxProps={{ color: theme.palette.primary[600]}}>
+                    { subTitle }
+                </Typography>
+            }
+        </Box>
     );
 };

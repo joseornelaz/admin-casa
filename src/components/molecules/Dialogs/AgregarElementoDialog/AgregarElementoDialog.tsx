@@ -5,16 +5,18 @@ import {
   Box,
   Typography,
   Paper,
-  Stack
+  Stack,
+  IconButton,
 } from '@mui/material';
 
 // Iconos MUI
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
-import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
-import { HeaderDialog } from '../HeaderDialog/HeaderDialog';
+import CloseIcon from '@mui/icons-material/Close';
+
 import { ContenidoEvaluacionForm } from './ContenidoEvaluacionForm';
 import { ActividadForoForm } from './ActividadForoForm';
 
@@ -58,28 +60,28 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
       id: 'contenido',
       title: 'Contenido',
       description: 'PDF, video, HTML, SCORM o enlace',
-      icon: <DescriptionOutlinedIcon sx={{ color: '#E11D48' }} />,
-      bgColor: '#FFE4E6'
+      icon: <DescriptionOutlinedIcon sx={{ color: '#2563EB', fontSize: 22 }} />,
+      bgColor: '#EEF2FF'
     },
     {
       id: 'actividad',
       title: 'Actividad',
       description: 'Tarea o práctica evaluable',
-      icon: <AssignmentOutlinedIcon sx={{ color: '#7C3AED' }} />,
+      icon: <AssignmentOutlinedIcon sx={{ color: '#9333EA', fontSize: 22 }} />,
       bgColor: '#F3E8FF'
     },
     {
       id: 'foro',
       title: 'Foro',
       description: 'Discusión entre alumnos',
-      icon: <ChatOutlinedIcon sx={{ color: '#0284C7' }} />,
+      icon: <ChatBubbleOutlineIcon sx={{ color: '#06B6D4', fontSize: 22 }} />,
       bgColor: '#E0F2FE'
     },
     {
       id: 'evaluacion',
       title: 'Evaluación',
       description: 'Examen o quiz calificable',
-      icon: <QuizOutlinedIcon sx={{ color: '#D97706' }} />,
+      icon: <QuizOutlinedIcon sx={{ color: '#D97706', fontSize: 22 }} />,
       bgColor: '#FEF3C7'
     }
   ];
@@ -89,86 +91,108 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
   // ==========================================
   const renderMenuStep = () => (
     <Box>
-      <HeaderDialog titulo="Agregar elemento" descripcion='Selecciona el tipo de elemento que deseas crear' onClose={handleClose} />
+      {/* HEADER DEL DIÁLOGO */}
+      <Box
+        sx={{
+          pb: 2,
+          mb: 2,
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #E5E7EB',
+        }}
+      >
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 800, color: '#111827', fontSize: '1.15rem', lineHeight: 1.2 }}>
+            Agregar elemento
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.83rem', mt: 0.3 }}>
+            Selecciona el tipo de elemento que deseas crear
+          </Typography>
+        </Box>
 
-      <Stack spacing={2}>
+        <IconButton
+          onClick={handleClose}
+          size="small"
+          sx={{ color: '#6B7280', p: 0.5, '&:hover': { backgroundColor: '#F3F4F6' } }}
+        >
+          <CloseIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Box>
+
+      <Stack spacing={1.5}>
         {options.map((opt) => (
           <Paper
             key={opt.id}
             elevation={0}
             onClick={() => {
               setCurrentStep(opt.id as StepType);
-              // Asignar placeholders según diseño
               if (opt.id === 'contenido' || opt.id === 'evaluacion') setElementName('');
             }}
             sx={{
-              p: 2,
+              p: 1.8,
               borderRadius: '16px',
-              border: '1px solid #F3F4F6',
-              backgroundColor: '#FAFAFA',
+              border: '1px solid #E5E7EB',
+              backgroundColor: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               cursor: 'pointer',
-              transition: 'all 0.2s',
+              transition: 'all 0.15s ease',
               '&:hover': {
-                backgroundColor: '#F3F4F6',
-                borderColor: '#E5E7EB'
+                backgroundColor: '#F9FAFB',
+                borderColor: '#D1D5DB',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.04)'
               }
             }}
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
+                  width: 44,
+                  height: 44,
                   borderRadius: '12px',
                   backgroundColor: opt.bgColor,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  flexShrink: 0
                 }}
               >
                 {opt.icon}
               </Box>
               <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2, fontSize: '0.95rem' }}>
                   {opt.title}
                 </Typography>
-                <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.8rem' }}>
+                <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.8rem', mt: 0.2, display: 'block' }}>
                   {opt.description}
                 </Typography>
               </Box>
             </Stack>
-            <ChevronRightIcon sx={{ color: '#9CA3AF' }} />
+            <ChevronRightIcon sx={{ color: '#9CA3AF', fontSize: 20 }} />
           </Paper>
         ))}
       </Stack>
     </Box>
   );
 
-  // ==========================================
-  // RENDER: VISTA SUBIR ARCHIVO (Contenido / Evaluación)
-  // ==========================================
   const renderFileUploadStep = () => <ContenidoEvaluacionForm onBack={handleBack} onClose={handleClose} onSubmit={handleSave} />;
-
-  // ==========================================
-  // RENDER: VISTA CONTENIDO HTML (Actividad / Foro)
-  // ==========================================
   const renderHtmlStep = () => <ActividadForoForm onBack={handleBack} onClose={handleClose} onSubmit={handleSave} />;
 
   return (
     <Dialog
       open={open}
       onClose={handleClose}
+      maxWidth="xs"
+      fullWidth
       slotProps={{
         paper: {
-            sx: {
-            borderRadius: '24px',
-            width: '460px',
-            p: 1.5,
-            boxShadow: '0px 10px 30px rgba(0,0,0,0.08)'
-            }
+          sx: {
+            borderRadius: '20px',
+            p: 1,
+            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.12)'
+          }
         }
       }}
     >

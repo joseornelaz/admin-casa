@@ -9,6 +9,9 @@ import { CursoCard } from "../../../molecules/CursoCard/CursoCard";
 import Grid from "@mui/material/Grid";
 import type { ViewMode } from "../../../../types/Cursos.interface";
 import { AgregarCursoDrawer } from "./AgregarCursoDrawer";
+import { EditarCursoDrawer } from "./EditarCursoDrawer";
+import { AgregarModuloDialog } from "./AgregarModuloDialog";
+import { DuplicarCursoDialog } from "./DuplicarCursoDialog";
 
 const mockCourse = {
   id: '#ID-0001',
@@ -27,6 +30,11 @@ const Cursos: React.FC = () => {
 
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [isOpenRegistrar, setIsOpenRegistrar] = React.useState(false);
+    const [isOpenEditar, setIsOpenEditar] = React.useState(false);
+    const [isOpenAgregarModulo, setIsOpenAgregarModulo] = React.useState(false);
+    const [isOpenDuplicar, setIsOpenDuplicar] = React.useState(false);
+    const [duplicatingCourse, setDuplicatingCourse] = React.useState<any>(null);
+    const [editingCourse, setEditingCourse] = React.useState<any>(null);
     const [isLoading, _setIsLoading] = React.useState(false);
 
     // Estado para saber qué curso está expandido (guardamos su ID o índice)
@@ -37,6 +45,15 @@ const Cursos: React.FC = () => {
     setExpandedCourseId(isExpanded ? id : null);
     };
 
+    const handleOpenEdit = (course: any) => {
+      setEditingCourse(course);
+      setIsOpenEditar(true);
+    };
+
+    const handleOpenDuplicate = (course: any) => {
+      setDuplicatingCourse(course);
+      setIsOpenDuplicar(true);
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px'}}>
@@ -59,6 +76,7 @@ const Cursos: React.FC = () => {
                                     {[1, 2, 3].map((item) => {
                                     
                                     const isCurrentlyExpanded = expandedCourseId === item;
+                                    const currentCourse = { ...mockCourse, id: `#ID-000${item}` };
 
                                     return (
                                         <Grid
@@ -72,10 +90,13 @@ const Cursos: React.FC = () => {
                                             sx={{ transition: 'all 0.3s ease-in-out' }} // Transición suave al cambiar de tamaño
                                         >
                                             <CursoCard
-                                                data={{ ...mockCourse, id: `#ID-000${item}` }}
+                                                data={currentCourse}
                                                 viewMode="grid"
                                                 isExpanded={isCurrentlyExpanded}
                                                 onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
+                                                onEdit={() => handleOpenEdit(currentCourse)}
+                                                onDuplicate={() => handleOpenDuplicate(currentCourse)}
+                                                onAddModule={() => setIsOpenAgregarModulo(true)}
                                             />
                                         </Grid>
                                     );
@@ -86,14 +107,18 @@ const Cursos: React.FC = () => {
                                     {[1, 2, 3].map((item) => {
                                         // Hacemos exactamente lo mismo para la vista de lista
                                         const isCurrentlyExpanded = expandedCourseId === item;
+                                        const currentCourse = { ...mockCourse, id: `#ID-000${item}` };
 
                                         return (
                                             <CursoCard 
                                                 key={item} 
-                                                data={{ ...mockCourse, id: `#ID-000${item}` }} 
+                                                data={currentCourse} 
                                                 viewMode="list" 
                                                 isExpanded={isCurrentlyExpanded}
                                                 onToggleExpand={(expanding) => handleToggleExpand(item, expanding)}
+                                                onEdit={() => handleOpenEdit(currentCourse)}
+                                                onDuplicate={() => handleOpenDuplicate(currentCourse)}
+                                                onAddModule={() => setIsOpenAgregarModulo(true)}
                                             />
                                         );
                                         })}
@@ -104,6 +129,14 @@ const Cursos: React.FC = () => {
                 </>
             }
             <AgregarCursoDrawer open={isOpenRegistrar} onClose={() => setIsOpenRegistrar(false)} />
+            <EditarCursoDrawer open={isOpenEditar} onClose={() => setIsOpenEditar(false)} cursoData={editingCourse} />
+            <AgregarModuloDialog open={isOpenAgregarModulo} onClose={() => setIsOpenAgregarModulo(false)} />
+            <DuplicarCursoDialog
+              open={isOpenDuplicar}
+              onClose={() => setIsOpenDuplicar(false)}
+              courseTitle={duplicatingCourse?.title}
+              modulesCount={duplicatingCourse?.modulesCount}
+            />
         </Box>
     );
 }

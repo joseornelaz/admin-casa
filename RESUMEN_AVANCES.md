@@ -140,8 +140,14 @@ Se han implementado nuevas pantallas y componentes de arquitectura siguiendo las
 | `src/components/pages/Alumnos/AltaUnica/steps/Step3Inscripcion.tsx` | **[NUEVO]** | Sub-componente del Paso 3 (Inscripción y selección de periodo). |
 | `src/components/pages/Alumnos/AltaUnica/steps/Step4Confirmacion.tsx` | **[NUEVO]** | Sub-componente del Paso 4 (Resumen de prospecto y confirmación). |
 | `src/components/pages/Alumnos/AltaUnica/steps/index.ts` | **[NUEVO]** | Archivo de exportación de sub-componentes de pasos. |
-| `src/components/pages/Academia/Cursos/Cursos.tsx` | **Modificado** | Conectado el botón "Agregar curso" con el nuevo Sidenav lateral. |
+| `src/components/pages/Academia/Cursos/Cursos.tsx` | **Modificado** | Conectadas las acciones de "Agregar curso", "Editar", "Agregar módulo" y "Duplicar" con sus respectivos Drawers y Diálogos. |
 | `src/components/pages/Academia/Cursos/AgregarCursoDrawer.tsx` | **[NUEVO]** | Sidenav lateral optimizado en dimensiones y espaciado compacto para visualizar el 100% de los campos sin necesidad de scroll. |
+| `src/components/pages/Academia/Cursos/EditarCursoDrawer.tsx` | **[NUEVO]** | Sidenav lateral de edición de curso y gestión dinámica de lista de módulos (agregar, eliminar y reordenar módulos). |
+| `src/components/molecules/Dialogs/AgregarModuloDialog/AgregarModuloDialog.tsx` | **Modificado** | Integrado el botón "+ Agregar elemento al módulo" para desplegar el modal `AgregarElementoDialog`. |
+| `src/components/molecules/Dialogs/AgregarElementoDialog/AgregarElementoDialog.tsx` | **Modificado** | Rediseño visual del selector de tipos de elemento (Contenido, Actividad, Foro y Evaluación) con tarjetas e iconos estilizados según la maqueta. |
+| `src/components/molecules/Dialogs/DuplicarCursoDialog/DuplicarCursoDialog.tsx` | **[NUEVO]** | Diálogo modal secuencial de 3 pasos para la duplicación de cursos en el mismo programa o hacia otro programa destino. |
+| `src/components/pages/Academia/Vigencias/Vigencias.tsx` | **Modificado** | Rediseño visual completo de la pantalla `/academia/vigencias` soportando vistas en Lista y Cuadrícula, chips de filtro activo (`Activas ✕`, `Habilitadas ✕`), badging de vigencia (`VIGENCIA-0001` ámbar, `VIGENCIA-0002` azul), pills de estado (`• ACTIVA`) y acciones. |
+| `src/components/pages/Academia/Vigencias/VigenciasDetalles.tsx` | **Modificado** | Rediseño visual completo de la pantalla `/academia/vigencias/details/:id` incluyendo la tarjeta de detalles con cuadrícula de 4 fechas, tarjetas métricas de "Estado de la Vigencia" y sección "Grupos (3)" con avatares apilados y drawer de edición de grupo. |
 | `src/components/index.tsx` | **Modificado** | Exportación de `SeleccionEspacio`, `GlobalTemplate` y `NuevaAltaUnica`. |
 | `src/AppRouting.tsx` | **Modificado** | Configuración de rutas asociadas al nuevo layout y formulario. |
 | `src/components/pages/Authorization/Login/Login.tsx` | **Modificado** | Rediseño visual pixel-perfect de "Iniciar Sesión" y "Recuperar contraseña" con soporte dinámico de hero banner en modo oscuro y crema. |
@@ -152,3 +158,4 @@ Se han implementado nuevas pantallas y componentes de arquitectura siguiendo las
 
 - **TypeScript Build**: `npx tsc --noEmit` completado exitosamente sin advertencias ni errores.
 - **Compatibilidad**: Conservados todos los componentes y estructuras previas (`MainTemplate`, `Sidenav`, etc.).
+

@@ -46,6 +46,7 @@ interface CourseCardProps {
   onToggleExpand?: (isExpanded: boolean) => void;
   onView?: () => void;
   onEdit?: () => void;
+  onDuplicate?: () => void;
   onAddModule?: () => void;
   onAddElement?: (moduleId: string | number, elementData: any) => void;
 }
@@ -63,6 +64,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   onToggleExpand,
   onView,
   onEdit,
+  onDuplicate,
   onAddModule,
   onAddElement
 }) => {
@@ -274,6 +276,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
             variant="outlined"
             size="small"
             startIcon={<ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />}
+            onClick={onDuplicate}
             sx={{ background: 'transparent', borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px', height: '32px', fontSize: '0.8rem', px: 1.5 }}
           >
             Duplicar

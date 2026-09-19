@@ -36,6 +36,17 @@ export const RegistrarGrupoFormSchema = (tutoresValidos: number[], tiposGrupoVal
       .refine((id) => id > 0 && tutoresValidos.includes(id), {
             message: "Seleccionar Tutor",
         }),
+
+    planEstudio: z.string().optional(),
+    servicio: z.string().optional(),
+    titulo: z.string().optional(),
+    linkAdmin: z.string().optional(),
+    linkTutoria: z.string().optional(),
+    descripcionClase: z.string().optional(),
+    tipoClase: z.string().optional(),
+    materia: z.string().optional(),
+    grupo1: z.boolean().optional(),
+    grupo2: z.boolean().optional(),
 });
 
 
