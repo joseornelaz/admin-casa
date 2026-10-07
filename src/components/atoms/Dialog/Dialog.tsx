@@ -4,11 +4,12 @@ import type { SxProps, Theme } from '@mui/material';
 
 type ResponsiveDialogProps = {
     isOpen?: boolean;
+    onClose?: () => void;
     children: React.ReactNode;
     sxProps?: SxProps<Theme>;
 }
 
-export const Dialog: React.FC<ResponsiveDialogProps> = ({children, isOpen, sxProps }) => {
+export const Dialog: React.FC<ResponsiveDialogProps> = ({children, isOpen, sxProps, onClose }) => {
     const [open, setOpen] = React.useState(false);
 
     React.useEffect(() => {
@@ -16,12 +17,17 @@ export const Dialog: React.FC<ResponsiveDialogProps> = ({children, isOpen, sxPro
             setOpen(isOpen);
         }
     }, [isOpen]);
+
+    const handleClose = () => {
+        onClose?.();
+    }
     
     return (
         <React.Fragment>
             <MuiDialog
                 maxWidth="md"
                 open={open}
+                onClose={handleClose}
                 slotProps={{
                     paper: {
                         sx: {

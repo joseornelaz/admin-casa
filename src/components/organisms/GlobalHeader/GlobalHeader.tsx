@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../../../hooks";
 import {
   Box,
   Typography,
@@ -33,6 +34,7 @@ const ORGANIZACIONES_HEADER: OrgOption[] = [
 ];
 
 export const GlobalHeader: React.FC = () => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [selectedOrg, setSelectedOrg] = useState<OrgOption>(ORGANIZACIONES_HEADER[0]);
   const [orgMenuAnchor, setOrgMenuAnchor] = useState<null | HTMLElement>(null);
@@ -52,9 +54,11 @@ export const GlobalHeader: React.FC = () => {
     setUserMenuAnchor(event.currentTarget);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUserMenuAnchor(null);
-    navigate(AppRoutingPaths.LOGIN);
+    await logout();
+    localStorage.clear();
+    navigate("/");
   };
 
   return (

@@ -34,3 +34,24 @@ export const PERIODOS_INSCRIPCION = {
 export const MATERIAS = {
     GET_MATERIAS: { path: '/materias', key: 'materias' },
 }
+
+export const CURSOS = {
+    GET_CURSOS: { path: '/academic/cursos', key: 'cursos' },
+    POST_REGISTRAR_CURSO: { path: '/academic/cursos', key: 'registrar-curso' },
+    PUT_ACTUALIZAR_CURSO: { path: '/academic/cursos/:id', key: 'actualizar-curso' },
+    DELETE_ELIMINAR_CURSO: { path: '/academic/cursos/:id', key: 'eliminar-curso' },
+}
+
+export const MODULOS_CURSOS = {
+    GET_MODULOS: { path: '/academic/cursos/:id_curso/modulos', key: 'modulos' },
+    POST_REGISTRAR_MODULO: { path: '/academic/cursos/:id_curso/modulos', key: 'registrar-modulo' },
+    PUT_ACTUALIZAR_MODULO: { path: '/academic/modulos/:id_modulo', key: 'actualizar-modulo' },
+    DELETE_MODULO: { path: '/academic/modulos/:id_modulo', key: 'eliminar-modulo' },
+    
+    GET_LISTAR_LECCIONES_MODULO: { path: '/academic/modulos/:id_modulo/lecciones', key: 'listar-lecciones-modulo' },
+    GET_LISTAR_RECURSOS_MODULO: { path: '/academic/lecciones/:id_leccion/recursos', key: 'listar-recursos-modulo' },
+
+    POST_REGISTRAR_RECURSO: { path: '/academic/lecciones/:id_leccion/recursos', key: 'registrar-recurso' },
+    PUT_ACTUALIZAR_RECURSO: { path: '/academic/recursos/:id_recurso', key: 'actualizar-recurso' },
+    DELETE_RECURSO: { path: '/academic/recursos/:id_recurso', key: 'eliminar-recurso' },
+}

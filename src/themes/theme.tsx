@@ -213,10 +213,7 @@ const theme = createTheme({
           },
           '& .MuiInputLabel-root': {
             transform: 'translate(14px, 10px) scale(1)',
-            '&.Mui-focused': {
-              transform: 'translate(14px, -9px) scale(0.75)',
-            },
-            '&.MuiFormLabel-filled': {
+            '&.Mui-focused, &.MuiFormLabel-filled, &.MuiInputLabel-shrink': {
               transform: 'translate(14px, -9px) scale(0.75)',
             },
           },

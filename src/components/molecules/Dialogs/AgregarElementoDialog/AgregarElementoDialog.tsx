@@ -19,38 +19,116 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { ContenidoEvaluacionForm } from './ContenidoEvaluacionForm';
 import { ActividadForoForm } from './ActividadForoForm';
+import { CreateRecurso } from '../../../../services/CursosService';
+import type { ModulosResponse } from '../../../../types/Cursos.interface';
+import { useQueryClient } from '@tanstack/react-query';
+import { MODULOS_CURSOS } from '../../../../types/endpoints';
 
-type StepType = 'menu' | 'contenido' | 'actividad' | 'foro' | 'evaluacion';
+export type StepType = 'menu' | 'contenido' | 'actividad' | 'foro' | 'evaluacion';
+export type TipoElemento = 'contenido' | 'actividad' | 'foro' | 'evaluacion';
+
+export interface ElementoCapturedData {
+  tipoElemento: TipoElemento;
+  tipoLabel: string;
+  isFromModulo: boolean;
+  nombre: string;
+  descripcion?: string;
+  contenidoHtml?: string;
+  archivo?: File | null;
+  fechaInicio?: string;
+  fechaFin?: string;
+  formData: any;
+}
 
 interface AgregarElementoDialogProps {
   open: boolean;
-  onClose: () => void;
-  onSave?: (data: any) => void;
+  onClose?: () => void;
+  onSave?: (data: ElementoCapturedData) => void;
+  isFromModulo?: boolean; // Prop para indicar si se está agregando desde un módulo
+  modulo?: ModulosResponse | null; // ID de la lección para asociar el recurso
 }
 
 export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
   open,
   onClose,
-  onSave
+  onSave,
+  isFromModulo = false, // Valor por defecto
+  modulo,
 }) => {
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<StepType>('menu');
-  const [elementName, setElementName] = useState('');
-  const [htmlContent, setHtmlContent] = useState('');
+  const [tipoRecurso, setTipoRecurso] = useState<number | null>(null);
 
   // Resetear estados al cerrar
   const handleClose = () => {
     setCurrentStep('menu');
-    setElementName('');
-    setHtmlContent('');
-    onClose();
+    onClose?.();
   };
 
   const handleBack = () => {
     setCurrentStep('menu');
   };
 
-  const handleSave = () => {
-    onSave?.({ step: currentStep, name: elementName, htmlContent });
+  const getTipoLabel = (step: StepType): string => {
+    switch (step) {
+      case 'contenido':
+        return 'Contenido';
+      case 'actividad':
+        return 'Actividad';
+      case 'foro':
+        return 'Foro';
+      case 'evaluacion':
+        return 'Evaluación';
+      default:
+        return '';
+    }
+  };
+
+  const handleFormSubmit = async (formData: any) => {
+    if (currentStep === 'menu') return;
+
+    const titulo = formData?.titulo || formData?.nombre || '';
+    const descripcion_html = formData?.descripcion_html || formData?.descripcion || formData?.contenidoHtml || '';
+    const file = formData?.file || formData?.archivo || null;
+
+    const resultData: ElementoCapturedData = {
+      tipoElemento: currentStep,
+      tipoLabel: getTipoLabel(currentStep),
+      isFromModulo,
+      nombre: titulo,
+      descripcion: descripcion_html,
+      contenidoHtml: descripcion_html,
+      archivo: file,
+      fechaInicio: formData?.fechaInicio || '',
+      fechaFin: formData?.fechaFin || '',
+      formData,
+    };
+
+    const leccionId = modulo?.id_leccion || modulo?.id_modulo;
+
+    if (!isFromModulo && leccionId) {
+      try {
+        await CreateRecurso(leccionId, {
+          id_recurso: 0,
+          id_leccion: leccionId,
+          titulo: titulo,
+          id_tipo_recurso: tipoRecurso!,
+          package_uuid: '',
+          descripcion_html: descripcion_html,
+          url: formData?.url || '',
+          tipo_material: formData?.tipo_material || '',
+          tipo_examen: formData?.tipo_examen || '',
+          file: file,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: [MODULOS_CURSOS.GET_LISTAR_RECURSOS_MODULO.key],
+        });
+      } catch (error) {
+        console.error("Error al registrar el recurso:", error);
+      }
+    }
+
+    onSave?.(resultData);
     handleClose();
   };
 
@@ -61,28 +139,32 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
       title: 'Contenido',
       description: 'PDF, video, HTML, SCORM o enlace',
       icon: <DescriptionOutlinedIcon sx={{ color: '#2563EB', fontSize: 22 }} />,
-      bgColor: '#EEF2FF'
-    },
+      bgColor: '#EEF2FF',
+      tipoRecurso: 3
+     },
     {
       id: 'actividad',
       title: 'Actividad',
       description: 'Tarea o práctica evaluable',
       icon: <AssignmentOutlinedIcon sx={{ color: '#9333EA', fontSize: 22 }} />,
-      bgColor: '#F3E8FF'
+      bgColor: '#F3E8FF',
+      tipoRecurso: 1
     },
     {
       id: 'foro',
       title: 'Foro',
       description: 'Discusión entre alumnos',
       icon: <ChatBubbleOutlineIcon sx={{ color: '#06B6D4', fontSize: 22 }} />,
-      bgColor: '#E0F2FE'
+      bgColor: '#E0F2FE',
+      tipoRecurso: 5
     },
     {
       id: 'evaluacion',
       title: 'Evaluación',
       description: 'Examen o quiz calificable',
       icon: <QuizOutlinedIcon sx={{ color: '#D97706', fontSize: 22 }} />,
-      bgColor: '#FEF3C7'
+      bgColor: '#FEF3C7',
+      tipoRecurso: 2
     }
   ];
 
@@ -127,7 +209,7 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
             elevation={0}
             onClick={() => {
               setCurrentStep(opt.id as StepType);
-              if (opt.id === 'contenido' || opt.id === 'evaluacion') setElementName('');
+              setTipoRecurso(opt.tipoRecurso);
             }}
             sx={{
               p: 1.8,
@@ -177,8 +259,8 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
     </Box>
   );
 
-  const renderFileUploadStep = () => <ContenidoEvaluacionForm onBack={handleBack} onClose={handleClose} onSubmit={handleSave} />;
-  const renderHtmlStep = () => <ActividadForoForm onBack={handleBack} onClose={handleClose} onSubmit={handleSave} />;
+  const renderFileUploadStep = () => <ContenidoEvaluacionForm onBack={handleBack} onClose={handleClose} onSubmit={handleFormSubmit} />;
+  const renderHtmlStep = () => <ActividadForoForm onBack={handleBack} onClose={handleClose} onSubmit={handleFormSubmit} />;
 
   return (
     <Dialog

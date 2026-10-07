@@ -57,6 +57,10 @@ export const CursoCardDetail: React.FC = () => {
   const [module1Expanded, setModule1Expanded] = useState(true);
   const [isMandatorySwitch, setIsMandatorySwitch] = useState(false);
 
+  const handleAgregarModulo = () => {
+    console.log('Agregar módulo al curso');
+  }
+
   return (
     <Paper
       elevation={0}
@@ -185,7 +189,22 @@ export const CursoCardDetail: React.FC = () => {
                     <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280' }}>
                       ACCIONES DEL MÓDULO
                     </Typography>
-                    <Button variant="contained" size="small" startIcon={<AddIcon />} sx={{ backgroundColor: '#111827', color: '#FFF', borderRadius: '20px', textTransform: 'none', fontSize: '0.75rem', py: 0.5, px: 2, '&:hover': { backgroundColor: '#1F2937' } }}>
+                    <Button 
+                      onClick={handleAgregarModulo}
+                      variant="contained" 
+                      size="small" 
+                      startIcon={<AddIcon />} 
+                      sx={{ 
+                        backgroundColor: '#111827', 
+                        color: '#FFF', 
+                        borderRadius: '20px', 
+                        textTransform: 'none', 
+                        fontSize: '0.75rem', 
+                        py: 0.5, 
+                        px: 2, 
+                        '&:hover': { backgroundColor: '#1F2937' } 
+                      }}
+                      >
                       Agregar elemento
                     </Button>
                   </Stack>

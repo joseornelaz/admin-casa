@@ -28,6 +28,8 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { AppRoutingPaths } from "@constants";
+import { useAuth } from "../../../hooks";
+import { CerrarSesionDialog } from "../../molecules/Dialogs/CerrarSesionDialog/CerrarSesionDialog";
 
 interface GlobalSidenavProps {
   collapsed?: boolean;
@@ -50,10 +52,12 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
   collapsed: externalCollapsed,
   onToggleCollapse,
 }) => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [internalCollapsed, setInternalCollapsed] = useState<boolean>(false);
   const [academicoOpen, setAcademicoOpen] = useState<boolean>(true);
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState<boolean>(false);
 
   // Estado para el programa seleccionado y el menú desplegable
   const [selectedProg, setSelectedProg] = useState<ProgramaOption>(PROGRAMAS_MOCK[1]); // Diplomado en Administración
@@ -85,6 +89,13 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
   };
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    setIsLogoutDialogOpen(false);
+    await logout();
+    localStorage.clear();
+    navigate("/");
+  };
 
   return (
     <Box
@@ -792,7 +803,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
         {isCollapsed ? (
           <Tooltip title="Ana Belén Ávila - Cerrar sesión" placement="right">
             <Avatar
-              onClick={() => navigate(AppRoutingPaths.LOGIN)}
+              onClick={()=> setIsLogoutDialogOpen(true)}
               sx={{
                 width: 32,
                 height: 32,
@@ -841,7 +852,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
 
             <IconButton
               size="small"
-              onClick={() => navigate(AppRoutingPaths.LOGIN)}
+              onClick={()=> setIsLogoutDialogOpen(true)}
               sx={{
                 color: "#9CA3AF",
                 "&:hover": { color: "#FFFFFF", backgroundColor: "rgba(255, 255, 255, 0.1)" },
@@ -852,6 +863,11 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
           </>
         )}
       </Box>
+      <CerrarSesionDialog
+        isOpen={isLogoutDialogOpen}
+        onClose={()=> setIsLogoutDialogOpen(false)}
+        onConfirm={handleLogout}
+      />
     </Box>
   );
 };

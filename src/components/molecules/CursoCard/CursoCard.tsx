@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Paper,
   Box,
@@ -14,7 +14,7 @@ import {
   Checkbox,
   LinearProgress,
   type SxProps,
-  type Theme
+  type Theme,
 } from '@mui/material';
 
 // Iconos MUI
@@ -36,11 +36,14 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 
 import { AgregarElementoDialog } from '../Dialogs/AgregarElementoDialog/AgregarElementoDialog';
-import type { ModuleData, ViewMode } from '../../../types/Cursos.interface';
+import type { Curso, ViewMode, ModulosResponse } from '../../../types/Cursos.interface';
 import { ModuleItem } from './ModuleItem';
+import { GetCursoContenido } from '../../../services/CursosService';
+import { LoadingDialog } from '../Dialogs/LoadingDialog/LoadingDialog';
+import { EditarModuloDialog } from '../Dialogs/EditarModuloDialog/EditarModuloDialog';
 
 interface CourseCardProps {
-  data: any;
+  data: Curso;
   viewMode?: ViewMode;
   isExpanded?: boolean;
   onToggleExpand?: (isExpanded: boolean) => void;
@@ -69,45 +72,70 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   onAddElement
 }) => {
   // Estado para controlar qué módulo tiene abierto el diálogo de "Agregar elemento"
-  const [activeModuleForAdd, setActiveModuleForAdd] = useState<ModuleData | null>(null);
+  const [activeModuleForAdd, setActiveModuleForAdd] = useState<ModulosResponse | null>(null);
+  const [activeModuleForEdit, setActiveModuleForEdit] = useState<ModulosResponse | null>(null);
 
   // Estado para controlar la apertura individual de N módulos
   const [expandedModules, setExpandedModules] = useState<Record<string | number, boolean>>({});
 
-  // Módulos mock o desde props si vienen en data
-  const modulesList: ModuleData[] = data.modules || [
-    {
-      id: 1,
-      title: 'Módulo 1 — Introducción',
-      status: 'Publicado',
-      isMandatory: false,
-      items: [
-        { id: 'item-1', sectionTitle: 'CONTENIDO', title: 'Presentación del módulo — Mód. 1', format: 'PDF', type: 'article' },
-        { id: 'item-2', sectionTitle: 'ACTIVIDAD', title: 'Actividad diagnóstica — Mód. 1', format: 'SCORM', type: 'assignment' },
-        { id: 'item-3', sectionTitle: 'FORO', title: 'Foro de discusión — Mód. 1', format: 'HTML', type: 'forum' },
-        { id: 'item-4', sectionTitle: 'EVALUACIONES', title: 'Evaluación final — Mód. 1', format: 'JSON', type: 'quiz' }
-      ]
-    }
-  ];
+  const isMandatory = true; // Falta traer el valor real desde la API para determinar si es obligatorio o no
 
-  const handleExpandToggle = () => {
-    onToggleExpand?.(!isExpanded);
-  };
+  const [idCurso, setIdCurso] = useState<number | null>(null);
+
+  const { modulos, recursosPorModulo, lecciones, isSuccess, isLoading: isCursoContenidoLoading } = GetCursoContenido(idCurso ?? 0, {
+      enabled: !!idCurso,
+  });
+
+  const handleExpandToggle = useCallback((nextExpanded?: boolean) => {
+    const targetExpanded = nextExpanded !== undefined ? nextExpanded : !isExpanded;
+    if (targetExpanded) {
+      setIdCurso(data.id_curso ?? null);
+    }
+    onToggleExpand?.(targetExpanded);
+  }, [data.id_curso, isExpanded, onToggleExpand]);
+
+  const toggleModuleCollapse = useCallback((moduleId: string | number) => {
+    setExpandedModules((prev) => {
+      const isCurrentlyExpanded = prev[moduleId];
+      if (isCurrentlyExpanded) {
+        return {
+          ...prev,
+          [moduleId]: false
+        };
+      } else {
+        return {
+          [moduleId]: true
+        };
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess && modulos.length > 0) {
+      setExpandedModules((prev) => {
+        const hasExpanded = Object.values(prev).some(Boolean);
+        if (!hasExpanded) {
+          return { [modulos[0].id_modulo]: true };
+        }
+        return prev;
+      });
+    }
+  }, [isSuccess, modulos]);
 
   const handleViewClick = () => {
-    handleExpandToggle();
+    setIdCurso(data.id_curso ?? null);
+    onToggleExpand?.(true);
     onView?.();
   };
 
-  const toggleModuleCollapse = (moduleId: string | number) => {
-    setExpandedModules((prev) => ({
-      ...prev,
-      [moduleId]: prev[moduleId] !== undefined ? !prev[moduleId] : false // Por defecto true para el primer render
-    }));
+  const handleGetModuleContent = (moduleId: string | number) => {
+    toggleModuleCollapse(moduleId);
   };
 
-  const handleOpenAddDialog = (module: ModuleData) => {
-    setActiveModuleForAdd(module);
+  const handleOpenAddDialog = (module: ModulosResponse) => {
+    const idLeccion = lecciones.find((leccion) => leccion.idModulo === module.id_modulo)?.idLeccion ?? null;
+    
+    setActiveModuleForAdd({...module, id_leccion: idLeccion});
   };
 
   const handleCloseAddDialog = () => {
@@ -116,9 +144,17 @@ export const CursoCard: React.FC<CourseCardProps> = ({
 
   const handleSaveElement = (elementData: any) => {
     if (activeModuleForAdd) {
-      onAddElement?.(activeModuleForAdd.id, elementData);
+      onAddElement?.(activeModuleForAdd.id_modulo, elementData);
     }
     handleCloseAddDialog();
+  };
+
+  const handleEditarModulo = (module: ModulosResponse) => {
+    setActiveModuleForEdit(module);
+  };
+
+  const handleCloseEditDialog = () => {
+    setActiveModuleForEdit(null);
   };
 
   // Helper para renderizar los iconos según tipo de ítem
@@ -150,7 +186,8 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   );
 
   const headerAcordion = () => (
-    <Box
+    <>
+      <Box
         sx={{
           p: 1,
           px: 2.5,
@@ -166,12 +203,12 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Checkbox size="small" sx={{ p: 0, color: '#D1D5DB', '&.Mui-checked': { color: '#2563EB' } }} />
 
-          <IconButton size="small" onClick={handleExpandToggle} sx={{ color: '#9CA3AF', p: 0.5 }}>
+          <IconButton size="small" onClick={() => handleExpandToggle()} sx={{ color: '#9CA3AF', p: 0.5 }}>
             {isExpanded ? <KeyboardArrowDownIcon sx={{ fontSize: 20 }} /> : <KeyboardArrowRightIcon sx={{ fontSize: 20 }} />}
           </IconButton>
 
           <Chip
-            label={data?.id || '#ID-0001'}
+            label={`#ID-${data.id_curso}`}
             size="small"
             sx={{
               backgroundColor: '#EAEAEA',
@@ -187,13 +224,13 @@ export const CursoCard: React.FC<CourseCardProps> = ({
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.3 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#111827', lineHeight: 1.2, fontSize: '0.95rem' }}>
-              {data?.title || 'Fundamentos de Administración'}
+              {data?.titulo || ''}
             </Typography>
 
             <Stack direction="row" spacing={0.5} alignItems="center">
               <PersonOutlineIcon sx={{ fontSize: 15, color: '#9CA3AF' }} />
               <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.8rem' }}>
-                {data?.author || 'Ana Belén Ávila'}
+                {'No asignado'}
               </Typography>
             </Stack>
 
@@ -210,7 +247,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                 }}
               />
               <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.75rem', fontFamily: 'monospace' }}>
-                {data?.modulesCount || '10'}/{data?.totalModules || '10'} mód.
+                {data?.total_modulos || '0'} mód.
               </Typography>
             </Stack>
           </Box>
@@ -219,23 +256,23 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         {/* Lado derecho */}
         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" sx={{ ml: 'auto' }}>
           <StatusChip 
-            label={data?.period || 'Ene-Jun 2026'}
+            label={'Ene-Jun 2026'} // Falta traer el periodo real desde la API
             styles={{ backgroundColor: '#F3F4F6', color: '#4B5563' }}
             variant="filled"
           />
 
           <StatusChip
-            label={data?.isMandatory ? 'Obligatorio' : 'Optativo'}
+            label={'Obligatorio'} // Falta traer el valor real desde la API
             styles={{ borderColor: '#BFDBFE', color: '#2563EB', backgroundColor: '#EFF6FF' }}
           />
 
           <StatusChip
-            label={data?.status || 'Publicado'}
+            label={data?.estado_curso || 'Publicado'}
             styles={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4', mr: 1 }}
           />
-
+          
           <Tooltip title="Vista previa" arrow placement="top">
-            <IconButton size="small" onClick={onView} sx={{ p: '5px', color: '#6B7280' }}>
+            <IconButton size="small" onClick={handleViewClick} sx={{ p: '5px', color: '#6B7280' }}>
               <VisibilityOutlinedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
@@ -283,6 +320,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
           </Button>
         </Stack>
       </Box>
+    </>
   );
 
 
@@ -290,7 +328,8 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   // RENDER: VISTA DESPLEGADA COMPLETA (FULL DETAIL)
   // ==========================================
   const renderExpandedDetailView = () => (
-    <Paper
+    <>
+      <Paper
       elevation={0}
       sx={{
         borderRadius: '16px',
@@ -323,7 +362,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
 
           <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
             <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.875rem' }}>
-              {data.description || 'Introduce los principios básicos de la administración moderna: planeación, organización, dirección y control aplicados a contextos empresariales reales.'}
+              {data.descripcion || 'Introduce los principios básicos de la administración moderna: planeación, organización, dirección y control aplicados a contextos empresariales reales.'}
             </Typography>
           </Paper>
         </Box>
@@ -338,13 +377,13 @@ export const CursoCard: React.FC<CourseCardProps> = ({
             overflow: 'hidden'
           }}
         >
-          {modulesList.map((module, index) => {
-            const isModuleExpanded = expandedModules[module.id] ?? true;
-            const isLastModule = index === modulesList.length - 1;
+          {modulos.map((module, index) => {
+            const isModuleExpanded = expandedModules[module.id_modulo] ?? false;
+            const isLastModule = index === modulos.length - 1;
 
             return (
               <Box 
-                key={module.id} 
+                key={module.id_modulo} 
                 sx={{ 
                   borderBottom: isLastModule ? 'none' : '1px solid #E5E7EB',
                   backgroundColor: '#FFFFFF'
@@ -364,7 +403,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                     direction="row" 
                     spacing={1} 
                     alignItems="center" 
-                    onClick={() => toggleModuleCollapse(module.id)} 
+                    onClick={() => handleGetModuleContent(module.id_modulo)} 
                     sx={{ cursor: 'pointer', flexGrow: 1 }}
                   >
                     {isModuleExpanded ? (
@@ -373,14 +412,19 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                       <KeyboardArrowRightIcon sx={{ color: '#6B7280', fontSize: 20 }} />
                     )}
                     <Typography variant="subtitle2" sx={{ fontWeight: 500, color: '#111827', fontSize: '0.9rem' }}>
-                      {module.title}
+                      {module.titulo}
                     </Typography>
                   </Stack>
 
                   {/* Badges y Botones de Acción */}
                   <Stack direction="row" spacing={1} alignItems="center">
+                    {
+                      /*
+                      Falta traer el status real del módulo desde la API para determinar si es "Publicado", "Borrador", etc. Por ahora se usa un valor mock.
+                      */
+                    }
                     <Chip 
-                      label={module.status || 'Publicado'} 
+                      label={'Publicado'} 
                       size="small" 
                       sx={{ 
                         backgroundColor: '#10B981', 
@@ -393,35 +437,35 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                     />
                     
                     {/* Botones cuadrados con borde como en la imagen */}
-                    {[
-                      <Tooltip title="Editar módulo" arrow  key="edit">
+                    <Tooltip title="Editar módulo" arrow>
+                      <IconButton onClick={() => handleEditarModulo(module)} size="small" sx={{ p: '4px', color: '#9CA3AF', '&:hover': { backgroundColor: '#F3F4F6' } }}>
                         <EditOutlinedIcon sx={{ fontSize: 16 }} />
-                      </Tooltip>,
-                      <Tooltip title="Duplicar módulo" arrow  key="copy">
-                        <ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />
-                      </Tooltip>,
-                      <Tooltip title="Descargar módulo" arrow key="down">
-                        <FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />                        
-                      </Tooltip>,
-                      <Tooltip title="Publicar módulo" arrow key="up">
-                        <CloudUploadOutlinedIcon sx={{ fontSize: 16 }} />
-                      </Tooltip>,
-                      <Tooltip title="Ver módulo" arrow key="view">
-                        <VisibilityOutlinedIcon sx={{ fontSize: 16 }} />
-                      </Tooltip>,
-                    ].map((icon, idx) => (
-                      <IconButton 
-                        key={idx} 
-                        size="small" 
-                        sx={{
-                          p: '4px',
-                          color: '#9CA3AF',
-                          '&:hover': { backgroundColor: '#F3F4F6' }
-                        }}
-                      >
-                        {icon}
                       </IconButton>
-                    ))}
+                    </Tooltip>
+                    <Tooltip title="Duplicar módulo" arrow>
+                      <IconButton size="small" sx={{ p: '4px', color: '#9CA3AF', '&:hover': { backgroundColor: '#F3F4F6' } }}>
+                        <ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Descargar módulo" arrow>
+                      <IconButton size="small" sx={{ p: '4px', color: '#9CA3AF', '&:hover': { backgroundColor: '#F3F4F6' } }}>
+                        <FileDownloadOutlinedIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Publicar módulo" arrow>
+                      <IconButton size="small" sx={{ p: '4px', color: '#9CA3AF', '&:hover': { backgroundColor: '#F3F4F6' } }}>
+                        <CloudUploadOutlinedIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Ver módulo" arrow>
+                      <IconButton 
+                        size="small" 
+                        onClick={() => handleGetModuleContent(module.id_modulo)}
+                        sx={{ p: '4px', color: '#9CA3AF', '&:hover': { backgroundColor: '#F3F4F6' } }}
+                      >
+                        <VisibilityOutlinedIcon sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Tooltip>
                   </Stack>
                 </Box>
 
@@ -467,7 +511,12 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                     <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.75rem' }}>
                       Marcar como obligatorio
                     </Typography>
-                    <Switch size="small" defaultChecked={module.isMandatory} sx={{ transform: 'scale(0.9)' }} />
+                      {
+                        /*
+                          Falta traer el valor real desde la API para determinar si el módulo es obligatorio o no. Por ahora se usa un valor mock.
+                        */
+                      }
+                    <Switch size="small" defaultChecked={true} sx={{ transform: 'scale(0.9)' }} />
                   </Stack>
                 </Box>
 
@@ -475,13 +524,14 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                 <Collapse in={isModuleExpanded}>
                   <Box sx={{ p: 2, pl: 4.5, pt: 0, backgroundColor: '#FFFFFF' }}>
                     <Stack spacing={2} sx={{ mt: 2 }}>
-                      {module.items?.map((item) => (
+                      {(recursosPorModulo[module.id_modulo] ?? []).map((item) => (
                         <ModuleItem
-                          key={item.id}
-                          sectionTitle={item.sectionTitle}
-                          title={item.title}
-                          format={item.format}
-                          icon={renderItemIcon(item.type)}
+                          key={item.id_recurso}
+                          sectionTitle={item.tipo_recurso_nombre}
+                          title={item.titulo}
+                          format={''}
+                          icon={renderItemIcon(item.tipo_recurso_nombre)}
+                          item={item}
                         />
                       ))}
                     </Stack>
@@ -498,8 +548,16 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         open={Boolean(activeModuleForAdd)}
         onClose={handleCloseAddDialog}
         onSave={handleSaveElement}
+        modulo={activeModuleForAdd}
       />
-    </Paper>
+      <EditarModuloDialog
+        open={Boolean(activeModuleForEdit)}
+        modulo={activeModuleForEdit}
+        onClose={handleCloseEditDialog}
+      />
+      </Paper>
+      <LoadingDialog isOpen={isCursoContenidoLoading} />
+    </>
   );
 
   // SI ESTÁ EXPANDIDO: Muestra la vista horizontal extendida
@@ -512,7 +570,8 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   // ==========================================
   if (viewMode === 'grid') {
     return (
-      <Paper
+      <>
+        <Paper
         elevation={0}
         sx={{
           p: 2.5,
@@ -536,7 +595,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         {/* Fila Superior: Badge ID + Tag Obligatorio */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Chip
-            label={data.id}
+            label={`#ID-${data.id_curso}`}
             size="small"
             sx={{
               backgroundColor: '#EAEAEA',
@@ -549,7 +608,10 @@ export const CursoCard: React.FC<CourseCardProps> = ({
               fontFamily: 'monospace'
             }}
           />
-          {data.isMandatory && (
+          {
+            // Falta traer el valor real desde la API para determinar si es obligatorio o no
+          }
+          {isMandatory && (
             <Chip
               label="Obligatorio"
               size="small"
@@ -573,19 +635,23 @@ export const CursoCard: React.FC<CourseCardProps> = ({
             variant="h6"
             sx={{ fontWeight: 700, color: '#111827', fontSize: '1rem', lineHeight: 1.3 }}
           >
-            {data.title}
+            {data.titulo}
           </Typography>
           <Stack direction="row" spacing={0.5} alignItems="center">
             <PersonOutlineIcon sx={{ fontSize: 16, color: '#9CA3AF' }} />
             <Typography variant="body2" sx={{ color: '#9CA3AF', fontSize: '0.825rem' }}>
-              {data.author}
+              {data.profesor_nombre || 'No asignado'}
             </Typography>
           </Stack>
         </Box>
 
-        {/* Fila de Badges de Estatus */}
+        {
+          /* Fila de Badges de Estatus 
+            Falta traer los valores reales desde la API para determinar el estado del curso y los conteos de publicados, borradores y sin publicar.
+          */
+        }
         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-          {data.publishedCount !== undefined && (
+          {/* {data.publishedCount !== undefined && (
             <Chip label={`${data.publishedCount} publicados`} size="small" variant="outlined" sx={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4', fontSize: '0.75rem', fontWeight: 600, borderRadius: '12px', height: '24px' }} />
           )}
           {data.draftCount !== undefined && (
@@ -593,7 +659,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
           )}
           {data.unpublishedCount !== undefined && (
             <Chip label={`${data.unpublishedCount} sin publicar`} size="small" variant="outlined" sx={{ borderColor: '#FECDD3', color: '#E11D48', backgroundColor: '#FFF1F2', fontSize: '0.75rem', fontWeight: 500, borderRadius: '12px', height: '24px' }} />
-          )}
+          )} */}
         </Stack>
 
         <Divider sx={{ my: 0.5, borderColor: '#F3F4F6' }} />
@@ -601,7 +667,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         {/* Fila Inferior: Conteo de Módulos + Botones de Acción */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: 500, fontSize: '0.875rem', fontFamily: 'monospace' }}>
-            {data.modulesCount} módulos
+            {data.modulos?.length || 0} módulos
           </Typography>
 
           <Stack direction="row" spacing={1} alignItems="center">
@@ -626,7 +692,9 @@ export const CursoCard: React.FC<CourseCardProps> = ({
             </Button>
           </Stack>
         </Stack>
-      </Paper>
+        </Paper>
+        <LoadingDialog isOpen={isCursoContenidoLoading} />
+      </>
     );
   }
 
@@ -635,7 +703,8 @@ export const CursoCard: React.FC<CourseCardProps> = ({
   // ==========================================
 
   return (
-    <Paper
+    <>
+      <Paper
       elevation={0}
       sx={{
         borderRadius: '16px',
@@ -648,7 +717,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
       {/* HEADER LISTA */}
       {
         headerAcordion()
-      }
+      }      
 
       {/* DETALLE DESPLEGABLE */}
       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
@@ -668,12 +737,12 @@ export const CursoCard: React.FC<CourseCardProps> = ({
 
             <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
               <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.875rem' }}>
-                {data?.description || 'Introduce los principios básicos de la administración moderna...'}
+                {data.descripcion || ''}
               </Typography>
             </Paper>
           </Box>
 
-          <Paper elevation={0} sx={{ borderRadius: '8px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF', overflow: 'hidden' }}>
+          {/* <Paper elevation={0} sx={{ borderRadius: '8px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF', overflow: 'hidden' }}>
             {modulesList.map((module, index) => {
               const isModuleExpanded = expandedModules[module.id] ?? true;
               return (
@@ -699,7 +768,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                 </Box>
               );
             })}
-          </Paper>
+          </Paper> */}
         </Box>
       </Collapse>
 
@@ -707,68 +776,13 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         open={Boolean(activeModuleForAdd)}
         onClose={() => setActiveModuleForAdd(null)}
         onSave={(elementData) => {
-          if (activeModuleForAdd) onAddElement?.(activeModuleForAdd.id, elementData);
+          if (activeModuleForAdd) onAddElement?.(activeModuleForAdd.id_modulo, elementData);
           setActiveModuleForAdd(null);
         }}
+        modulo={activeModuleForAdd}
       />
-    </Paper>
-  );
-
-
-  return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 1.5,
-        px: 2,
-        borderRadius: '16px',
-        border: '1px solid #E5E7EB',
-        backgroundColor: '#FFFFFF',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 2,
-        flexWrap: 'wrap'
-      }}
-    >
-      <Stack direction="row" spacing={1.5} alignItems="center" sx={{ minWidth: 280 }}>
-        <IconButton size="small" onClick={handleExpandToggle} sx={{ color: '#9CA3AF', p: 0.5 }}>
-          <KeyboardArrowRightIcon />
-        </IconButton>
-
-        <Chip label={data.id} size="small" sx={{ backgroundColor: '#EAEAEA', color: '#555555', fontWeight: 700, fontSize: '0.75rem', borderRadius: '6px', height: '28px', fontFamily: 'monospace' }} />
-
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#111827', fontSize: '0.95rem' }}>
-            {data.title}
-          </Typography>
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <PersonOutlineIcon sx={{ fontSize: 15, color: '#9CA3AF' }} />
-            <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.8rem' }}>
-              {data.author}
-            </Typography>
-          </Stack>
-        </Box>
-      </Stack>
-
-      <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-        {data.period && <Chip label={data.period} size="small" sx={{ backgroundColor: '#F3F4F6', color: '#4B5563', fontSize: '0.8rem', borderRadius: '12px' }} />}
-        {data.isMandatory && <Chip label="Obligatorio" size="small" variant="outlined" sx={{ borderColor: '#BFDBFE', color: '#2563EB', backgroundColor: '#EFF6FF', fontSize: '0.8rem', borderRadius: '12px' }} />}
-        {data.status && <Chip label={data.status} size="small" variant="outlined" sx={{ borderColor: '#BBF7D0', color: '#16A34A', backgroundColor: '#F0FDF4', fontSize: '0.8rem', borderRadius: '12px' }} />}
-        <Chip label={`${data.modulesCount} mód.`} size="small" variant="outlined" sx={{ borderColor: '#FECDD3', color: '#E11D48', backgroundColor: '#FFF1F2', fontSize: '0.8rem', borderRadius: '12px' }} />
-
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 1 }}>
-          <IconButton size="small" onClick={handleViewClick} sx={{ border: '1px solid #E5E7EB', borderRadius: '8px', p: '5px', color: '#6B7280' }}>
-            <VisibilityOutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-          <Button variant="outlined" size="small" startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />} onClick={onEdit} sx={{ borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px' }}>
-            Editar
-          </Button>
-          <Button variant="outlined" size="small" startIcon={<AddIcon sx={{ fontSize: 16 }} />} onClick={onAddModule} sx={{ borderColor: '#E5E7EB', color: '#6B7280', textTransform: 'none', borderRadius: '8px' }}>
-            Agregar módulo
-          </Button>
-        </Stack>
-      </Stack>
-    </Paper>
+      </Paper>
+      <LoadingDialog isOpen={isCursoContenidoLoading} />
+    </>
   );
 };

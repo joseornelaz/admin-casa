@@ -4,6 +4,7 @@ import App from "./App";
 // import MainTemplate from "./components/templates/MainTemplate/MainTemplate";
 import { AppRoutingPaths } from "@constants";
 import * as Component from "@components";
+import { ProtectedRoute } from "./components/templates/ProtectedRoute";
 
 
 export const AppRouting = createHashRouter([
@@ -20,7 +21,7 @@ export const AppRouting = createHashRouter([
                 Component: Component.SeleccionEspacio
             },
             {
-                // Component: ProtectedRoute,
+                Component: ProtectedRoute,
                 children: [
                     {
                         Component: Component.GlobalTemplate,
@@ -85,6 +86,14 @@ export const AppRouting = createHashRouter([
                     }
                 ]
             },
+            {
+                path: AppRoutingPaths.NOTFOUND,
+                Component: Component.NotFound
+            },
+            {
+                path: AppRoutingPaths.SESSION_EXPIRED,
+                Component: Component.SessionExpired
+            }
         ],
     }
 ]);

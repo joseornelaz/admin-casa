@@ -11,39 +11,84 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import type { RecursosResponse } from "../../../types/Cursos.interface";
+import { DeleteRecurso } from "../../../services/CursosService";
+import { ConfirmDialog } from "../Dialogs/ConfirmDialog/ConfirmDialog";
+import React from "react";
+import { EditarRecursoDialog } from "../Dialogs/EditarRecursoDialog/EditarRecursoDialog";
+import { useQueryClient } from "@tanstack/react-query";
+import { MODULOS_CURSOS } from "../../../types/endpoints";
 
 interface ModuleItemProps {
   sectionTitle: string;
   title: string;
   format: string;
   icon: React.ReactNode;
+  item: RecursosResponse;
 }
 
-export const ModuleItem: React.FC<ModuleItemProps> = ({ sectionTitle, title, format, icon }) => (
-  <Box>
-    <Stack direction="row" spacing={0.8} alignItems="center" sx={{ mb: 0.8 }}>
-      {icon}
-      <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280', letterSpacing: '0.5px' }}>
-        {sectionTitle}
-      </Typography>
-    </Stack>
+export const ModuleItem: React.FC<ModuleItemProps> = ({ sectionTitle, title, format, icon, item }) => {
+  const queryClient = useQueryClient();
+  const [openConfirmDialog, setOpenConfirmDialog] = React.useState(false);
+  const [openEditDialog, setOpenEditDialog] = React.useState(false);
 
-    <Paper elevation={0} sx={{ p: 1.2, px: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <InsertDriveFileOutlinedIcon sx={{ fontSize: 18, color: '#EF4444' }} />
-        <Typography variant="body2" sx={{ fontWeight: 500, color: '#1F2937', fontSize: '0.875rem' }}>
-          {title}
+  const handleDelete = async () => {
+    const response = await DeleteRecurso(item.id_recurso);
+    console.log('Recurso eliminado:', response);
+    await queryClient.invalidateQueries({
+      queryKey: [MODULOS_CURSOS.GET_LISTAR_RECURSOS_MODULO.key],
+    });
+    setOpenConfirmDialog(false);
+  };
+
+  const handleEdit = () => {
+    console.log('Edit item:', item);
+    setOpenEditDialog(true);
+  };
+
+  const handleView = () => {
+    console.log('View item:', item);
+    // Aquí puedes agregar la lógica para ver el elemento
+  };
+
+  return (
+    <Box>
+      <Stack direction="row" spacing={0.8} alignItems="center" sx={{ mb: 0.8 }}>
+        {icon}
+        <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280', letterSpacing: '0.5px' }}>
+          {sectionTitle}
         </Typography>
-        <Chip label={format} size="small" sx={{ height: '20px', fontSize: '0.65rem', fontWeight: 700, backgroundColor: '#F3F4F6', color: '#6B7280' }} />
       </Stack>
 
-      <Stack direction="row" spacing={0.5}>
-        <IconButton size="small"><VisibilityOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
-        <IconButton size="small"><EditOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
-        <IconButton size="small"><FileDownloadOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
-        <IconButton size="small"><RocketLaunchOutlinedIcon sx={{ fontSize: 16, color: '#10B981' }} /></IconButton>
-        <IconButton size="small"><DeleteOutlineOutlinedIcon sx={{ fontSize: 16, color: '#EF4444' }} /></IconButton>
-      </Stack>
-    </Paper>
-  </Box>
-);
+      <Paper elevation={0} sx={{ p: 1.2, px: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Stack direction="row" spacing={1} alignItems="center">
+          <InsertDriveFileOutlinedIcon sx={{ fontSize: 18, color: '#EF4444' }} />
+          <Typography variant="body2" sx={{ fontWeight: 500, color: '#1F2937', fontSize: '0.875rem' }}>
+            {title}
+          </Typography>
+          <Chip label={format} size="small" sx={{ height: '20px', fontSize: '0.65rem', fontWeight: 700, backgroundColor: '#F3F4F6', color: '#6B7280' }} />
+        </Stack>
+
+        <Stack direction="row" spacing={0.5}>
+          <IconButton size="small" onClick={handleView}><VisibilityOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
+          <IconButton size="small" onClick={handleEdit}><EditOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
+          <IconButton size="small"><FileDownloadOutlinedIcon sx={{ fontSize: 16, color: '#9CA3AF' }} /></IconButton>
+          <IconButton size="small"><RocketLaunchOutlinedIcon sx={{ fontSize: 16, color: '#10B981' }} /></IconButton>
+          <IconButton size="small" onClick={() => setOpenConfirmDialog(true)}><DeleteOutlineOutlinedIcon sx={{ fontSize: 16, color: '#EF4444' }} /></IconButton>
+        </Stack>
+      </Paper>
+      <ConfirmDialog
+        isOpen={openConfirmDialog}
+        textoAccion="Eliminar recurso"
+        textoConfirmacion={`¿Estás seguro de que deseas eliminar el recurso "${title}"?`}
+        onClose={() => setOpenConfirmDialog(false)}
+        onConfirm={handleDelete}
+      />
+      <EditarRecursoDialog 
+        open={openEditDialog}
+        recurso={item}
+        onClose={() => setOpenEditDialog(false)}
+      />
+    </Box>
+  );
+};

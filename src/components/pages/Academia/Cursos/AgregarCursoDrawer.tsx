@@ -13,6 +13,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  InputAdornment,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -32,6 +33,29 @@ export const AgregarCursoDrawer: React.FC<AgregarCursoDrawerProps> = ({
   const [periodo, setPeriodo] = useState<string>("Selecciona un periodo");
   const [seriacion, setSeriacion] = useState<string>("Sin seriación");
   const [ordenPeriodo, setOrdenPeriodo] = useState<string>("Periodo 1");
+  const [estado, setEstado] = useState<string>("Publicado");
+  const [horas, setHoras] = useState<string>("");
+  const [precio, setPrecio] = useState<string>("");
+
+  const handleHorasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val === "" || /^\d*\.?\d{0,2}$/.test(val)) {
+      setHoras(val);
+    }
+  };
+
+  const handlePrecioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let raw = e.target.value.replace(/[^0-9.]/g, "");
+    const parts = raw.split(".");
+    if (parts.length > 2) return;
+    if (parts[1] && parts[1].length > 2) return;
+
+    if (parts[0]) {
+      parts[0] = parseInt(parts[0], 10).toLocaleString("en-US");
+    }
+    const formatted = parts.join(".");
+    setPrecio(formatted);
+  };
 
   // Planes de estudio / Años seleccionados (2025 y 2026 seleccionados por defecto como en la maqueta)
   const [rutasSeleccionadas, setRutasSeleccionadas] = useState<string[]>([
@@ -76,6 +100,9 @@ export const AgregarCursoDrawer: React.FC<AgregarCursoDrawerProps> = ({
       seriacion,
       rutasSeleccionadas,
       ordenPeriodo,
+      estado,
+      horas,
+      precio,
       ponderaciones: {
         contenido: { valor: contenidoVal, extra: contenidoExtra },
         actividades: { valor: actividadesVal, extra: actividadesExtra },
@@ -274,7 +301,74 @@ export const AgregarCursoDrawer: React.FC<AgregarCursoDrawerProps> = ({
           </Typography>
         </Box>
 
-        {/* 6. Ponderaciones * */}
+        {/* 6. Estado * */}
+        <FormControl fullWidth size="small">
+          <InputLabel id="estado-label">Estado *</InputLabel>
+          <Select
+            labelId="estado-label"
+            label="Estado *"
+            value={estado}
+            onChange={(e) => setEstado(e.target.value)}
+            sx={{ borderRadius: "10px" }}
+          >
+            <MenuItem value="Publicado" sx={{ fontSize: "0.85rem" }}>
+              Publicado
+            </MenuItem>
+            <MenuItem value="Borrador" sx={{ fontSize: "0.85rem" }}>
+              Borrador
+            </MenuItem>
+            <MenuItem value="Archivado" sx={{ fontSize: "0.85rem" }}>
+              Archivado
+            </MenuItem>
+          </Select>
+        </FormControl>
+
+        {/* 7. Horas y Precio */}
+        <Stack direction="row" spacing={1.5}>
+          <TextField
+            fullWidth
+            size="small"
+            label="Horas"
+            placeholder="Ej. 40.00"
+            value={horas}
+            onChange={handleHorasChange}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                backgroundColor: "#FFFFFF",
+              },
+            }}
+          />
+
+          <TextField
+            fullWidth
+            size="small"
+            label="Precio"
+            placeholder="0.00"
+            value={precio}
+            onChange={handlePrecioChange}
+            InputLabelProps={{ shrink: true }}
+            slotProps={{
+              input: {
+                startAdornment: <InputAdornment position="start">$</InputAdornment>,
+              },
+              inputLabel: {
+                shrink: true,
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                backgroundColor: "#FFFFFF",
+              },
+              "& .MuiInputLabel-root.MuiInputLabel-shrink": {
+                transform: "translate(14px, -9px) scale(0.75) !important",
+              },
+            }}
+          />
+        </Stack>
+
+        {/* 8. Ponderaciones * */}
         <Box>
           <Stack
             direction="row"

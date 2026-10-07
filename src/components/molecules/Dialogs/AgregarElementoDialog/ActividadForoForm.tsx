@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -8,47 +9,59 @@ import Typography from "@mui/material/Typography";
 import CloseIcon from '@mui/icons-material/Close';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Controller, useForm } from "react-hook-form";
+import type { RecursosResponse } from '../../../../types/Cursos.interface';
 
 type ActividadForoFormProps = {
     onClose: () => void;
     onBack: () => void;
-    onSubmit?: (data: any) => void;
-    initialData?: any;
+    onSubmit?: (data: { titulo: string; descripcion_html: string }) => void;
+    isEditMode?: boolean;
+    recursoData?: RecursosResponse;
 }
 
-export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, onBack, onSubmit, initialData }) => {
-    
-    const { control, handleSubmit } = useForm({
-            defaultValues: initialData || {
-                nombre: '',
-                descripcion: '',
-                fechaInicio: '',
-                fechaFin: '',
-            },
-        });
-    
-        const handleBack = () => {
-            onBack();
-        }
-    
-        const handleClose = () => {
-            onClose();
-        }
-    
-        const handleSave = () => {
-            handleSubmit((data) => {
-                if(onSubmit) onSubmit(data);
-            })();
-        }
+export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, onBack, onSubmit, recursoData, isEditMode = false }) => {
+  const { control, handleSubmit, reset } = useForm({
+      defaultValues: recursoData || {
+          titulo: '',
+          descripcion_html: '',
+      },
+  });
 
-    return (
+  useEffect(() => {
+      if (recursoData) {
+        reset({
+          titulo: recursoData.titulo || "",
+          descripcion_html: recursoData.descripcion_html || "",
+        });
+      }
+    }, [recursoData, reset]);
+
+  const handleBack = () => {
+      onBack();
+  }
+
+  const handleClose = () => {
+      onClose();
+  }
+
+  const handleSave = () => {
+      handleSubmit((data) => {
+          if(onSubmit) onSubmit(data);
+      })();
+  }
+
+  return (
     <Box>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
         <Stack direction="row" spacing={1} alignItems="center">
-          <IconButton size="small" onClick={handleBack} sx={{ color: '#6B7280', p: 0 }}>
-            <ChevronLeftIcon />
-          </IconButton>
+          {
+            !isEditMode && (
+              <IconButton size="small" onClick={handleBack} sx={{ color: '#6B7280', p: 0 }}>
+                <ChevronLeftIcon />
+              </IconButton>
+            )
+          }
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 700, color: '#111827', fontSize: '1.1rem', lineHeight: 1.2 }}>
               Contenido HTML
@@ -66,12 +79,12 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
       {/* Formulario */}
       <Stack spacing={2.5}>
         <Controller
-            name="nombre"
+            name="titulo"
             control={control}
             render={({ field }) => (
                 <TextField
                     {...field}
-                    id="nombre"
+                    id="titulo"
                     label="Nombre del elemento *"
                     fullWidth
                     variant="outlined"
@@ -92,13 +105,12 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
             Contenido HTML
           </Typography>
           <Controller
-            name="nombre"
+            name="descripcion_html"
             control={control}
             render={({ field }) => (
                 <TextField
                     {...field}
-                    id="nombre"
-                    label="Nombre del elemento *"
+                    id="descripcion_html"
                     fullWidth
                     variant="outlined"
                     size="medium"
@@ -137,7 +149,9 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
               fontWeight: 600
             }}
           >
-            Atrás
+            {
+              !isEditMode ? 'Atrás' : 'Cancelar'
+            }
           </Button>
           <Button
             fullWidth
@@ -153,7 +167,9 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
               '&:hover': { backgroundColor: '#991B1B' }
             }}
           >
-            Guardar elemento
+            {
+              !isEditMode ? 'Guardar elemento' : 'Editar elemento'
+            }
           </Button>
         </Stack>
       </Stack>

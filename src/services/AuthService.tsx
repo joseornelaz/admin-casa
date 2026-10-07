@@ -1,26 +1,26 @@
-import type { AuthResponse, LoginCredentials, PerfilResponse } from '@constants';
+import type { LoginResponse, LoginCredentials, PerfilResponse } from '@constants';
 import { apiClient } from './ApiConfiguration/httpClient';
 import { LOGIN_ENDPOINTS, PERFIL_ENDPOINTS } from '../types/endpoints';
 import { useQuery } from '@tanstack/react-query';
 
 import axios from 'axios';
 
-export const useAuthLogin = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const encryptedPayload = await apiClient.encryptData(credentials);
-    return await apiClient.post<AuthResponse>(LOGIN_ENDPOINTS.POST_LOGIN.path, { data: encryptedPayload });
+export const authLogin = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+    // const encryptedPayload = await apiClient.post<{ data: string }, LoginCredentials>(LOGIN_ENDPOINTS.POST_LOGIN.path, { data: credentials });
+    return await apiClient.post<LoginResponse>(LOGIN_ENDPOINTS.POST_LOGIN.path, credentials );
 };
 
-export const useLogout = async (): Promise<void> => {
+export const authLogout = async (): Promise<void> => {
   return await apiClient.post<void>(LOGIN_ENDPOINTS.POST_LOGOUT.path);
 };
 
-export const useAuthNewPassword = async (payload: { username: string; newPassword: string; token: string }): Promise<AuthResponse> => {
+export const authNewPassword = async (payload: { username: string; newPassword: string; token: string }): Promise<LoginResponse> => {
     const BASE_URL = import.meta.env.VITE_APP_API_BASE_URL;
     const { token, ...dataToEncrypt } = payload;
 
     const encryptedPayload = await apiClient.encryptData(dataToEncrypt);
 
-    const response = await axios.post<AuthResponse>(
+    const response = await axios.post<LoginResponse>(
         `${BASE_URL}${LOGIN_ENDPOINTS.POST_NEW_PASSWORD.path}`,
         { data: encryptedPayload },
         {

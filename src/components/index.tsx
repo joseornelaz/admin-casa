@@ -15,3 +15,5 @@ export { default as Cursos } from './pages/Academia/Cursos/Cursos';
 export { default as Reportes } from './pages/Reportes/Reportes';
 export { default as GlobalTemplate } from './templates/GlobalTemplate/GlobalTemplate';
 export { default as NuevaAltaUnica } from './pages/Alumnos/AltaUnica/NuevaAltaUnica';
+export { default as NotFound } from './pages/NotFound/NotFound';
+export { default as SessionExpired } from './pages/SessionExpired/SessionExpired';

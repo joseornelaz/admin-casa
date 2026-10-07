@@ -19,6 +19,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useAuth } from "../../../../hooks";
 import { loginSchema, type LoginFormData } from "../../../../schemas/authSchema";
 import { AppRoutingPaths } from "@constants";
+import { useNotification } from "../../../../providers/NotificationProvider";
 
 const GoogleIcon: React.FC = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" style={{ marginRight: 8 }}>
@@ -42,7 +43,8 @@ const GoogleIcon: React.FC = () => (
 );
 
 export const Login: React.FC = () => {
-  const { isLoading } = useAuth();
+  const { login, isLoading } = useAuth();
+  const { showNotification } = useNotification();
   const navigate = useNavigate();
 
   // Mode: 'login' | 'forgot'
@@ -53,18 +55,24 @@ export const Login: React.FC = () => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [codeSent, setCodeSent] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const { register, handleSubmit, formState: { errors }, } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const onSubmit = async () => {
-    navigate(AppRoutingPaths.SELECCION_ESPACIO);
+  const onSubmit = async (data: LoginFormData) => {
+    const result = await login(data.username, data.password);
+    if (result.success) {
+        navigate(AppRoutingPaths.SELECCION_ESPACIO);
+    } else {
+        if (result.cambiarPassword) {
+            // setShowChangePassword(true);
+            showNotification("Mostrar Cambiar Password", 'info');
+        } else {
+            showNotification(result.message ?? "Ocurrió un error inesperado", "warning");
+        }
+    }
   };
 
   const handleSendCode = (e: React.FormEvent) => {
@@ -165,9 +173,8 @@ export const Login: React.FC = () => {
                   {...register("username")}
                   fullWidth
                   size="small"
-                  placeholder="nombre@institucion.edu.mx"
+                  placeholder="nombre de usuario"
                   disabled={isLoading}
-                  defaultValue="nombre@institucion.edu.mx"
                   sx={{
                     backgroundColor: "#FFFFFF",
                     borderRadius: "10px",
@@ -210,7 +217,6 @@ export const Login: React.FC = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   disabled={isLoading}
-                  defaultValue="prueba123"
                   slotProps={{
                     input: {
                       endAdornment: (
@@ -309,7 +315,7 @@ export const Login: React.FC = () => {
               <Button
                 fullWidth
                 variant="outlined"
-                onClick={onSubmit}
+                // onClick={onSubmit}
                 sx={{
                   borderColor: "#27272A",
                   backgroundColor: "transparent",

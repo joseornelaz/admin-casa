@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -17,6 +17,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SortIcon from '@mui/icons-material/Sort';
 import MenuIcon from '@mui/icons-material/Menu';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
+import { useDebounce } from '../../../hooks/useDebounce';
 
 export type ViewMode = 'list' | 'grid';
 export type SortOption = 'manual' | 'alpha' | 'recent' | 'status';
@@ -74,6 +75,9 @@ interface HeaderDegreeBarProps {
   onDegreeChange?: (degree: DegreeOption) => void;
   onSortChange?: (sort: SortOption) => void;
   onStatusChange?: (selectedStatuses: string[]) => void;
+  selectedSort?: SortOption;
+  selectedStatuses?: string[];
+  searchQuery?: string;
 }
 
 export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
@@ -83,13 +87,36 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   onDegreeChange,
   onSortChange,
   onStatusChange,
+  selectedSort: propSelectedSort,
+  selectedStatuses: propSelectedStatuses,
+  searchQuery: propSearchQuery,
 }) => {
   const [view, setView] = useState<ViewMode>(defaultView);
   const [selectedDegree, setSelectedDegree] = useState<DegreeOption>(DEGREE_OPTIONS[0]);
-  const [selectedSort, setSelectedSort] = useState<SortOption>('manual');
+  const [internalSort, setInternalSort] = useState<SortOption>('manual');
+  const [internalStatuses, setInternalStatuses] = useState<string[]>(['draft', 'unpublished']);
+  const [internalSearchQuery, setInternalSearchQuery] = useState<string>('');
 
-  // Estado para guardar las claves de estatus seleccionados (ej: 'draft', 'unpublished' seleccionados por defecto como la imagen)
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['draft', 'unpublished']);
+  const selectedSort = propSelectedSort !== undefined ? propSelectedSort : internalSort;
+  const selectedStatuses = propSelectedStatuses !== undefined ? propSelectedStatuses : internalStatuses;
+  const searchQuery = propSearchQuery !== undefined ? propSearchQuery : internalSearchQuery;
+
+  // Estado local para captura inmediata en el input y debounce para emitir el filtro
+  const [searchInput, setSearchInput] = useState<string>(searchQuery ?? '');
+  const debouncedSearchInput = useDebounce(searchInput, 300);
+
+  useEffect(() => {
+    setSearchInput(searchQuery ?? '');
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (debouncedSearchInput !== searchQuery) {
+      if (propSearchQuery === undefined) {
+        setInternalSearchQuery(debouncedSearchInput);
+      }
+      onSearchChange?.(debouncedSearchInput);
+    }
+  }, [debouncedSearchInput, propSearchQuery, searchQuery, onSearchChange]);
 
   // Menús Desplegables
   const [degreeAnchorEl, setDegreeAnchorEl] = useState<null | HTMLElement>(null);
@@ -100,7 +127,9 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
       ? selectedStatuses.filter((id) => id !== statusId)
       : [...selectedStatuses, statusId];
 
-    setSelectedStatuses(updated);
+    if (propSelectedStatuses === undefined) {
+      setInternalStatuses(updated);
+    }
     onStatusChange?.(updated);
   };
 
@@ -111,7 +140,9 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   };
 
   const handleSortSelect = (sort: SortOption) => {
-    setSelectedSort(sort);
+    if (propSelectedSort === undefined) {
+      setInternalSort(sort);
+    }
     onSortChange?.(sort);
     setSortAnchorEl(null);
   };
@@ -250,7 +281,8 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
           <SearchIcon sx={{ color: '#9CA3AF', fontSize: 20, mr: 1 }} />
           <InputBase
             placeholder="Buscar curso o docente..."
-            onChange={(e) => onSearchChange?.(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
             sx={{
               width: '100%',
               fontSize: '0.85rem',
