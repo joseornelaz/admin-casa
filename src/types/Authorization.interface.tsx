@@ -2,7 +2,7 @@
 
 export interface LoginCredentials {
   password: string;
-  email?: string;
+  usuario: string;
 }
 
 export interface LoginResponse {
@@ -13,16 +13,20 @@ export interface LoginResponse {
 }
 
 export interface User {
-    uuid:        string;
-    email:       string;
-    firstName:   string;
-    lastName:    string;
-    fullName:    string;
-    role:        string;
-    photoUrl:    string;
-    username:    string;
-    matricula:   string;
-    planEstudio: string;
-    empresa:     string;
-    campusId:    number;
+    uuid?:        string;
+    id_usuario: number;
+    sub_cognito: string;
+    correo: string;
+    usuario: string;
+    matricula: string | null;
+    id_tipo_usuario: number;
+    id_plan_estudio: number | null;
+    tipo_usuario: string;
+    nombre: string;
+    apellido_paterno: string;
+    apellido_materno: string | null;
+    foto_perfil_url: string | null;
+    nombre_plan: string | null;
+    nombre_empresa: string | null;
+    role: string;
 }

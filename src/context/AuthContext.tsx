@@ -16,7 +16,7 @@ interface AuthContextType {
   isTokenExpired: boolean;
   isLogout: boolean;
   clearError: () => void;
-  login: (email: string, password: string) => Promise<{ success: boolean; message?: string; cambiarPassword?: boolean; aceptoTerminos?: boolean }>;
+  login: (usuario: string, password: string) => Promise<{ success: boolean; message?: string; cambiarPassword?: boolean; aceptoTerminos?: boolean }>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
   newPassword: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
@@ -75,11 +75,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     });
 
-    const handleLogin = async(email: string, password: string) => {
+    const handleLogin = async(usuario: string, password: string) => {
         try {
             initValues();
             
-            const response = await loginMutation.mutateAsync({ password, email });
+            const response = await loginMutation.mutateAsync({ password, usuario });
             
             queryClient.invalidateQueries({ queryKey: ['currentUser']});
 
@@ -114,11 +114,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    const handleNewPassword = async(email: string, password: string) => {
+    const handleNewPassword = async(usuario: string, password: string) => {
         try {
             initValues();
 
-            const username = email;
+            const username = usuario;
             const token = localStorage.getItem("session") || "";
             const response = await newPasswordMutation.mutateAsync({ newPassword: password, username, token });
             

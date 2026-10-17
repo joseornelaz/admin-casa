@@ -10,6 +10,14 @@ export const PERFIL_ENDPOINTS = {
     POST_PERFIL: { path: '/actualizar', key: 'actualizar' }
 }
 
+export const USUARIOS_ADMIN = {
+    GET_USUARIOS: { path: '/usuarios', key: 'usuarios' },
+    GET_USUARIOS_BY_ID: { path: '/usuarios/:id', key: 'usuarios-id' },
+    POST_REGISTRAR_USUARIO: { path: '/usuarios', key: 'registrar-usuario' },
+    PUT_ACTUALIZAR_USUARIO: { path: '/usuarios/:id', key: 'actualizar-usuario' },
+    DELETE_ELIMINAR_USUARIO: { path: '/usuarios/:id', key: 'eliminar-usuario' },
+}
+
 export const FOROS_ADMIN = {
     GET_FORO_GRUPOS: { path: '/foros/grupo', key: 'foros-grupo'},
     GET_FORO_CALIFICAR: { path: '/calificaciones/foros', key: 'foros-calificaciones'},
@@ -36,22 +44,38 @@ export const MATERIAS = {
 }
 
 export const CURSOS = {
-    GET_CURSOS: { path: '/academic/cursos', key: 'cursos' },
-    POST_REGISTRAR_CURSO: { path: '/academic/cursos', key: 'registrar-curso' },
-    PUT_ACTUALIZAR_CURSO: { path: '/academic/cursos/:id', key: 'actualizar-curso' },
-    DELETE_ELIMINAR_CURSO: { path: '/academic/cursos/:id', key: 'eliminar-curso' },
+    GET_CURSOS: { path: '/cursos', key: 'cursos' },
+    POST_REGISTRAR_CURSO: { path: '/cursos', key: 'registrar-curso' },
+    PUT_ACTUALIZAR_CURSO: { path: '/cursos/:id', key: 'actualizar-curso' },
+    DELETE_ELIMINAR_CURSO: { path: '/cursos/:id', key: 'eliminar-curso' },
+
+    GET_CURSOS_BY_PLAN: { path: '/cursos/planes/:id_plan', key: 'cursos-by-plan' },
 }
 
 export const MODULOS_CURSOS = {
-    GET_MODULOS: { path: '/academic/cursos/:id_curso/modulos', key: 'modulos' },
-    POST_REGISTRAR_MODULO: { path: '/academic/cursos/:id_curso/modulos', key: 'registrar-modulo' },
-    PUT_ACTUALIZAR_MODULO: { path: '/academic/modulos/:id_modulo', key: 'actualizar-modulo' },
-    DELETE_MODULO: { path: '/academic/modulos/:id_modulo', key: 'eliminar-modulo' },
+    GET_MODULOS: { path: '/modulos/cursos/:id_curso', key: 'modulos' },
+    POST_REGISTRAR_MODULO: { path: '/modulos/cursos/:id_curso', key: 'registrar-modulo' },
+    PUT_ACTUALIZAR_MODULO: { path: '/modulos/:id_modulo', key: 'actualizar-modulo' },
+    DELETE_MODULO: { path: '/modulos/:id_modulo', key: 'eliminar-modulo' },
     
-    GET_LISTAR_LECCIONES_MODULO: { path: '/academic/modulos/:id_modulo/lecciones', key: 'listar-lecciones-modulo' },
-    GET_LISTAR_RECURSOS_MODULO: { path: '/academic/lecciones/:id_leccion/recursos', key: 'listar-recursos-modulo' },
+    GET_LISTAR_LECCIONES_MODULO: { path: '/lecciones/modulos/:id_modulo', key: 'listar-lecciones-modulo' },
+    GET_LISTAR_RECURSOS_MODULO: { path: '/recursos/lecciones/:id_leccion', key: 'listar-recursos-modulo' },
 
-    POST_REGISTRAR_RECURSO: { path: '/academic/lecciones/:id_leccion/recursos', key: 'registrar-recurso' },
-    PUT_ACTUALIZAR_RECURSO: { path: '/academic/recursos/:id_recurso', key: 'actualizar-recurso' },
-    DELETE_RECURSO: { path: '/academic/recursos/:id_recurso', key: 'eliminar-recurso' },
+    POST_REGISTRAR_RECURSO: { path: '/recursos/lecciones/:id_leccion', key: 'registrar-recurso' },
+    PUT_ACTUALIZAR_RECURSO: { path: '/recursos/:id_recurso', key: 'actualizar-recurso' },
+    DELETE_RECURSO: { path: '/recursos/:id_recurso', key: 'eliminar-recurso' },
 }
+
+export const PLANES_ESTUDIO = {
+    GET_PLANES_ESTUDIO_TOTAL_ALUMNOS: { path: '/planes/programas/academicos', key: 'planes-programas-academicos' },
+    GET_PLANES_ESTUDIO_TOTAL_CURSOS: { path: '/planes/programas/academicos/total-cursos', key: 'planes-programas-academicos-cursos' },
+}
+
+export const CATALOGOS = {
+    GET_ESTATUS_CURSOS: { path: '/catalogo/estados-curso', key: 'estatus-cursos' },
+    GET_NIVELES: { path: '/catalogo/niveles', key: 'niveles' },
+    GET_EMPRESAS: { path: '/catalogo/empresas', key: 'empresas' },
+    GET_MODALIDADES: { path: '/catalogo/modalidades', key: 'modalidades' },
+    GET_TIPOS_RECURSO: { path: '/catalogo/tipos-recurso', key: 'tipos-recurso' },
+    GET_PROFESORES: { path: '/catalogo/profesores', key: 'profesores' },
+} 

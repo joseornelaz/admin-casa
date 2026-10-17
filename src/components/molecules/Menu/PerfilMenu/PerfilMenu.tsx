@@ -14,7 +14,7 @@ export const PerfilMenu: React.FC<PerfilMenuProps> = ({anchorEl, onClose}) => {
     const menuOpen = Boolean(anchorEl);
     
     const items = [
-        {label: TitleScreen.MI_PERFIL, path: AppRoutingPaths.MI_PERFIL},
+        {label: TitleScreen.MI_PERFIL, path: AppRoutingPaths.PERFIL},
         {label: 'Cerrar Sesión', path: 'logout'}
     ];
 

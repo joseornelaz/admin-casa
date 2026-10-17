@@ -667,7 +667,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
         {/* Fila Inferior: Conteo de Módulos + Botones de Acción */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: 500, fontSize: '0.875rem', fontFamily: 'monospace' }}>
-            {data.modulos?.length || 0} módulos
+            {data?.total_modulos || '0'} módulos.
           </Typography>
 
           <Stack direction="row" spacing={1} alignItems="center">

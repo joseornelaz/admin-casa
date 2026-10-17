@@ -50,8 +50,8 @@ export const GlobalHeader: React.FC = () => {
     setOrgMenuAnchor(null);
   };
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setUserMenuAnchor(event.currentTarget);
+  const handleOpenUserMenu = () => {
+    navigate(AppRoutingPaths.PERFIL);
   };
 
   const handleLogout = async () => {

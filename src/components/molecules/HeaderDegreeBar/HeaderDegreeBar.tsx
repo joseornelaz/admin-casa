@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -18,41 +18,18 @@ import SortIcon from '@mui/icons-material/Sort';
 import MenuIcon from '@mui/icons-material/Menu';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import { useDebounce } from '../../../hooks/useDebounce';
+import { GetPlanesEstudioTotalCursos } from '../../../services/PlanesEstudioService';
 
 export type ViewMode = 'list' | 'grid';
 export type SortOption = 'manual' | 'alpha' | 'recent' | 'status';
 
 interface DegreeOption {
-  id: string;
+  id: number;
   title: string;
   subtitle: string;
   coursesCount: number;
   avatarText: string;
 }
-
-const DEGREE_OPTIONS: DegreeOption[] = [
-  {
-    id: '1',
-    title: 'Lic. en Administración de Empresas',
-    subtitle: 'Grado Universitario · 6 cursos · 10 mód. c/u',
-    coursesCount: 6,
-    avatarText: 'AG'
-  },
-  {
-    id: '2',
-    title: 'Ingeniería en Desarrollo de Software',
-    subtitle: 'Grado Universitario · 12 cursos · 10 mód. c/u',
-    coursesCount: 12,
-    avatarText: 'DS'
-  },
-  {
-    id: '3',
-    title: 'Lic. en Negocios Internacionales',
-    subtitle: 'Grado Universitario · 8 cursos · 10 mód. c/u',
-    coursesCount: 8,
-    avatarText: 'NI'
-  }
-];
 
 const SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: 'manual', label: 'Orden manual' },
@@ -62,10 +39,10 @@ const SORT_OPTIONS: { id: SortOption; label: string }[] = [
 ];
 
 const STATUS_ITEMS = [
-  { id: 'published', label: 'Publicado', color: '#059669' },
-  { id: 'draft', label: 'Borrador', color: '#6B7280' },
-  { id: 'review', label: 'En revisión', color: '#D97706' },
-  { id: 'unpublished', label: 'Sin publicar', color: '#DC2626' }
+  { id: 'publicado', label: 'Publicado', color: '#059669' },
+  { id: 'borrador', label: 'Borrador', color: '#6B7280' },
+  { id: 'revision', label: 'En revisión', color: '#D97706' },
+  { id: '', label: 'Sin publicar', color: '#DC2626' }
 ];
 
 interface HeaderDegreeBarProps {
@@ -92,7 +69,9 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   searchQuery: propSearchQuery,
 }) => {
   const [view, setView] = useState<ViewMode>(defaultView);
-  const [selectedDegree, setSelectedDegree] = useState<DegreeOption>(DEGREE_OPTIONS[0]);
+  const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
+  const [dataDegreeOptions, setDataDegreeOptions] = useState<DegreeOption[] | null>(null);
+
   const [internalSort, setInternalSort] = useState<SortOption>('manual');
   const [internalStatuses, setInternalStatuses] = useState<string[]>(['draft', 'unpublished']);
   const [internalSearchQuery, setInternalSearchQuery] = useState<string>('');
@@ -104,6 +83,39 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   // Estado local para captura inmediata en el input y debounce para emitir el filtro
   const [searchInput, setSearchInput] = useState<string>(searchQuery ?? '');
   const debouncedSearchInput = useDebounce(searchInput, 300);
+
+  const { data: totalCursosData, isLoading: isLoadingTotalCursos } = GetPlanesEstudioTotalCursos();
+  
+  useEffect(() => {
+    if (totalCursosData && totalCursosData.length > 0) {
+      const mappedOptions = totalCursosData.map(degree => ({
+        ...degree,
+        id: degree.id_plan_estudio,
+        title: degree.nombre_plan,
+        subtitle: `${degree.total_cursos} cursos · ${degree.modulos_promedio_por_curso} mód. c/u`,
+        coursesCount: degree.total_cursos,
+        avatarText: degree.nombre_plan.split(' ').map(word => word[0]).join('').toUpperCase()
+      }));
+
+      setDataDegreeOptions(mappedOptions);
+
+      const firstDegree = mappedOptions[0];
+      setSelectedDegree(firstDegree);
+      
+    }
+  }, [totalCursosData]);
+
+  const handleDegreeSelect = useCallback((degree: any) => {
+    setSelectedDegree(degree);
+    onDegreeChange?.(degree);
+    setDegreeAnchorEl(null);
+  }, []);
+
+  useEffect(() => {
+    if (selectedDegree) {
+      handleDegreeSelect(selectedDegree);
+    }
+  }, [selectedDegree, handleDegreeSelect]);
 
   useEffect(() => {
     setSearchInput(searchQuery ?? '');
@@ -131,12 +143,6 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
       setInternalStatuses(updated);
     }
     onStatusChange?.(updated);
-  };
-
-  const handleDegreeSelect = (degree: DegreeOption) => {
-    setSelectedDegree(degree);
-    onDegreeChange?.(degree);
-    setDegreeAnchorEl(null);
   };
 
   const handleSortSelect = (sort: SortOption) => {
@@ -173,6 +179,9 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
       <Stack direction="row" spacing={1.5} alignItems="center" width="100%">
         
         {/* Dropdown del Título / Titulación */}
+
+        {
+          !isLoadingTotalCursos && (
         <Paper
           elevation={0}
           onClick={(e) => setDegreeAnchorEl(e.currentTarget)}
@@ -192,7 +201,7 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
           <Avatar
             variant="rounded"
             sx={{
-              width: 28,
+              width: 40,
               height: 28,
               borderRadius: '6px',
               backgroundColor: '#000000',
@@ -202,20 +211,24 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
               mr: 1.2
             }}
           >
-            {selectedDegree.avatarText}
+            {selectedDegree?.avatarText || ''}
           </Avatar>
 
           <Box sx={{ mr: 1.5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: '0.85rem', color: '#111827', lineHeight: 1.1 }}>
-              {selectedDegree.title}
+              {selectedDegree?.title}
             </Typography>
             <Typography variant="caption" sx={{ color: '#9CA3AF', fontSize: '0.7rem', lineHeight: 1.1, mt: 0.2 }}>
-              {selectedDegree.subtitle}
+              {selectedDegree?.subtitle}
             </Typography>
           </Box>
 
           <KeyboardArrowDownIcon sx={{ color: '#9CA3AF', fontSize: 18, ml: 'auto' }} />
         </Paper>
+          )
+        }
+
+        
 
         {/* Menú Flotante de Titulaciones */}
         <Menu
@@ -236,11 +249,11 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
             }
           }}
         >
-          {DEGREE_OPTIONS.map((option) => (
+          {dataDegreeOptions && dataDegreeOptions.map((option) => (
             <MenuItem
               key={option.id}
               onClick={() => handleDegreeSelect(option)}
-              selected={selectedDegree.id === option.id}
+              selected={selectedDegree!.id === option.id}
               sx={{
                 borderRadius: '8px',
                 py: 1,

@@ -17,7 +17,16 @@ export const GetCursoById = (id: number, options?: { enabled?: boolean }) => {
     return useQuery<Curso, Error>({
         queryKey: [CURSOS.GET_CURSOS.key, id],
         queryFn: () => apiClient.get<Curso>(`${CURSOS.GET_CURSOS.path}/${id}`),
-        staleTime: 1000 * 60 * 10, // 10 minutos de stale time
+        staleTime: 0, // sin stale time
+        ...options
+    });
+}
+
+export const GetCursoByPlan = (id: number, options?: { enabled?: boolean }) => {
+    return useQuery<Curso[], Error>({
+        queryKey: [CURSOS.GET_CURSOS_BY_PLAN.key, id],
+        queryFn: () => apiClient.get<Curso[]>(`${CURSOS.GET_CURSOS_BY_PLAN.path.replace(':id_plan', id.toString())}`),
+        staleTime: 0, // sin stale time
         ...options
     });
 }

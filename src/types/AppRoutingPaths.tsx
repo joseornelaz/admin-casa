@@ -10,7 +10,7 @@ export const AppRoutingPaths = {
     HISTORIAL_CAMBIOS: "/alumnos/historial-cambios",
     HOME: "/home",
     LOGIN: "/login",
-    MI_PERFIL: '/perfil',
+    PERFIL: '/perfil',
     NOTFOUND: '*',
     RAIZ: "/",
     SESSION_EXPIRED: "/expired",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -6,7 +6,6 @@ import {
   Button,
   Stack,
   Avatar,
-  Chip,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -17,135 +16,18 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { AppRoutingPaths } from "@constants";
-
-export interface ProgramaAcademico {
-  id: string;
-  nombre: string;
-  generacion: string;
-  alumnosCount: number;
-  esReciente?: boolean;
-  estado: "activa" | "futura" | "finalizada";
-}
-
-export interface Organizacion {
-  id: string;
-  nombre: string;
-  badgeText: string;
-  badgeBgColor: string;
-  badgeTextColor: string;
-  programasCount: number;
-  alumnosCount: number;
-  programas: ProgramaAcademico[];
-}
-
-const ORGANIZACIONES_MOCK: Organizacion[] = [
-  {
-    id: "ag-college",
-    nombre: "AG College",
-    badgeText: "AG",
-    badgeBgColor: "#111827",
-    badgeTextColor: "#FFFFFF",
-    programasCount: 4,
-    alumnosCount: 1247,
-    programas: [
-      {
-        id: "ing-soft",
-        nombre: "Ingeniería en Desarrollo de Software",
-        generacion: "Gen 2024-A",
-        alumnosCount: 48,
-        esReciente: true,
-        estado: "activa",
-      },
-      {
-        id: "dip-admin",
-        nombre: "Diplomado en Administración",
-        generacion: "Gen 2024-A",
-        alumnosCount: 32,
-        estado: "activa",
-      },
-      {
-        id: "dip-ia",
-        nombre: "Diplomado en Inteligencia Artificial",
-        generacion: "Gen 2024-B",
-        alumnosCount: 28,
-        estado: "activa",
-      },
-      {
-        id: "prep",
-        nombre: "Preparatoria",
-        generacion: "Gen 2025-A",
-        alumnosCount: 18,
-        estado: "futura",
-      },
-    ],
-  },
-  {
-    id: "coppel-univ",
-    nombre: "Coppel Universidad",
-    badgeText: "CU",
-    badgeBgColor: "#2563EB",
-    badgeTextColor: "#FFFFFF",
-    programasCount: 2,
-    alumnosCount: 834,
-    programas: [
-      {
-        id: "lic-gest",
-        nombre: "Licenciatura en Gestión de Negocios",
-        generacion: "Gen 2024-A",
-        alumnosCount: 450,
-        estado: "activa",
-      },
-      {
-        id: "ing-ind",
-        nombre: "Ingeniería Industrial y de Sistemas",
-        generacion: "Gen 2024-B",
-        alumnosCount: 384,
-        estado: "activa",
-      },
-    ],
-  },
-  {
-    id: "umi",
-    nombre: "UMi",
-    badgeText: "UMi",
-    badgeBgColor: "#7C3AED",
-    badgeTextColor: "#FFFFFF",
-    programasCount: 3,
-    alumnosCount: 267,
-    programas: [
-      {
-        id: "mae-inn",
-        nombre: "Maestría en Innovación Educativa",
-        generacion: "Gen 2024-A",
-        alumnosCount: 120,
-        estado: "activa",
-      },
-      {
-        id: "dip-lid",
-        nombre: "Diplomado en Liderazgo",
-        generacion: "Gen 2024-B",
-        alumnosCount: 85,
-        estado: "activa",
-      },
-      {
-        id: "cur-trans",
-        nombre: "Curso de Transformación Digital",
-        generacion: "Gen 2025-A",
-        alumnosCount: 62,
-        estado: "futura",
-      },
-    ],
-  },
-];
+import { GetPlanesEstudioTotalAlumnos } from "../../../../services/PlanesEstudioService";
+import type { EmpresaPlanesResponse } from "../../../../types/PlanesEstudio.interface";
+import { LoadingCircular } from "../../../molecules/LoadingCircular/LoadingCircular";
 
 interface OrgBadgeProps {
   text: string;
   bgColor: string;
-  textColor: string;
+  textColor?: string;
   size?: "small" | "medium" | "large";
 }
 
-const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor, size = "medium" }) => {
+const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor = "#FFF", size = "medium" }) => {
   const dimensions =
     size === "small"
       ? { minWidth: 26, height: 26, fontSize: "0.7rem", px: "6px", borderRadius: "6px" }
@@ -156,8 +38,8 @@ const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor, size = "m
   return (
     <Box
       sx={{
-        backgroundColor: bgColor,
-        color: textColor,
+        backgroundColor: bgColor || "#E5E7EB", // Fallback de seguridad por si viene vacío
+        color: textColor || "#FFF",       // Fallback de seguridad por si viene vacío
         fontWeight: 800,
         display: "inline-flex",
         alignItems: "center",
@@ -166,12 +48,12 @@ const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor, size = "m
         boxSizing: "border-box",
         userSelect: "none",
         flexShrink: 0,
-        letterSpacing: text.length > 2 ? "-0.5px" : "0px",
+        letterSpacing: (text?.length || 0) > 2 ? "-0.5px" : "0px",
         fontFamily: "inherit",
         ...dimensions,
       }}
     >
-      {text}
+      {text || "ORG"}
     </Box>
   );
 };
@@ -179,29 +61,52 @@ const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor, size = "m
 export const SeleccionEspacio: React.FC = () => {
   const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"tabs" | "list">("tabs");
-  const [selectedOrgId, setSelectedOrgId] = useState<string>("ag-college");
-  const [selectedProgramId, setSelectedProgramId] = useState<string | null>("ing-soft");
-  const [expandedOrgId, setExpandedOrgId] = useState<string | false>("ag-college");
+  const [selectedOrgId, setSelectedOrgId] = useState<number>(0); 
+  const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
+  const [expandedOrgId, setExpandedOrgId] = useState<number | false>(0);
+  const [planesEstudio, setPlanesEstudio] = useState<EmpresaPlanesResponse[]>([]);
 
-  const selectedOrg = ORGANIZACIONES_MOCK.find((o) => o.id === selectedOrgId) || ORGANIZACIONES_MOCK[0];
+  const { data: planesEstudioData, isLoading: isPlanesEstudioLoading } = GetPlanesEstudioTotalAlumnos();
 
-  const handleSelectProgram = (orgId: string, programId: string) => {
+  // Aseguramos que selectedOrg apunte al elemento correcto según el ID numérico
+  const selectedOrg = planesEstudio.find((o) => o.id === selectedOrgId) || planesEstudio[0];
+
+  useEffect(() => {
+    if (planesEstudioData && planesEstudioData.length > 0) {
+      setPlanesEstudio(planesEstudioData);
+      // Inicializamos por defecto la primera organización y su primer programa si no hay selección
+      setSelectedOrgId(planesEstudioData[0].id);
+      if (planesEstudioData[0].programas?.length > 0) {
+        setSelectedProgramId(planesEstudioData[0].programas[0].id);
+      }
+    }
+  }, [planesEstudioData]);
+
+  const handleSelectProgram = (orgId: number, programId: number) => {
     setSelectedOrgId(orgId);
     setSelectedProgramId(programId);
   };
 
   const handleIngresar = () => {
-    if (!selectedProgramId) return;
+    if (!selectedProgramId || !selectedOrg) return;
     const programObj = selectedOrg.programas.find((p) => p.id === selectedProgramId);
     localStorage.setItem("selectedOrganization", JSON.stringify(selectedOrg));
     localStorage.setItem("selectedProgram", JSON.stringify(programObj));
     navigate(AppRoutingPaths.HOME);
   };
 
-  const handleAccordionChange = (orgId: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleAccordionChange = (orgId: number) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpandedOrgId(isExpanded ? orgId : false);
     setSelectedOrgId(orgId);
+    const org = planesEstudio.find((o) => o.id === orgId);
+    if (org && org.programas.length > 0) {
+      setSelectedProgramId(org.programas[0].id);
+    }
   };
+
+  if (isPlanesEstudioLoading) {
+    return <LoadingCircular />;
+  }
 
   return (
     <Box
@@ -213,7 +118,7 @@ export const SeleccionEspacio: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      {/* SECCIÓN IZQUIERDA: PANEL OSCURO (PERFIL & MODO DE VISTA) */}
+      {/* SECCIÓN IZQUIERDA: PANEL OSCURO */}
       <Box
         sx={{
           width: { xs: "100%", md: "380px", lg: "430px" },
@@ -228,7 +133,6 @@ export const SeleccionEspacio: React.FC = () => {
           flexShrink: 0,
         }}
       >
-        {/* Top Header: Rol de usuario / Identificador */}
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Avatar
             variant="rounded"
@@ -250,7 +154,6 @@ export const SeleccionEspacio: React.FC = () => {
           </Typography>
         </Stack>
 
-        {/* Agrupador Central: Bienvenida y Selector de Vista */}
         <Box sx={{ my: "auto" }}>
           <Typography
             variant="caption"
@@ -293,7 +196,6 @@ export const SeleccionEspacio: React.FC = () => {
             Elige la organización y el programa académico en los que trabajarás durante esta sesión.
           </Typography>
 
-          {/* Toggle de Vista: Tabs / Lista */}
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography variant="body2" sx={{ color: "#9CA3AF", fontSize: "0.8rem", mr: 0.5 }}>
               Vista
@@ -354,13 +256,12 @@ export const SeleccionEspacio: React.FC = () => {
           </Stack>
         </Box>
 
-        {/* Footer info */}
         <Typography variant="caption" sx={{ color: "#6B7280", fontSize: "0.75rem" }}>
           Podrás cambiar de espacio en cualquier momento
         </Typography>
       </Box>
 
-      {/* SECCIÓN DERECHA: SELECCIÓN DE ORGANIZACIÓN & PROGRAMAS */}
+      {/* SECCIÓN DERECHA */}
       <Box
         sx={{
           flex: 1,
@@ -384,11 +285,9 @@ export const SeleccionEspacio: React.FC = () => {
           }}
         >
           {viewMode === "tabs" ? (
-            /* ================= VISTA TABS ================= */
             <>
-              {/* Tabs de Organizaciones */}
               <Stack direction="row" spacing={1.5} flexWrap="wrap" sx={{ mb: 1 }}>
-                {ORGANIZACIONES_MOCK.map((org) => {
+                {planesEstudio.map((org) => {
                   const isActive = selectedOrgId === org.id;
                   return (
                     <Button
@@ -402,7 +301,6 @@ export const SeleccionEspacio: React.FC = () => {
                         <OrgBadge
                           text={org.badgeText}
                           bgColor={org.badgeBgColor}
-                          textColor={org.badgeTextColor}
                           size="small"
                         />
                       }
@@ -441,81 +339,77 @@ export const SeleccionEspacio: React.FC = () => {
                 PROGRAMAS
               </Typography>
 
-              {/* Tarjeta de Contenedor de Programas */}
-              <Box
-                sx={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "16px",
-                  border: "1px solid #E5E7EB",
-                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.03)",
-                  overflow: "hidden",
-                }}
-              >
-                {/* Header de la Organización Seleccionada */}
-                <Stack
-                  direction="row"
-                  spacing={1.5}
-                  alignItems="center"
+              {selectedOrg && (
+                <Box
                   sx={{
-                    px: 3,
-                    py: 2,
-                    borderBottom: "1px solid #F3F4F6",
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "16px",
+                    border: "1px solid #E5E7EB",
+                    boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.03)",
+                    overflow: "hidden",
                   }}
                 >
-                  <OrgBadge
-                    text={selectedOrg.badgeText}
-                    bgColor={selectedOrg.badgeBgColor}
-                    textColor={selectedOrg.badgeTextColor}
-                    size="medium"
-                  />
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    alignItems="center"
+                    sx={{
+                      px: 3,
+                      py: 2,
+                      borderBottom: "1px solid #F3F4F6",
+                    }}
+                  >
+                    <OrgBadge
+                      text={selectedOrg.badgeText}
+                      bgColor={selectedOrg.badgeBgColor}
+                      size="medium"
+                    />
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#111827", lineHeight: 1.2 }}>
+                        {selectedOrg.nombre}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.75rem" }}>
+                        {selectedOrg.programasCount} programas · {(selectedOrg.alumnosCount || 0).toLocaleString()} alumnos
+                      </Typography>
+                    </Box>
+                  </Stack>
+
                   <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: "#111827", lineHeight: 1.2 }}>
-                      {selectedOrg.nombre}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.75rem" }}>
-                      {selectedOrg.programasCount} programas · {selectedOrg.alumnosCount.toLocaleString()} alumnos
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                {/* Lista de Radio Buttons de Programas */}
-                <Box>
-                  {selectedOrg.programas.map((prog, index) => {
-                    const isSelected = selectedProgramId === prog.id;
-                    return (
-                      <Box
-                        key={prog.id}
-                        onClick={() => handleSelectProgram(selectedOrg.id, prog.id)}
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          px: 2.5,
-                          py: 1.8,
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? "#F9FAFB" : "transparent",
-                          borderBottom:
-                            index < selectedOrg.programas.length - 1 ? "1px solid #F3F4F6" : "none",
-                          transition: "background-color 0.15s ease",
-                          "&:hover": {
-                            backgroundColor: "#F9FAFB",
-                          },
-                        }}
-                      >
-                        <Radio
-                          checked={isSelected}
-                          onChange={() => handleSelectProgram(selectedOrg.id, prog.id)}
-                          size="small"
+                    {selectedOrg.programas?.map((prog, index) => {
+                      const isSelected = selectedProgramId === prog.id;
+                      return (
+                        <Box
+                          key={prog.id}
+                          onClick={() => handleSelectProgram(selectedOrg.id, prog.id)}
                           sx={{
-                            color: "#D1D5DB",
-                            "&.Mui-checked": {
-                              color: "#111827",
+                            display: "flex",
+                            alignItems: "center",
+                            px: 2.5,
+                            py: 1.8,
+                            cursor: "pointer",
+                            backgroundColor: isSelected ? "#F9FAFB" : "transparent",
+                            borderBottom:
+                              index < selectedOrg.programas.length - 1 ? "1px solid #F3F4F6" : "none",
+                            transition: "background-color 0.15s ease",
+                            "&:hover": {
+                              backgroundColor: "#F9FAFB",
                             },
-                            mr: 1,
                           }}
-                        />
+                        >
+                          <Radio
+                            checked={isSelected}
+                            onChange={() => handleSelectProgram(selectedOrg.id, prog.id)}
+                            size="small"
+                            sx={{
+                              color: "#D1D5DB",
+                              "&.Mui-checked": {
+                                color: "#111827",
+                              },
+                              mr: 1,
+                            }}
+                          />
 
-                        <Box sx={{ flex: 1 }}>
-                          <Stack direction="row" spacing={1} alignItems="center">
+                          <Box sx={{ flex: 1 }}>
                             <Typography
                               variant="body2"
                               sx={{
@@ -526,31 +420,16 @@ export const SeleccionEspacio: React.FC = () => {
                             >
                               {prog.nombre}
                             </Typography>
-                            {prog.esReciente && (
-                              <Chip
-                                label="reciente"
-                                size="small"
-                                sx={{
-                                  height: 18,
-                                  fontSize: "0.65rem",
-                                  fontWeight: 600,
-                                  backgroundColor: "#F3F4F6",
-                                  color: "#6B7280",
-                                  borderRadius: "4px",
-                                }}
-                              />
-                            )}
-                          </Stack>
-
-                          <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.75rem" }}>
-                            {prog.generacion} {prog.estado} · {prog.alumnosCount} alumnos
-                          </Typography>
+                            <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.75rem" }}>
+                              {prog.generacion} {prog.estado} · {prog.alumnosCount} alumnos
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    );
-                  })}
+                      );
+                    })}
+                  </Box>
                 </Box>
-              </Box>
+              )}
             </>
           ) : (
             /* ================= VISTA LISTA (ACCORDIONS) ================= */
@@ -577,7 +456,7 @@ export const SeleccionEspacio: React.FC = () => {
                   overflow: "hidden",
                 }}
               >
-                {ORGANIZACIONES_MOCK.map((org, index) => {
+                {planesEstudio.map((org, index) => {
                   const isExpanded = expandedOrgId === org.id;
 
                   return (
@@ -592,7 +471,7 @@ export const SeleccionEspacio: React.FC = () => {
                         borderRadius: "0 !important",
                         border: "none",
                         borderBottom:
-                          index < ORGANIZACIONES_MOCK.length - 1 ? "1px solid #E5E7EB" : "none",
+                          index < planesEstudio.length - 1 ? "1px solid #E5E7EB" : "none",
                         overflow: "hidden",
                         "&:before": { display: "none" },
                       }}
@@ -611,7 +490,6 @@ export const SeleccionEspacio: React.FC = () => {
                           <OrgBadge
                             text={org.badgeText}
                             bgColor={org.badgeBgColor}
-                            textColor={org.badgeTextColor}
                             size="medium"
                           />
                           <Box>
@@ -619,14 +497,14 @@ export const SeleccionEspacio: React.FC = () => {
                               {org.nombre}
                             </Typography>
                             <Typography variant="caption" sx={{ color: "#9CA3AF", fontSize: "0.75rem" }}>
-                              {org.programasCount} programas · {org.alumnosCount.toLocaleString()} alumnos
+                              {org.programasCount} programas · {(org.alumnosCount || 0).toLocaleString()} alumnos
                             </Typography>
                           </Box>
                         </Stack>
                       </AccordionSummary>
 
                       <AccordionDetails sx={{ p: 0, borderTop: "1px solid #F3F4F6" }}>
-                        {org.programas.map((prog, idx) => {
+                        {org.programas?.map((prog, idx) => {
                           const isSelected = selectedOrgId === org.id && selectedProgramId === prog.id;
 
                           return (
@@ -673,23 +551,9 @@ export const SeleccionEspacio: React.FC = () => {
                   );
                 })}
               </Box>
-
-              <Typography
-                variant="caption"
-                sx={{
-                  color: "#9CA3AF",
-                  textAlign: "center",
-                  display: "block",
-                  mt: 1,
-                  fontSize: "0.75rem",
-                }}
-              >
-                Selecciona la organización en la que deseas trabajar.
-              </Typography>
             </>
           )}
 
-          {/* Botón de Acción Principal: Ingresar al sistema */}
           <Button
             fullWidth
             variant="contained"

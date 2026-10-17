@@ -17,3 +17,4 @@ export { default as GlobalTemplate } from './templates/GlobalTemplate/GlobalTemp
 export { default as NuevaAltaUnica } from './pages/Alumnos/AltaUnica/NuevaAltaUnica';
 export { default as NotFound } from './pages/NotFound/NotFound';
 export { default as SessionExpired } from './pages/SessionExpired/SessionExpired';
+export { default as Perfil } from './pages/Perfil/Perfil';

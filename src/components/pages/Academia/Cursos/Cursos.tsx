@@ -14,7 +14,7 @@ import { AgregarCursoDrawer } from "./AgregarCursoDrawer";
 import { EditarCursoDrawer } from "./EditarCursoDrawer";
 import { AgregarModuloDialog } from "./AgregarModuloDialog";
 import { DuplicarCursoDialog } from "./DuplicarCursoDialog";
-import { GetCursos } from "../../../../services/CursosService";
+import { GetCursoByPlan } from "../../../../services/CursosService";
 
 const STATUS_ID_MAP: Record<string, string[]> = {
   published: ['publicado', 'published'],
@@ -33,16 +33,19 @@ const Cursos: React.FC = () => {
     const [duplicatingCourse, setDuplicatingCourse] = React.useState<Curso | null>(null);
     const [editingCourse, setEditingCourse] = React.useState<Curso | null>(null);
     const [selectedModule, setSelectedModule] = React.useState<Curso | null>(null);
+    const [idPlanEstudio, setIdPlanEstudio] = React.useState<number | null>(null);
 
     // Filtros, búsqueda y ordenamiento
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOption, setSortOption] = useState<SortOption>('manual');
-    const [selectedStatuses, setSelectedStatuses] = useState<string[]>(['draft', 'unpublished']);
+    const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
     // Estado para saber qué curso está expandido (guardamos su ID o índice)
     const [expandedCourseId, setExpandedCourseId] = useState<number | string | null>(null);
 
-    const { data: cursosData, isLoading: isCursosLoading } = GetCursos(); 
+    const { data: cursosData, isLoading: isCursosLoading } = GetCursoByPlan(idPlanEstudio ?? 0, {
+        enabled: !!idPlanEstudio,
+    }); 
 
     // Filtrado y ordenamiento de cursos
     const filteredAndSortedCursos = useMemo(() => {
@@ -134,6 +137,11 @@ const Cursos: React.FC = () => {
       setIsOpenDuplicar(true);
     };
 
+    const handleDegreeChange = (degree: any) => {
+        // console.log('Grado seleccionado:', degree);
+        setIdPlanEstudio(degree?.id_plan_estudio ?? null);
+    };
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px'}}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -151,6 +159,7 @@ const Cursos: React.FC = () => {
                 onSortChange={(sort) => setSortOption(sort)}
                 selectedStatuses={selectedStatuses}
                 onStatusChange={(statuses) => setSelectedStatuses(statuses)}
+                onDegreeChange={(degree) => handleDegreeChange(degree)}
             />
             {
                 isCursosLoading ? 
