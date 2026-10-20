@@ -35,4 +35,8 @@ export const PostRegistrarVigencia = async (payload: VigenciaPayload) => {
 
     const encryptedPayload = await apiClient.encryptData({ ...payload });
     return await apiClient.post(PERIODOS_INSCRIPCION.POST_REGISTRAR_PERIODO.path, { data: encryptedPayload });
-}
+};
+
+export const PutActualizarVigencia = async ({ id, payload }: { id: number; payload: VigenciaPayload }) => {
+    return { success: true, data: { id, ...payload } };
+};

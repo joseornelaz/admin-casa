@@ -117,6 +117,11 @@ const theme = createTheme({
     }
   },
   components: {
+    MuiFormControl: {
+      defaultProps: {
+        size: "small",
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: (theme) => ({
         body: {
@@ -199,12 +204,12 @@ const theme = createTheme({
       defaultProps: {
         variant: 'outlined',
         fullWidth: true,
-        size: 'medium',
+        size: 'small',
         autoComplete: 'new-password',
       },
       styleOverrides: {
         root: ({theme}) => ({
-          marginBottom: '1rem',
+          // marginBottom: '1rem',
           '& .MuiInputBase-input': {
             height: '40px',
             padding: '0 14px',
@@ -271,6 +276,7 @@ const theme = createTheme({
         })
       }
     }
+    
   },
   breakpoints: {
     values: {

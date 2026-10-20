@@ -18,3 +18,4 @@ export { default as NuevaAltaUnica } from './pages/Alumnos/AltaUnica/NuevaAltaUn
 export { default as NotFound } from './pages/NotFound/NotFound';
 export { default as SessionExpired } from './pages/SessionExpired/SessionExpired';
 export { default as Perfil } from './pages/Perfil/Perfil';
+export { default as Usuarios } from './pages/Usuarios/Usuarios';

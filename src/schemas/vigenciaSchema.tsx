@@ -1,19 +1,31 @@
 import { z } from "zod";
 
-export const VigenciaFormSchema = (materias: number[]) =>
-    z.object({
-        idMateria: z
-            .number()
-            .min(1, { message: "Seleccionar Materia" })
-            .refine((id) => materias.includes(id), {
-                message: "Seleccionar Materia",
-            }),
-        nombre: z.string().nonempty("Nombre de vigencia es requerido"),
-        tipoVigencia: z.string().nonempty("Tipo Vigencia es requerida"),
-        fechaInicio: z.string().nonempty("Fecha inicio es requerida"),
-        fechaFin: z.string().nonempty("Fecha fin es requerida"),
-        fechaProrroga: z.string().nonempty("Fecha de prorroga es requerida"),
-});
-
+export const VigenciaFormSchema = (materiasValidas: number[]) =>
+  z.object({
+    idMateria: z
+      .number({ message: "Seleccionar Materia" })
+      .min(1, { message: "Seleccionar Materia" })
+      .refine(
+        (id) => (materiasValidas.length > 0 ? materiasValidas.includes(id) : id > 0),
+        { message: "Seleccionar Materia" }
+      ),
+    nombre: z
+      .string()
+      .trim()
+      .min(1, { message: "Nombre de vigencia es requerido" }),
+    tipoVigencia: z
+      .string()
+      .trim()
+      .min(1, { message: "Tipo Vigencia es requerida" }),
+    fechaInicio: z
+      .string()
+      .trim()
+      .min(1, { message: "Fecha inicio es requerida" }),
+    fechaFin: z
+      .string()
+      .trim()
+      .min(1, { message: "Fecha fin es requerida" }),
+    fechaProrroga: z.string(),
+  });
 
 export type VigenciaFormData = z.infer<ReturnType<typeof VigenciaFormSchema>>;

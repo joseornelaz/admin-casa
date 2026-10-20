@@ -86,6 +86,10 @@ export const AppRouting = createHashRouter([
                                 path: AppRoutingPaths.PERFIL,
                                 Component: Component.Perfil
                             },
+                            {
+                                path: AppRoutingPaths.USUARIOS,
+                                Component: Component.Usuarios
+                            }
                         ]
                     }
                 ]

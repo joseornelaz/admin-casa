@@ -109,3 +109,73 @@ export const Paddings = {
     xxl: '64px',
     xxxl: '96px',
 };
+
+
+export const fieldSx = {
+  marginBottom: 0,
+  "& .MuiOutlinedInput-root": {
+    height: 46,
+    borderRadius: "10px",
+    backgroundColor: "#FAFAFA",
+    fontSize: "0.9rem",
+    "& fieldset": {
+      borderColor: "#E5E7EB",
+    },
+    "&:hover fieldset": {
+      borderColor: "#D1D5DB",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#2563EB",
+      borderWidth: "1px",
+    },
+  },
+  "& .MuiInputLabel-root": {
+    fontSize: "0.82rem",
+    color: "#6B7280",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#2563EB",
+  },
+} as const;
+
+export const secondaryButtonSx = {
+  flex: 1,
+  height: 44,
+  borderRadius: "10px",
+  borderColor: "#E5E7EB",
+  backgroundColor: "#FFFFFF",
+  color: "#374151",
+  textTransform: "none",
+  fontWeight: 600,
+  fontSize: "0.9rem",
+  "&:hover": {
+    backgroundColor: "#F9FAFB",
+    borderColor: "#D1D5DB",
+  },
+} as const;
+
+export const primaryButtonSx = {
+  flex: 1,
+  height: 44,
+  borderRadius: "10px",
+  backgroundColor: "#111827",
+  color: "#FFFFFF",
+  textTransform: "none",
+  fontWeight: 600,
+  fontSize: "0.9rem",
+  "&:hover": {
+    backgroundColor: "#1F2937",
+  },
+  "&.Mui-disabled": {
+    backgroundColor: "#F1F2F4",
+    color: "#FFFFFF",
+  },
+} as const;
+
+export const createButtonSx = {
+  ...primaryButtonSx,
+  backgroundColor: "#16A34A",
+  "&:hover": {
+    backgroundColor: "#15803D",
+  },
+} as const;

@@ -27,6 +27,7 @@ import { TitleHeader } from "../../../molecules/TitleHeader/TitleHeader";
 import { Search } from "../../../molecules/Search/Search";
 import { EmptyState } from "../../../molecules/EmptyState/EmptyState";
 import { RegistroVigenciasDialog } from "../../../molecules/Dialogs/RegistroVigenciasDialog/RegistroVigenciasDialog";
+import { EditarVigenciasDialog } from "../../../molecules/Dialogs/EditarVigenciasDialog";
 import { AppRoutingPaths } from "@constants";
 
 export interface VigenciaItemData {
@@ -86,6 +87,8 @@ const Vigencias: React.FC = () => {
   const navigate = useNavigate();
 
   const [isOpenRegistrar, setIsOpenRegistrar] = useState(false);
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [selectedEditId, setSelectedEditId] = useState<number | undefined>(undefined);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>(["Activas", "Habilitadas"]);
@@ -116,8 +119,9 @@ const Vigencias: React.FC = () => {
     navigate(AppRoutingPaths.VIGENCIAS_DETALLE.replace(":id", String(item.id)));
   };
 
-  const handleEdit = (_item: VigenciaItemData) => {
-    setIsOpenRegistrar(true);
+  const handleEdit = (item: VigenciaItemData) => {
+    setSelectedEditId(item.id);
+    setIsOpenEdit(true);
   };
 
   const filteredItems = mockVigencias.filter((item) => {
@@ -663,10 +667,17 @@ const Vigencias: React.FC = () => {
         </Grid>
       )}
 
-      {/* Dialog for creating / editing vigencia */}
+      {/* Dialog for creating vigencia */}
       <RegistroVigenciasDialog
         isOpen={isOpenRegistrar}
         close={() => setIsOpenRegistrar(false)}
+      />
+
+      {/* Dialog for editing vigencia */}
+      <EditarVigenciasDialog
+        isOpen={isOpenEdit}
+        idVigencia={selectedEditId}
+        close={() => setIsOpenEdit(false)}
       />
     </Box>
   );

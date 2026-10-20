@@ -716,7 +716,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
         {/* Usuarios */}
         <Tooltip title={isCollapsed ? "Usuarios" : ""} placement="right">
           <Box
-            onClick={() => navigate(AppRoutingPaths.CONSULTA)}
+            onClick={() => navigate(AppRoutingPaths.USUARIOS)}
             sx={{
               display: "flex",
               alignItems: "center",

@@ -21,5 +21,6 @@ export const AppRoutingPaths = {
     REPORTES: "/academia/reportes",
     SELECCION_ESPACIO: "/seleccionar-espacio",
     ALTA_UNICA_NUEVA: "/alumnos/alta-unica/nueva",
+    USUARIOS: "/usuarios",
 };
 // export type AppRoutingPaths = typeof AppRoutingPaths;

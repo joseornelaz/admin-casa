@@ -23,10 +23,10 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ShowChartOutlinedIcon from "@mui/icons-material/ShowChartOutlined";
 import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { TitleHeader } from "../../../molecules/TitleHeader/TitleHeader";
-import { RegistroVigenciasDialog } from "../../../molecules/Dialogs/RegistroVigenciasDialog/RegistroVigenciasDialog";
+import { EditarVigenciasDialog } from "../../../molecules/Dialogs/EditarVigenciasDialog";
 import { RegistroGruposDialog } from "../../../molecules/Dialogs/RegistroGruposDialog/RegistroGruposDialog";
 import { GrupoEdit } from "../Grupos/GrupoEdit";
 import { AppRoutingPaths } from "@constants";
@@ -89,11 +89,12 @@ const mockGruposData: GrupoItemData[] = [
 
 const VigenciasDetalles: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
 
   const [isOpenEditVigencia, setIsOpenEditVigencia] = useState(false);
   const [isOpenCrearGrupo, setIsOpenCrearGrupo] = useState(false);
   const [isOpenDrawerGrupo, setIsOpenDrawerGrupo] = useState(false);
-  const [_selectedGrupo, setSelectedGrupo] = useState<GrupoItemData | null>(null);
+  const [, setSelectedGrupo] = useState<GrupoItemData | null>(null);
 
   const [activeFilters, setActiveFilters] = useState<string[]>(["Coppel"]);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
@@ -866,8 +867,9 @@ const VigenciasDetalles: React.FC = () => {
       </Box>
 
       {/* Edit Vigencia Dialog */}
-      <RegistroVigenciasDialog
+      <EditarVigenciasDialog
         isOpen={isOpenEditVigencia}
+        idVigencia={id ? Number(id) : undefined}
         close={() => setIsOpenEditVigencia(false)}
       />
 
