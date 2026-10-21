@@ -18,7 +18,7 @@ import type { RegistroVigenciaFormData } from "../types";
 
 export interface Step3ClasesProps {
   control: Control<RegistroVigenciaFormData>;
-  materias: { id: number; nombre: string }[];
+  materias: { id_curso: number; titulo: string }[];
   isLoadingMaterias: boolean;
   loading: boolean;
   onSubmit: () => void;
@@ -236,8 +236,8 @@ export const Step3Clases: React.FC<Step3ClasesProps> = ({
                   <em>Selecciona una materia</em>
                 </MenuItem>
                 {materias.map((m) => (
-                  <MenuItem key={m.id} value={m.nombre}>
-                    {m.nombre}
+                  <MenuItem key={m.id_curso} value={m.id_curso}>
+                    {m.titulo}
                   </MenuItem>
                 ))}
               </Select>

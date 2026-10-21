@@ -23,7 +23,7 @@ import { tipoGrupoOptions } from "../../../../../types/Grupos.interface";
 export interface Step1VigenciaProps {
   control: Control<RegistroVigenciaFormData>;
   errors: FieldErrors<RegistroVigenciaFormData>;
-  materias: { id: number; nombre: string }[];
+  materias: { id_curso: number; titulo: string }[];
   isLoadingMaterias: boolean;
   tutores: { id: number; nombre: string }[];
   isLoadingTutores: boolean;
@@ -50,9 +50,7 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
 }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {/* ===== Sección: Vigencia ===== */}
-        {/* <SectionTitle>Vigencia</SectionTitle> */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>       
 
         {/* Materia */}
         <Controller
@@ -69,8 +67,8 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
                 sx={{ borderRadius: "8px" }}
               >
                 {materias.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.nombre}
+                  <MenuItem key={item.id_curso} value={item.id_curso}>
+                    {item.titulo}
                   </MenuItem>
                 ))}
               </Select>
@@ -294,11 +292,6 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
         </Box>
 
         <Divider sx={{ my: 0.5, borderColor: "#E5E7EB" }} />
-
-        {/* ===== Sección: Grupo ===== */}
-        {/* <SectionTitle>Grupo</SectionTitle> */}
-
-        
 
         {/* Botones de acción inferiores */}
         <Box

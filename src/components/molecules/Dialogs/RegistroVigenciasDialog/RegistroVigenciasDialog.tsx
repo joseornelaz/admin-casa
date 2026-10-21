@@ -39,8 +39,6 @@ const STEPS: StepItem[] = [
 const defaultValues: RegistroVigenciaFormData = {
   // Paso 1: Vigencia y Grupo
   idMateria: 0,
-  nombre: "",
-  tipoVigencia: "Normal",
   fechaInicio: "",
   fechaFin: "",
 
@@ -78,9 +76,12 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
   const { data: materiasData, isLoading: isLoadingMaterias } = GetMaterias({
     enabled: true,
   });
+
+  console.log("Materias data:", materiasData);
+
   const materias = materiasData
-    ? [{ id: 0, nombre: "Seleccionar" }, ...materiasData]
-    : [{ id: 0, nombre: "Seleccionar" }];
+    ? [{ id_curso: 0, titulo: "Seleccionar" }, ...materiasData]
+    : [{ id_curso: 0, titulo: "Seleccionar" }];
 
   const { data: tutoresData, isLoading: isLoadingTutores } = GetTutores({
     enabled: true,
@@ -100,7 +101,7 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
   } = useForm<RegistroVigenciaFormData>({
     resolver: zodResolver(
       RegistroVigenciaFormSchema(
-        materias.map((m: { id: number; nombre: string }) => m.id).filter((id: number) => id !== 0),
+        materias.map((m: { id_curso: number; titulo: string }) => m.id_curso).filter((id: number) => id !== 0),
         tutores.map((t: { id: number; nombre: string }) => t.id).filter((id: number) => id !== 0),
         tipoGrupoOptions.map((tg) => tg.id)
       )
@@ -146,8 +147,6 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
   const handleNextStep1 = async () => {
     const isValid = await trigger([
       "idMateria",
-      "nombre",
-      "tipoVigencia",
       "fechaInicio",
       "fechaFin",
       "nombreGrupo",
@@ -200,11 +199,12 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
     const data = getValues();
     const payload: VigenciaPayload = {
       idMateria: data.idMateria,
-      nombre: data.nombre,
+      nombre: data.nombreGrupo,
+      descripcionGrupo: data.descripcionGrupo || "",
       fechaInicio: data.fechaInicio,
       fechaFin: data.fechaFin,
-      fechaProrroga: "",
-      tipoVigencia: data.tipoVigencia,
+      tipoGrupo: data.tipoGrupo.toString(),
+      tutor: data.tutor,
     };
     createMutation.mutate(payload);
   };
@@ -312,7 +312,7 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
           {currentStep === 2 && (
             <Step3Clases
               control={control}
-              materias={materias.filter((m) => m.id !== 0)}
+              materias={materias.filter((m) => m.id_curso !== 0)}
               isLoadingMaterias={isLoadingMaterias}
               loading={loading}
               onSubmit={handleSubmit(handleOpenConfirm)}
