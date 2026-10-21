@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Controller, type Control } from "react-hook-form";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import Button from "../../../../atoms/Button/Button";
 import type { RegistroVigenciaFormData } from "../types";
 
@@ -22,6 +23,7 @@ export interface Step3ClasesProps {
   loading: boolean;
   onSubmit: () => void;
   onCancel: () => void;
+  onBack: () => void;
 }
 
 const planesEstudioMock = [
@@ -46,6 +48,7 @@ export const Step3Clases: React.FC<Step3ClasesProps> = ({
   loading,
   onSubmit,
   onCancel,
+  onBack,
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -306,9 +309,31 @@ export const Step3Clases: React.FC<Step3ClasesProps> = ({
           display: "flex",
           gap: 2,
           justifyContent: "flex-end",
+          alignItems: "center",
           mt: 2.5,
         }}
       >
+        <Button
+          variant="text"
+          onClick={onBack}
+          disabled={loading}
+          icon={<KeyboardArrowLeftIcon />}
+          iconPosition="start"
+          sxProps={{
+            borderRadius: "8px",
+            color: "#374151",
+            textTransform: "none",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+            px: 2,
+            mr: "auto",
+            "&:hover": {
+              backgroundColor: "#F3F4F6",
+            },
+          }}
+        >
+          Anterior
+        </Button>
         <Button
           variant="outlined"
           onClick={onCancel}

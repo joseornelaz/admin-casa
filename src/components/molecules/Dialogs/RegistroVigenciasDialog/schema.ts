@@ -6,21 +6,21 @@ export const RegistroVigenciaFormSchema = (
   tiposGrupoValidos: number[]
 ) =>
   z.object({
-    // Paso 1: Vigencia
+    // Paso 1: Vigencia y Grupo
     idMateria: z
       .number({ message: "Seleccionar Materia" })
       .min(1, { message: "Seleccionar Materia" })
       .refine((id) => (materiasValidas.length > 0 ? materiasValidas.includes(id) : id > 0), {
         message: "Seleccionar Materia",
       }),
-    nombre: z
-      .string()
-      .trim()
-      .min(1, { message: "El nombre de la vigencia es requerido" }),
-    tipoVigencia: z
-      .string()
-      .trim()
-      .min(1, { message: "El tipo de vigencia es requerido" }),
+    // nombre: z
+    //   .string()
+    //   .trim()
+    //   .min(1, { message: "El nombre de la vigencia es requerido" }),
+    // tipoVigencia: z
+    //   .string()
+    //   .trim()
+    //   .min(1, { message: "El tipo de vigencia es requerido" }),
     fechaInicio: z
       .string()
       .trim()
@@ -30,7 +30,7 @@ export const RegistroVigenciaFormSchema = (
       .trim()
       .min(1, { message: "La fecha de fin es requerida" }),
 
-    // Paso 2: Grupos
+    // Paso 1: Vigencia y Grupo
     nombreGrupo: z
       .string()
       .trim()

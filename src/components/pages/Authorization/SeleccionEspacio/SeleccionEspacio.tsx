@@ -17,8 +17,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { AppRoutingPaths } from "@constants";
 import { GetPlanesEstudioTotalAlumnos } from "../../../../services/PlanesEstudioService";
-import type { EmpresaPlanesResponse } from "../../../../types/PlanesEstudio.interface";
+import type { EmpresaPlanesResponse, PlanEstudioSeleccionado } from "../../../../types/PlanesEstudio.interface";
 import { LoadingCircular } from "../../../molecules/LoadingCircular/LoadingCircular";
+import { useAuth } from "../../../../hooks";
 
 interface OrgBadgeProps {
   text: string;
@@ -60,6 +61,7 @@ const OrgBadge: React.FC<OrgBadgeProps> = ({ text, bgColor, textColor = "#FFF", 
 
 export const SeleccionEspacio: React.FC = () => {
   const navigate = useNavigate();
+  const { setPlanEstudioSelected } = useAuth();
   const [viewMode, setViewMode] = useState<"tabs" | "list">("tabs");
   const [selectedOrgId, setSelectedOrgId] = useState<number>(0); 
   const [selectedProgramId, setSelectedProgramId] = useState<number | null>(null);
@@ -90,8 +92,19 @@ export const SeleccionEspacio: React.FC = () => {
   const handleIngresar = () => {
     if (!selectedProgramId || !selectedOrg) return;
     const programObj = selectedOrg.programas.find((p) => p.id === selectedProgramId);
-    localStorage.setItem("selectedOrganization", JSON.stringify(selectedOrg));
-    localStorage.setItem("selectedProgram", JSON.stringify(programObj));
+    if (!programObj) return;
+
+    const planSeleccionado: PlanEstudioSeleccionado = {
+      id_plan: programObj.id,
+      nombre_plan: programObj.nombre,
+      id_empresa: selectedOrg.id,
+      nombre_empresa: selectedOrg.nombre,
+      badgeText: selectedOrg.badgeText,
+    };
+
+    // El setter del contexto persiste en storage en el mismo lugar
+    setPlanEstudioSelected?.(planSeleccionado);
+
     navigate(AppRoutingPaths.HOME);
   };
 

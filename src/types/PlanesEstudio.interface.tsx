@@ -24,6 +24,15 @@ export interface ProgramaAcademico {
     estado: "activa" | "futura" | "finalizada";
 }
 
+/** Espacio de trabajo activo: organización + plan. Única fuente de verdad en AuthContext. */
+export interface PlanEstudioSeleccionado {
+    id_plan: number;
+    nombre_plan: string;
+    id_empresa: number;
+    nombre_empresa: string;
+    badgeText: string;
+}
+
 export interface ProgramasAcademicosTotalCursosResponse {
     id_plan_estudio:            number;
     nombre_plan:                string;

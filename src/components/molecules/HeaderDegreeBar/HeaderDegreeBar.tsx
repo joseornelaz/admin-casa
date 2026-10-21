@@ -19,6 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { GetPlanesEstudioTotalCursos } from '../../../services/PlanesEstudioService';
+import { useAuth } from '../../../hooks';
 
 export type ViewMode = 'list' | 'grid';
 export type SortOption = 'manual' | 'alpha' | 'recent' | 'status';
@@ -68,6 +69,7 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   selectedStatuses: propSelectedStatuses,
   searchQuery: propSearchQuery,
 }) => {
+  const { empresaSelected } = useAuth();
   const [view, setView] = useState<ViewMode>(defaultView);
   const [selectedDegree, setSelectedDegree] = useState<DegreeOption | null>(null);
   const [dataDegreeOptions, setDataDegreeOptions] = useState<DegreeOption[] | null>(null);
@@ -84,7 +86,7 @@ export const HeaderDegreeBar: React.FC<HeaderDegreeBarProps> = ({
   const [searchInput, setSearchInput] = useState<string>(searchQuery ?? '');
   const debouncedSearchInput = useDebounce(searchInput, 300);
 
-  const { data: totalCursosData, isLoading: isLoadingTotalCursos } = GetPlanesEstudioTotalCursos();
+  const { data: totalCursosData, isLoading: isLoadingTotalCursos } = GetPlanesEstudioTotalCursos(empresaSelected?.id_empresa || 0);
   
   useEffect(() => {
     if (totalCursosData && totalCursosData.length > 0) {

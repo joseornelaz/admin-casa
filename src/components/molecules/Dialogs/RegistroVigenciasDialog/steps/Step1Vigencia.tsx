@@ -1,12 +1,14 @@
 import React from "react";
 import {
   Box,
+  Divider,
   FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -16,12 +18,15 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import Button from "../../../../atoms/Button/Button";
 import type { RegistroVigenciaFormData } from "../types";
+import { tipoGrupoOptions } from "../../../../../types/Grupos.interface";
 
 export interface Step1VigenciaProps {
   control: Control<RegistroVigenciaFormData>;
   errors: FieldErrors<RegistroVigenciaFormData>;
   materias: { id: number; nombre: string }[];
   isLoadingMaterias: boolean;
+  tutores: { id: number; nombre: string }[];
+  isLoadingTutores: boolean;
   onNext: () => void;
   onCancel: () => void;
 }
@@ -38,12 +43,17 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
   errors,
   materias,
   isLoadingMaterias,
+  tutores,
+  isLoadingTutores,
   onNext,
   onCancel,
 }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {/* ===== Sección: Vigencia ===== */}
+        {/* <SectionTitle>Vigencia</SectionTitle> */}
+
         {/* Materia */}
         <Controller
           name="idMateria"
@@ -72,7 +82,7 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
         />
 
         {/* Nombre de la Vigencia */}
-        <Controller
+        {/* <Controller
           name="nombre"
           control={control}
           render={({ field }) => (
@@ -91,10 +101,10 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
               }}
             />
           )}
-        />
+        /> */}
 
         {/* Tipo de Vigencia */}
-        <Controller
+        {/* <Controller
           name="tipoVigencia"
           control={control}
           render={({ field }) => (
@@ -114,6 +124,105 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
               </Select>
               {errors.tipoVigencia && (
                 <FormHelperText>{errors.tipoVigencia.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
+        /> */}
+
+      {/* Nombre del Grupo * */}
+        <Controller
+          name="nombreGrupo"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="nombre-grupo"
+              label="Nombre del Grupo *"
+              placeholder="Ej. Grupo Diseño Interfaces | Sep 2025"
+              fullWidth
+              error={!!errors.nombreGrupo}
+              helperText={errors.nombreGrupo?.message}
+              slotProps={{
+                input: {
+                  sx: { borderRadius: "8px" },
+                },
+              }}
+            />
+          )}
+        />
+
+        {/* Descripción del Grupo */}
+        <Controller
+          name="descripcionGrupo"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              id="descripcion-grupo"
+              label="Descripción del Grupo"
+              placeholder="Descripción opcional del grupo..."
+              fullWidth
+              multiline
+              rows={3}
+              error={!!errors.descripcionGrupo}
+              helperText={errors.descripcionGrupo?.message}
+              slotProps={{
+                input: {
+                  sx: { borderRadius: "8px" },
+                },
+              }}
+            />
+          )}
+        />
+
+        {/* Tipo de Grupo */}
+        <Controller
+          name="tipoGrupo"
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth error={!!errors.tipoGrupo}>
+              <InputLabel id="tipo-grupo-label">Tipo de Grupo</InputLabel>
+              <Select
+                {...field}
+                labelId="tipo-grupo-label"
+                label="Tipo de Grupo"
+                sx={{ borderRadius: "8px" }}
+              >
+                {tipoGrupoOptions.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.tipoGrupo && (
+                <FormHelperText>{errors.tipoGrupo.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
+        />
+
+        {/* Tutor * */}
+        <Controller
+          name="tutor"
+          control={control}
+          render={({ field }) => (
+            <FormControl fullWidth error={!!errors.tutor}>
+              <InputLabel id="tutor-label">Tutor *</InputLabel>
+              <Select
+                {...field}
+                disabled={isLoadingTutores}
+                labelId="tutor-label"
+                label="Tutor *"
+                sx={{ borderRadius: "8px" }}
+              >
+                {tutores.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+              {errors.tutor && (
+                <FormHelperText>{errors.tutor.message}</FormHelperText>
               )}
             </FormControl>
           )}
@@ -183,6 +292,13 @@ export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
             )}
           />
         </Box>
+
+        <Divider sx={{ my: 0.5, borderColor: "#E5E7EB" }} />
+
+        {/* ===== Sección: Grupo ===== */}
+        {/* <SectionTitle>Grupo</SectionTitle> */}
+
+        
 
         {/* Botones de acción inferiores */}
         <Box

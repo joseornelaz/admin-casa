@@ -29,24 +29,22 @@ import { VigenciasStepper } from "./components/VigenciasStepper";
 import { ImportExcelBanner } from "./components/ImportExcelBanner";
 import { ConfirmarGuardarDialog } from "./components/ConfirmarGuardarDialog";
 import { Step1Vigencia } from "./steps/Step1Vigencia";
-import { Step2Grupos } from "./steps/Step2Grupos";
 import { Step3Clases } from "./steps/Step3Clases";
 
 const STEPS: StepItem[] = [
-  { id: 1, label: "Vigencia" },
-  { id: 2, label: "Grupos" },
-  { id: 3, label: "Clases" },
+  { id: 1, label: "Vigencia y Grupo" },
+  { id: 2, label: "Clases" },
 ];
 
 const defaultValues: RegistroVigenciaFormData = {
-  // Paso 1: Vigencia
+  // Paso 1: Vigencia y Grupo
   idMateria: 0,
   nombre: "",
   tipoVigencia: "Normal",
   fechaInicio: "",
   fechaFin: "",
 
-  // Paso 2: Grupos
+  // Paso 1: Vigencia y Grupo
   nombreGrupo: "",
   descripcionGrupo: "",
   tipoGrupo: 1,
@@ -152,16 +150,13 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
       "tipoVigencia",
       "fechaInicio",
       "fechaFin",
+      "nombreGrupo",
+      "descripcionGrupo",
+      "tipoGrupo",
+      "tutor",
     ]);
     if (isValid) {
       setCurrentStep(2);
-    }
-  };
-
-  const handleNextStep2 = async () => {
-    const isValid = await trigger(["nombreGrupo", "tipoGrupo", "tutor"]);
-    if (isValid) {
-      setCurrentStep(3);
     }
   };
 
@@ -219,8 +214,6 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
       case 1:
         return isEditMode ? "Editar Vigencia" : "Nueva Vigencia";
       case 2:
-        return "Datos del Grupo";
-      case 3:
         return "Configurar Clases";
       default:
         return "Nueva Vigencia";
@@ -248,6 +241,8 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
           sx={{
             backgroundColor: "#FFFFFF",
             padding: { xs: "20px", sm: "28px" },
+            maxHeight: "85vh",
+            overflowY: "auto",
           }}
         >
           {/* Header Superior con Título y Botón Cerrar */}
@@ -293,34 +288,28 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
           />
 
           {/* Banner Importar desde Excel */}
-          <ImportExcelBanner onClick={handleImportExcel} />
+          {
+            currentStep === 1 && (
+              <ImportExcelBanner onClick={handleImportExcel} />
+            )
+          }
 
-          {/* PASO 1: VIGENCIA */}
+          {/* PASO 1: VIGENCIA + GRUPO */}
           {currentStep === 1 && (
             <Step1Vigencia
               control={control}
               errors={errors}
               materias={materias}
               isLoadingMaterias={isLoadingMaterias}
+              tutores={tutores}
+              isLoadingTutores={isLoadingTutores}
               onNext={handleNextStep1}
               onCancel={handleClose}
             />
           )}
 
-          {/* PASO 2: GRUPOS */}
+          {/* PASO 2: CLASES */}
           {currentStep === 2 && (
-            <Step2Grupos
-              control={control}
-              errors={errors}
-              tutores={tutores}
-              isLoadingTutores={isLoadingTutores}
-              onNext={handleNextStep2}
-              onCancel={handleClose}
-            />
-          )}
-
-          {/* PASO 3: CLASES */}
-          {currentStep === 3 && (
             <Step3Clases
               control={control}
               materias={materias.filter((m) => m.id !== 0)}
@@ -328,6 +317,7 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
               loading={loading}
               onSubmit={handleSubmit(handleOpenConfirm)}
               onCancel={handleClose}
+              onBack={() => setCurrentStep(1)}
             />
           )}
         </DialogContent>

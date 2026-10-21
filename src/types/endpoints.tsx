@@ -68,7 +68,7 @@ export const MODULOS_CURSOS = {
 
 export const PLANES_ESTUDIO = {
     GET_PLANES_ESTUDIO_TOTAL_ALUMNOS: { path: '/planes/programas/academicos', key: 'planes-programas-academicos' },
-    GET_PLANES_ESTUDIO_TOTAL_CURSOS: { path: '/planes/programas/academicos/total-cursos', key: 'planes-programas-academicos-cursos' },
+    GET_PLANES_ESTUDIO_TOTAL_CURSOS: { path: '/planes/programas/academicos/total-cursos/:id_empresa', key: 'planes-programas-academicos-cursos' },
 }
 
 export const CATALOGOS = {

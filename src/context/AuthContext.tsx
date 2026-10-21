@@ -1,9 +1,10 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { checkAuthStatus, cleanStorage, setAuthModel, getAuthModel, setToken } from '../hooks/useLocalStorage';
+import { checkAuthStatus, cleanStorage, setAuthModel, getAuthModel, setToken, getPlanEstudioSelectedStorage, setPlanEstudioSelectedStorage } from '../hooks/useLocalStorage';
 import { encryptData } from '../utils/crypto';
 import type { User } from '@constants';
+import type { PlanEstudioSeleccionado } from '../types/PlanesEstudio.interface';
 import { authLogin, authNewPassword, authLogout } from '../services/AuthService';
 // useGetPerfilUsuario,
 
@@ -15,11 +16,17 @@ interface AuthContextType {
   isInitializing: boolean;
   isTokenExpired: boolean;
   isLogout: boolean;
+  /** Espacio de trabajo activo. Única fuente de verdad para empresa + plan. */
+  planEstudioSelected?: PlanEstudioSeleccionado;
+  /** Derivado de planEstudioSelected, por comodidad de los componentes de layout. */
+  empresaSelected?: {id_empresa: number, nombre_empresa: string, badgeText: string};
   clearError: () => void;
   login: (usuario: string, password: string) => Promise<{ success: boolean; message?: string; cambiarPassword?: boolean; aceptoTerminos?: boolean }>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
   newPassword: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  /** Actualiza estado y storage en un solo lugar. */
+  setPlanEstudioSelected?: (plan: PlanEstudioSeleccionado) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,7 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isInitializing, setIsInitializing] = useState(true);
     const [isTokenExpired, setIsTokenExpired] = useState(false);
-    
+    const [planEstudioSelected, setPlanEstudioSelected] = useState<PlanEstudioSeleccionado | undefined>(() => getPlanEstudioSelectedStorage());
+
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -50,6 +58,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 if (isAuth && !tokenExpired) {
                     const userData = await getAuthModel();
                     setUser(userData);
+
+                    // Restaura el espacio de trabajo persistido (si existe)
+                    setPlanEstudioSelected(getPlanEstudioSelectedStorage());
                 }
             } catch (error) {
                 console.error("Error checking auth:", error);
@@ -167,6 +178,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         onSuccess: () => {
             cleanStorage();
             setUser(null);
+            setPlanEstudioSelected(undefined);
             setIsLogout(true);
             setIsAuthenticated(false);
             setIsTokenExpired(false);
@@ -194,6 +206,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLogout(false);
     }
 
+    /**
+     * Único setter del espacio de trabajo: actualiza el estado del contexto
+     * y persiste en storage en el mismo lugar.
+     */
+    const handleSetPlanEstudioSelected = (plan: PlanEstudioSeleccionado): void => {
+        setPlanEstudioSelectedStorage(plan);
+        setPlanEstudioSelected(plan);
+    };
+
+    // La empresa activa es un derivado del espacio de trabajo seleccionado
+    const empresaSelected = planEstudioSelected
+        ? {
+            id_empresa: planEstudioSelected.id_empresa,
+            nombre_empresa: planEstudioSelected.nombre_empresa,
+            badgeText: planEstudioSelected.badgeText,
+        }
+        : undefined;
+
     const value = {
         user,
         isLoading,
@@ -202,6 +232,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isInitializing,
         isTokenExpired,
         isLogout,
+        planEstudioSelected,
+        empresaSelected,
+        setPlanEstudioSelected: handleSetPlanEstudioSelected,
         login: handleLogin,
         logout: handleLogout,
         clearError,

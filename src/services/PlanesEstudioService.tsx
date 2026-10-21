@@ -13,10 +13,10 @@ export const GetPlanesEstudioTotalAlumnos = (options?: { enabled?: boolean }) =>
     });
 }
 
-export const GetPlanesEstudioTotalCursos = (options?: { enabled?: boolean }) => {
+export const GetPlanesEstudioTotalCursos = (id_empresa: number, options?: { enabled?: boolean }) => {
     return useQuery<ProgramasAcademicosTotalCursosResponse[], Error>({
         queryKey: [PLANES_ESTUDIO.GET_PLANES_ESTUDIO_TOTAL_CURSOS.key],
-        queryFn: () => apiClient.get<ProgramasAcademicosTotalCursosResponse[]>(`${PLANES_ESTUDIO.GET_PLANES_ESTUDIO_TOTAL_CURSOS.path}`),
+        queryFn: () => apiClient.get<ProgramasAcademicosTotalCursosResponse[]>(`${PLANES_ESTUDIO.GET_PLANES_ESTUDIO_TOTAL_CURSOS.path.replace(':id_empresa', id_empresa.toString())}`),
         staleTime: 1000 * 60 * 10, // 10 minutos de stale time
         ...options
     });

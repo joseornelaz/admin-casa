@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -30,40 +30,41 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { AppRoutingPaths } from "@constants";
 import { useAuth } from "../../../hooks";
 import { CerrarSesionDialog } from "../../molecules/Dialogs/CerrarSesionDialog/CerrarSesionDialog";
+import { GetPlanesEstudioTotalAlumnos } from "../../../services/PlanesEstudioService";
+import type { ProgramaAcademico } from "../../../types/PlanesEstudio.interface";
 
 interface GlobalSidenavProps {
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
-interface ProgramaOption {
-  id: string;
-  nombre: string;
-}
-
-const PROGRAMAS_MOCK: ProgramaOption[] = [
-  { id: "ing-soft", nombre: "Ingeniería en Desarrollo de Software" },
-  { id: "dip-admin", nombre: "Diplomado en Administración" },
-  { id: "dip-ia", nombre: "Diplomado en Inteligencia Artificial" },
-  { id: "prep", nombre: "Preparatoria" },
-];
-
 export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
   collapsed: externalCollapsed,
   onToggleCollapse,
 }) => {
-  const { logout } = useAuth();
+  const { logout, planEstudioSelected, setPlanEstudioSelected } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [internalCollapsed, setInternalCollapsed] = useState<boolean>(false);
   const [academicoOpen, setAcademicoOpen] = useState<boolean>(true);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState<boolean>(false);
 
-  // Estado para el programa seleccionado y el menú desplegable
-  const [selectedProg, setSelectedProg] = useState<ProgramaOption>(PROGRAMAS_MOCK[1]); // Diplomado en Administración
+  // Estado para el menú desplegable de programas
   const [progMenuAnchor, setProgMenuAnchor] = useState<null | HTMLElement>(null);
 
   const isCollapsed = externalCollapsed !== undefined ? externalCollapsed : internalCollapsed;
+
+  const { data: planesEstudioData } = GetPlanesEstudioTotalAlumnos();
+
+  // Programas y programa activo derivados del espacio de trabajo seleccionado
+  // (única fuente de verdad en el contexto) — sin estados locales ni efectos.
+  const programasAcademicos = useMemo(() => {
+    return planesEstudioData?.find((plan) => plan.id === planEstudioSelected?.id_empresa)?.programas ?? [];
+  }, [planesEstudioData, planEstudioSelected]);
+
+  const selectedProg = useMemo(() => {
+    return programasAcademicos.find((prog) => prog.id === planEstudioSelected?.id_plan) ?? null;
+  }, [programasAcademicos, planEstudioSelected]);
 
   const handleToggle = () => {
     if (onToggleCollapse) {
@@ -77,9 +78,17 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
     setProgMenuAnchor(event.currentTarget);
   };
 
-  const handleSelectProg = (prog: ProgramaOption) => {
-    setSelectedProg(prog);
-    localStorage.setItem("selectedProgram", JSON.stringify(prog));
+  const handleSelectProg = (prog: ProgramaAcademico) => {
+    if (!planEstudioSelected) {
+      return;
+    }
+
+    setPlanEstudioSelected?.({
+      ...planEstudioSelected,
+      id_plan: prog.id,
+      nombre_plan: prog.nombre,
+    });
+
     setProgMenuAnchor(null);
   };
 
@@ -149,7 +158,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
         {/* Active Program Card (Clic para desplegar menú) */}
         {isCollapsed ? (
           <Box sx={{ display: "flex", justifyContent: "center", mb: 2, mt: 0.5 }}>
-            <Tooltip title={`${selectedProg.nombre} - Programa activo`} placement="right">
+            <Tooltip title={`${selectedProg?.nombre} - Programa activo`} placement="right">
               <Box
                 onClick={handleOpenProgMenu}
                 sx={{
@@ -168,7 +177,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
                   "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
                 }}
               >
-                AG
+                {planEstudioSelected?.badgeText || ""}
               </Box>
             </Tooltip>
           </Box>
@@ -207,7 +216,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
                 flexShrink: 0,
               }}
             >
-              AG
+              {planEstudioSelected?.badgeText || ""}
             </Box>
             <Box sx={{ flex: 1, overflow: "hidden" }}>
               <Typography
@@ -215,7 +224,7 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
                 noWrap
                 sx={{ fontWeight: 700, color: "#FFFFFF", fontSize: "0.8rem", lineHeight: 1.2 }}
               >
-                {selectedProg.nombre}
+                {selectedProg?.nombre}
               </Typography>
               <Stack direction="row" spacing={0.6} alignItems="center" sx={{ mt: 0.3 }}>
                 <Box sx={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#3B82F6" }} />
@@ -264,13 +273,13 @@ export const GlobalSidenav: React.FC<GlobalSidenavProps> = ({
               textTransform: "uppercase",
             }}
           >
-            PROGRAMAS — AG COLLEGE
+            PROGRAMAS — {planEstudioSelected?.nombre_empresa ?? ""}
           </Typography>
 
           {/* Lista de programas */}
           <Stack spacing={0.4} sx={{ my: 0.5 }}>
-            {PROGRAMAS_MOCK.map((prog) => {
-              const isSelected = selectedProg.id === prog.id;
+            {programasAcademicos && programasAcademicos.map((prog) => {
+              const isSelected = selectedProg && selectedProg.id === prog.id;
               return (
                 <MenuItem
                   key={prog.id}

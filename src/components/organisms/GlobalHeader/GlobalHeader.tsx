@@ -18,35 +18,44 @@ import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useNavigate } from "react-router-dom";
 import { AppRoutingPaths } from "@constants";
-
-interface OrgOption {
-  id: string;
-  nombre: string;
-  badgeText: string;
-  badgeBgColor: string;
-  badgeTextColor: string;
-}
-
-const ORGANIZACIONES_HEADER: OrgOption[] = [
-  { id: "ag-college", nombre: "AG College", badgeText: "AG", badgeBgColor: "#111827", badgeTextColor: "#FFFFFF" },
-  { id: "coppel-univ", nombre: "Coppel Universidad", badgeText: "CU", badgeBgColor: "#2563EB", badgeTextColor: "#FFFFFF" },
-  { id: "umi", nombre: "UMi", badgeText: "UMi", badgeBgColor: "#7C3AED", badgeTextColor: "#FFFFFF" },
-];
+import { GetPlanesEstudioTotalAlumnos } from "../../../services/PlanesEstudioService";
+import type { EmpresaPlanesResponse } from "../../../types/PlanesEstudio.interface";
 
 export const GlobalHeader: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout, planEstudioSelected, setPlanEstudioSelected } = useAuth();
   const navigate = useNavigate();
-  const [selectedOrg, setSelectedOrg] = useState<OrgOption>(ORGANIZACIONES_HEADER[0]);
   const [orgMenuAnchor, setOrgMenuAnchor] = useState<null | HTMLElement>(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+
+  const { data: planesEstudioData } = GetPlanesEstudioTotalAlumnos();
+
+  // La organización activa se deriva del espacio de trabajo seleccionado
+  // (única fuente de verdad) — sin estados locales ni efectos que la reviertan.
+  const selectedOrg = planEstudioSelected ?? null;
 
   const handleOpenOrgMenu = (event: React.MouseEvent<HTMLElement>) => {
     setOrgMenuAnchor(event.currentTarget);
   };
 
-  const handleSelectOrg = (org: OrgOption) => {
-    setSelectedOrg(org);
-    localStorage.setItem("selectedOrganization", JSON.stringify(org));
+  const handleSelectOrg = (org: EmpresaPlanesResponse) => {
+    // Conserva el programa elegido si existe en la nueva organización;
+    // de lo contrario toma el primer programa disponible.
+    const programaActual = org.programas?.find((programa) => programa.id === planEstudioSelected?.id_plan);
+    const programaElegido = programaActual ?? org.programas?.[0];
+
+    if (!programaElegido) {
+      // Organización sin programas: no se puede seleccionar como espacio activo
+      return;
+    }
+
+    setPlanEstudioSelected?.({
+      id_plan: programaElegido.id,
+      nombre_plan: programaElegido.nombre,
+      id_empresa: org.id,
+      nombre_empresa: org.nombre,
+      badgeText: org.badgeText,
+    });
+
     setOrgMenuAnchor(null);
   };
 
@@ -111,19 +120,20 @@ export const GlobalHeader: React.FC = () => {
           startIcon={
             <Box
               sx={{
-                width: 18,
+                minWidth: 30,
                 height: 18,
-                backgroundColor: selectedOrg.badgeBgColor === "#111827" ? "#374151" : selectedOrg.badgeBgColor,
-                color: selectedOrg.badgeTextColor,
+                backgroundColor: "#FFFFFF",
+                color: "#1E293B",
                 fontSize: "0.6rem",
                 fontWeight: 800,
                 borderRadius: "4px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                p: "0 4px",
               }}
             >
-              {selectedOrg.badgeText}
+              {selectedOrg?.badgeText}
             </Box>
           }
           endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16, color: "#9CA3AF" }} />}
@@ -142,7 +152,7 @@ export const GlobalHeader: React.FC = () => {
             },
           }}
         >
-          {selectedOrg.nombre}
+          {selectedOrg?.nombre_empresa}
         </Button>
 
         {/* Menú Dropdown de Organizaciones */}
@@ -150,40 +160,43 @@ export const GlobalHeader: React.FC = () => {
           anchorEl={orgMenuAnchor}
           open={Boolean(orgMenuAnchor)}
           onClose={() => setOrgMenuAnchor(null)}
-          PaperProps={{
-            sx: {
-              backgroundColor: "#1F2937",
-              color: "#FFFFFF",
-              borderRadius: "10px",
-              mt: 1,
-              boxShadow: "0px 8px 24px rgba(0,0,0,0.4)",
-              border: "1px solid rgba(255,255,255,0.1)",
+          slotProps={{
+            paper: {
+              sx: {
+                backgroundColor: "#1F2937",
+                color: "#FFFFFF",
+                borderRadius: "10px",
+                mt: 1,
+                boxShadow: "0px 8px 24px rgba(0,0,0,0.4)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              },
             },
           }}
         >
-          {ORGANIZACIONES_HEADER.map((org) => (
+          {planesEstudioData?.map((org) => (
             <MenuItem
               key={org.id}
               onClick={() => handleSelectOrg(org)}
               sx={{
                 fontSize: "0.85rem",
-                fontWeight: 600,
+                fontWeight: 500,
                 gap: 1.5,
                 "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.08)" },
               }}
             >
               <Box
                 sx={{
-                  width: 20,
+                  minWidth: 30,
                   height: 20,
-                  backgroundColor: org.badgeBgColor,
-                  color: org.badgeTextColor,
+                  backgroundColor: "#FFFFFF",
+                  color: "#1E293B",
                   fontSize: "0.65rem",
-                  fontWeight: 800,
+                  fontWeight: 600,
                   borderRadius: "4px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
+                  p: "0 4px",
                 }}
               >
                 {org.badgeText}
