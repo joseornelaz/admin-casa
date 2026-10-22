@@ -157,9 +157,52 @@ export const DeleteModulo = (id_modulo: number) => {
     return apiClient.delete(`${MODULOS_CURSOS.DELETE_MODULO.path.replace(':id_modulo', id_modulo.toString())}`);
 }
 
-export const CreateRecurso = (id_leccion: number, recurso: CreateRecursoPayload) => {
-    return apiClient.post(`${MODULOS_CURSOS.POST_REGISTRAR_RECURSO.path.replace(':id_leccion', id_leccion.toString())}`, recurso);
+export const CreateRecurso = async (id_modulo: number, recurso: CreateRecursoPayload): Promise<any> => {
+    const formData = new FormData();
+    formData.append('titulo', recurso.titulo);
+    formData.append('descripcion_html', recurso.descripcion_html ?? '');
+    formData.append('id_tipo_recurso', recurso.id_tipo_recurso.toString());
+    formData.append('tipo_examen', recurso.tipo_examen ?? '');
+    formData.append('url', recurso.url ?? '');
+
+    if (recurso.file) {
+        formData.append('file', recurso.file);
+    }
+
+    console.log('FormData:', formData);
+
+    return await apiClient.post(`${MODULOS_CURSOS.POST_REGISTRAR_RECURSO.path.replace(':id_modulo', id_modulo.toString()).replace(':id_leccion', recurso.id_leccion.toString())}`, formData);
 }
+
+/*
+
+export const SaveComentarioForo = async (payload: 
+    { 
+        id_mensaje: number | null, id_recurso: number, mensaje: string, id_mensaje_respuesta: number | null, files: File[] | null,
+        archivos_eliminar?: { id_archivo: number }[]
+    }): Promise<ForosSaveResponse> => {
+
+    const encryptedPayload = await apiClient.encryptData({
+        id_mensaje: payload.id_mensaje,
+        id_recurso: payload.id_recurso,
+        mensaje: payload.mensaje,
+        id_mensaje_respuesta: payload.id_mensaje_respuesta,
+        archivos_eliminar: payload.archivos_eliminar
+    });
+
+    const formData = new FormData(); 
+    formData.append('data', encryptedPayload);
+
+    if (payload.files && payload.files.length > 0) {
+        payload.files.forEach((file) => {
+            formData.append('files_foros', file);
+        });
+    }
+
+    return await apiClient.post<ForosSaveResponse>(SALA_CONVERSACION.SET_MENSAJES.path, formData);
+};
+
+*/
 
 export const UpdateRecurso = (id_recurso: number, recurso: Partial<CreateRecursoPayload>) => {
     return apiClient.put(`${MODULOS_CURSOS.PUT_ACTUALIZAR_RECURSO.path.replace(':id_recurso', id_recurso.toString())}`, recurso);

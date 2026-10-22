@@ -142,7 +142,7 @@ export const EditarVigenciasDialog: React.FC<EditarVigenciasDialogProps> = ({
 
   const onSubmit = async (data: VigenciaFormData) => {
     setLoading(true);
-    const payload: VigenciaPayload = {
+    const payload: Partial<VigenciaPayload> = {
       idMateria: data.idMateria,
       nombre: data.nombre,
       tipoVigencia: data.tipoVigencia,

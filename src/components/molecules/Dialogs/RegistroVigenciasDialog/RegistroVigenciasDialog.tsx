@@ -30,6 +30,7 @@ import { ImportExcelBanner } from "./components/ImportExcelBanner";
 import { ConfirmarGuardarDialog } from "./components/ConfirmarGuardarDialog";
 import { Step1Vigencia } from "./steps/Step1Vigencia";
 import { Step3Clases } from "./steps/Step3Clases";
+import { useAuth } from "../../../../context/AuthContext";
 
 const STEPS: StepItem[] = [
   { id: 1, label: "Vigencia y Grupo" },
@@ -66,6 +67,7 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
   idVigencia,
 }) => {
   const { showNotification } = useNotification();
+  const { planEstudioSelected } = useAuth(); // Assuming you have an authentication hook for user info
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -198,6 +200,7 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
     setLoading(true);
     const data = getValues();
     const payload: VigenciaPayload = {
+      // Paso 1: Vigencia y Grupo
       idMateria: data.idMateria,
       nombre: data.nombreGrupo,
       descripcionGrupo: data.descripcionGrupo || "",
@@ -205,6 +208,18 @@ export const RegistroVigenciasDialog: React.FC<VigenciaDialogProps> = ({
       fechaFin: data.fechaFin,
       tipoGrupo: data.tipoGrupo.toString(),
       tutor: data.tutor,
+
+      // Paso 2: Clases
+      planEstudio: data.planEstudio,
+      servicio: data.servicio,
+      tituloClase: data.tituloClase,
+      linkAdmin: data.linkAdmin,
+      linkTutoria: data.linkTutoria,
+      descripcionClase: data.descripcionClase,
+      tipoClase: data.tipoClase,
+      materiaClase: data.materiaClase,
+      gruposSeleccionados: data.gruposSeleccionados,
+      idPlanEstudio: planEstudioSelected?.id_plan || 0
     };
     createMutation.mutate(payload);
   };

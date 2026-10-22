@@ -8,7 +8,6 @@ import {
   MenuItem,
   Select,
   TextField,
-  Typography,
 } from "@mui/material";
 import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -30,13 +29,6 @@ export interface Step1VigenciaProps {
   onNext: () => void;
   onCancel: () => void;
 }
-
-const tipoVigenciaOptions = [
-  { id: "Normal", label: "Normal" },
-  { id: "Prueba", label: "Prueba" },
-  { id: "Especial", label: "Especial" },
-  { id: "Recursamiento", label: "Recursamiento" },
-];
 
 export const Step1Vigencia: React.FC<Step1VigenciaProps> = ({
   control,

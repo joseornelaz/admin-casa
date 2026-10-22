@@ -61,7 +61,7 @@ export const MODULOS_CURSOS = {
     GET_LISTAR_LECCIONES_MODULO: { path: '/lecciones/modulos/:id_modulo', key: 'listar-lecciones-modulo' },
     GET_LISTAR_RECURSOS_MODULO: { path: '/recursos/lecciones/:id_leccion', key: 'listar-recursos-modulo' },
 
-    POST_REGISTRAR_RECURSO: { path: '/recursos/lecciones/:id_leccion', key: 'registrar-recurso' },
+    POST_REGISTRAR_RECURSO: { path: '/recursos/modulos/:id_modulo/leccion/:id_leccion', key: 'registrar-recurso' },
     PUT_ACTUALIZAR_RECURSO: { path: '/recursos/:id_recurso', key: 'actualizar-recurso' },
     DELETE_RECURSO: { path: '/recursos/:id_recurso', key: 'eliminar-recurso' },
 }
@@ -79,3 +79,15 @@ export const CATALOGOS = {
     GET_TIPOS_RECURSO: { path: '/catalogo/tipos-recurso', key: 'tipos-recurso' },
     GET_PROFESORES: { path: '/catalogo/profesores', key: 'profesores' },
 } 
+
+export const GRUPOS_VIGENCIAS = {
+    GET_GRUPOS_VIGENCIAS: { path: '/grupos-vigencias', key: 'grupos-vigencias' },
+    GET_GRUPO_VIGENCIA_BY_ID: { path: '/grupos-vigencias/:id', key: 'grupo-vigencia-by-id' },
+    POST_REGISTRAR_GRUPO: { path: '/grupos', key: 'registrar-grupo' },
+    POST_REGISTRAR_GRUPO_TUTOR: { path: '/grupos/:id/tutores', key: 'registrar-grupo-tutores' },
+    POST_REGISTRAR_GRUPO_CLASE: { path: '/grupos/:id/tutorias', key: 'registrar-grupo-tutorias' },
+
+    PUT_ACTUALIZAR_GRUPO_VIGENCIA: { path: '/grupos-vigencias/:id', key: 'actualizar-grupo-vigencia' },
+    DELETE_ELIMINAR_GRUPO_VIGENCIA: { path: '/grupos-vigencias/:id', key: 'eliminar-grupo-vigencia' },
+    GET_GRUPOS_VIGENCIAS_BY_MATERIA: { path: '/grupos-vigencias/materia/:id_materia', key: 'grupos-vigencias-by-materia' },    
+}

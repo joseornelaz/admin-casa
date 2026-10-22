@@ -12,7 +12,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Button from "../../atoms/Button/Button";
-import type { RolUsuario, EstatusUsuario, UsuariosFilterParams } from "./types";
+import type { RolUsuario, EstatusUsuario, UsuariosFilterParams } from "../../../types/Usuario.interface";
 
 type UsuariosSearchProps = {
     onSearch?: (filters: UsuariosFilterParams) => void;

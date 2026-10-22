@@ -104,11 +104,11 @@ export const AgregarElementoDialog: React.FC<AgregarElementoDialogProps> = ({
       formData,
     };
 
-    const leccionId = modulo?.id_leccion || modulo?.id_modulo;
+    const leccionId = modulo?.id_leccion;
 
     if (!isFromModulo && leccionId) {
       try {
-        await CreateRecurso(leccionId, {
+        await CreateRecurso(modulo?.id_modulo, {
           id_recurso: 0,
           id_leccion: leccionId,
           titulo: titulo,
