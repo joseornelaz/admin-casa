@@ -14,16 +14,18 @@ import type { RecursosResponse } from '../../../../types/Cursos.interface';
 type ActividadForoFormProps = {
     onClose: () => void;
     onBack: () => void;
-    onSubmit?: (data: { titulo: string; descripcion_html: string }) => void;
+    onSubmit?: (data: { titulo: string; descripcion_html: string, tipo_material: string }) => void;
     isEditMode?: boolean;
     recursoData?: RecursosResponse;
 }
 
 export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, onBack, onSubmit, recursoData, isEditMode = false }) => {
+  const [isSaving, setIsSaving] = React.useState(false);
   const { control, handleSubmit, reset } = useForm({
       defaultValues: recursoData || {
           titulo: '',
           descripcion_html: '',
+          tipo_material: '',
       },
   });
 
@@ -32,6 +34,7 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
         reset({
           titulo: recursoData.titulo || "",
           descripcion_html: recursoData.descripcion_html || "",
+          tipo_material: "web",
         });
       }
     }, [recursoData, reset]);
@@ -41,10 +44,13 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
   }
 
   const handleClose = () => {
+    if (!isSaving) {
       onClose();
+    }
   }
 
   const handleSave = () => {
+      setIsSaving(true);
       handleSubmit((data) => {
           if(onSubmit) onSubmit(data);
       })();
@@ -140,6 +146,7 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
             fullWidth
             variant="outlined"
             onClick={handleBack}
+            disabled={isSaving}
             sx={{
               borderColor: '#E5E7EB',
               color: '#374151',
@@ -157,6 +164,7 @@ export const ActividadForoForm: React.FC<ActividadForoFormProps> = ({ onClose, o
             fullWidth
             variant="contained"
             onClick={handleSave}
+            disabled={isSaving}
             sx={{
               backgroundColor: '#B82338',
               color: '#FFF',

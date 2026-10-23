@@ -37,10 +37,10 @@ import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 
 import { AgregarElementoDialog } from '../Dialogs/AgregarElementoDialog/AgregarElementoDialog';
 import type { Curso, ViewMode, ModulosResponse } from '../../../types/Cursos.interface';
-import { ModuleItem } from './ModuleItem';
 import { GetCursoContenido } from '../../../services/CursosService';
 import { LoadingDialog } from '../Dialogs/LoadingDialog/LoadingDialog';
 import { EditarModuloDialog } from '../Dialogs/EditarModuloDialog/EditarModuloDialog';
+import { ModuleItem } from './ModuleItem';
 
 interface CourseCardProps {
   data: Curso;
@@ -84,7 +84,7 @@ export const CursoCard: React.FC<CourseCardProps> = ({
 
   const { modulos, recursosPorModulo, lecciones, isSuccess, isLoading: isCursoContenidoLoading } = GetCursoContenido(idCurso ?? 0, {
       enabled: !!idCurso,
-  });
+  });  
 
   const handleExpandToggle = useCallback((nextExpanded?: boolean) => {
     const targetExpanded = nextExpanded !== undefined ? nextExpanded : !isExpanded;
@@ -361,9 +361,12 @@ export const CursoCard: React.FC<CourseCardProps> = ({
           </Stack>
 
           <Paper elevation={0} sx={{ p: 2, borderRadius: '12px', border: '1px solid #E5E7EB', backgroundColor: '#FFFFFF' }}>
-            <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.875rem' }}>
-              {data.descripcion || 'Introduce los principios básicos de la administración moderna: planeación, organización, dirección y control aplicados a contextos empresariales reales.'}
-            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ color: '#6B7280', fontSize: '0.875rem' }}
+              dangerouslySetInnerHTML={{ __html: '<b>Esta información de donde se obtiene?</b>' }}
+              // dangerouslySetInnerHTML={{ __html: data.descripcion || 'Sin descripción disponible.' }}
+            />
           </Paper>
         </Box>
 
@@ -524,15 +527,27 @@ export const CursoCard: React.FC<CourseCardProps> = ({
                 <Collapse in={isModuleExpanded}>
                   <Box sx={{ p: 2, pl: 4.5, pt: 0, backgroundColor: '#FFFFFF' }}>
                     <Stack spacing={2} sx={{ mt: 2 }}>
-                      {(recursosPorModulo[module.id_modulo] ?? []).map((item) => (
-                        <ModuleItem
-                          key={item.id_recurso}
-                          sectionTitle={item.tipo_recurso_nombre}
-                          title={item.titulo}
-                          format={''}
-                          icon={renderItemIcon(item.tipo_recurso_nombre)}
-                          item={item}
-                        />
+                      {Object.entries(recursosPorModulo[module.id_modulo] ?? {}).map(([tipoRecurso, recursos]) => (
+                        <Box key={tipoRecurso}>
+                          {/* Encabezado del tipo de recurso (una sola vez) */}
+                          <Stack direction="row" spacing={0.8} alignItems="center" sx={{ mb: 0.8 }}>
+                            {renderItemIcon(tipoRecurso)}
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: '#6B7280', letterSpacing: '0.5px' }}>
+                              {tipoRecurso}
+                            </Typography>
+                          </Stack>
+
+                          {/* Recursos del tipo */}
+                          <Stack spacing={1}>
+                            {recursos.map((item) => (
+                              <ModuleItem
+                                key={item.id_recurso}
+                                title={item.titulo}
+                                item={item}
+                              />
+                            ))}
+                          </Stack>
+                        </Box>
                       ))}
                     </Stack>
                   </Box>

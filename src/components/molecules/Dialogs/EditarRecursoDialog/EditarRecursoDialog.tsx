@@ -48,16 +48,17 @@ export const EditarRecursoDialog: React.FC<EditarRecursoDialogProps> = ({
   }, [recurso, open, reset]);
 
   // 2. Maneja el envío usando data validada de React Hook Form
-  const onSubmit = async (data: { titulo: string; descripcion_html?: string; file?: File | null }) => {
+  const onSubmit = async (data: { titulo: string; descripcion_html?: string; tipo_material?: string; file?: File | null }) => {
     try {
+      console.log("Datos a enviar para actualizar el recurso:", data);
       const response = await UpdateRecurso(recurso.id_recurso, {
         titulo: data.titulo,
         descripcion_html: data.descripcion_html,
         id_tipo_recurso: recurso.id_tipo_recurso,
-        url: recurso.url,
-        package_uuid: recurso.package_uuid,
-        tipo_material: recurso.tipo_material,
-        tipo_examen: recurso.tipo_examen,
+        url: recurso.url || '',
+        package_uuid: recurso.package_uuid || '',
+        tipo_material: recurso.tipo_material || '',
+        tipo_examen: recurso.tipo_examen || '',
         file: data.file || null,
       });
 

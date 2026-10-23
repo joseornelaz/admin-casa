@@ -22,7 +22,7 @@ type ContenidoEvaluacionFormProps = {
 
 export const ContenidoEvaluacionForm: React.FC<ContenidoEvaluacionFormProps> = ({ onClose, onBack, onSubmit, recursoData, isEditMode = false }) => {
     const [selectedFile, setSelectedFile] = React.useState<File | null>(recursoData?.file || null);
-
+    const [isSaving, setIsSaving] = React.useState(false);
     const { control, handleSubmit, setValue, reset } = useForm({
         defaultValues: recursoData || {
             titulo: '',
@@ -52,10 +52,13 @@ export const ContenidoEvaluacionForm: React.FC<ContenidoEvaluacionFormProps> = (
     }
 
     const handleClose = () => {
-        onClose();
+        if (!isSaving) {
+            onClose();
+        }     
     }
 
     const handleSave = () => {
+        setIsSaving(true);
         handleSubmit((data) => {
             if(onSubmit) onSubmit({ ...data, file: selectedFile });
         })();
@@ -155,13 +158,14 @@ export const ContenidoEvaluacionForm: React.FC<ContenidoEvaluacionFormProps> = (
                     fullWidth
                     variant="outlined"
                     onClick={handleBack}
+                    disabled={isSaving}
                     sx={{
-                    borderColor: '#E5E7EB',
-                    color: '#374151',
-                    borderRadius: '10px',
-                    textTransform: 'none',
-                    py: 1.2,
-                    fontWeight: 600
+                        borderColor: '#E5E7EB',
+                        color: '#374151',
+                        borderRadius: '10px',
+                        textTransform: 'none',
+                        py: 1.2,
+                        fontWeight: 600
                     }}
                 >
                     {
@@ -172,14 +176,15 @@ export const ContenidoEvaluacionForm: React.FC<ContenidoEvaluacionFormProps> = (
                     fullWidth
                     variant="contained"
                     onClick={handleSave}
+                    disabled={isSaving}
                     sx={{
-                    backgroundColor: '#B82338',
-                    color: '#FFF',
-                    borderRadius: '10px',
-                    textTransform: 'none',
-                    py: 1.2,
-                    fontWeight: 600,
-                    '&:hover': { backgroundColor: '#991B1B' }
+                        backgroundColor: '#B82338',
+                        color: '#FFF',
+                        borderRadius: '10px',
+                        textTransform: 'none',
+                        py: 1.2,
+                        fontWeight: 600,
+                        '&:hover': { backgroundColor: '#991B1B' }
                     }}
                 >
                     {

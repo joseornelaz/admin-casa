@@ -114,6 +114,12 @@ export interface RecursosResponse {
     file?:               File | null; // Agregado para manejar archivos subidos 
 }
 
+/** Recursos de un módulo agrupados por tipo de recurso (ej. "Video", "Documento", "Examen") */
+export type RecursosPorTipo = Record<string, RecursosResponse[]>;
+
+/** Recursos agrupados por id de módulo y, dentro de cada módulo, por tipo de recurso */
+export type RecursosPorModulo = Record<number, RecursosPorTipo>;
+
 
 export interface CreateRecursoPayload {
     id_recurso:         number;

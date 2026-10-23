@@ -1,7 +1,7 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { CURSOS, MODULOS_CURSOS } from "../types/endpoints";
 import { apiClient } from "./ApiConfiguration/httpClient";
-import type { CreateModuloPayload, Curso, ModulosResponse, RecursosResponse, LeccionesResponse, CreateRecursoPayload } from "../types/Cursos.interface";
+import type { CreateModuloPayload, Curso, ModulosResponse, RecursosResponse, LeccionesResponse, CreateRecursoPayload, RecursosPorModulo } from "../types/Cursos.interface";
 
 
 export const GetCursos = (options?: { enabled?: boolean }) => {
@@ -87,9 +87,19 @@ export const GetCursoContenido = (id_curso: number, options?: { enabled?: boolea
         })),
     });
 
-    const recursosPorModulo = leccionesConModulo.reduce<Record<number, RecursosResponse[]>>(
+    const recursosPorModulo = leccionesConModulo.reduce<RecursosPorModulo>(
         (recursos, { idModulo }, index) => {
-            recursos[idModulo] = [...(recursos[idModulo] ?? []), ...(recursosQueries[index].data ?? [])];
+            const recursosDelModulo = recursos[idModulo] ?? {};
+
+            (recursosQueries[index].data ?? []).forEach((recurso) => {
+                const tipoRecurso = recurso.tipo_recurso_nombre;
+                recursosDelModulo[tipoRecurso] = [
+                    ...(recursosDelModulo[tipoRecurso] ?? []),
+                    recurso,
+                ];
+            });
+
+            recursos[idModulo] = recursosDelModulo;
             return recursos;
         },
         {}
@@ -160,18 +170,21 @@ export const DeleteModulo = (id_modulo: number) => {
 export const CreateRecurso = async (id_modulo: number, recurso: CreateRecursoPayload): Promise<any> => {
     const formData = new FormData();
     formData.append('titulo', recurso.titulo);
-    formData.append('descripcion_html', recurso.descripcion_html ?? '');
-    formData.append('id_tipo_recurso', recurso.id_tipo_recurso.toString());
-    formData.append('tipo_examen', recurso.tipo_examen ?? '');
-    formData.append('url', recurso.url ?? '');
+    formData.append('descripcion_html', recurso.descripcion_html || '');
+    formData.append('id_tipo_recurso', recurso.id_tipo_recurso.toString() || '');
+    formData.append('tipo_examen', recurso.tipo_examen || '');
+    formData.append('url', recurso.url || '');
 
     if (recurso.file) {
         formData.append('file', recurso.file);
     }
 
-    console.log('FormData:', formData);
-
-    return await apiClient.post(`${MODULOS_CURSOS.POST_REGISTRAR_RECURSO.path.replace(':id_modulo', id_modulo.toString()).replace(':id_leccion', recurso.id_leccion.toString())}`, formData);
+    // La subida de un paquete (.zip con muchos archivos) puede tardar más de 10 s:
+    // se amplía el timeout solo para esta petición, sin afectar al resto del cliente.
+    return await apiClient.post(
+        `${MODULOS_CURSOS.POST_REGISTRAR_RECURSO.path.replace(':id_modulo', id_modulo.toString()).replace(':id_leccion', recurso.id_leccion.toString())}`,
+        formData, { timeout: 120000 }
+    );
 }
 
 /*
